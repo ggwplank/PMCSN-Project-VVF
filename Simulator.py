@@ -1,5 +1,19 @@
 import random
 
+from Statistics import Statistics
+
+# Creazione degli stream separati
+stream_arrival = random.Random()  # Per generare i tempi di arrivo
+stream_service_hub = random.Random()  # Per generare i tempi di servizio per il hub
+stream_service_red = random.Random()  # Per generare i tempi di servizio per il codice rosso
+stream_service_yellow = random.Random()  # Per generare i tempi di servizio per il codice giallo
+stream_service_green = random.Random()  # Per generare i tempi di servizio per il codice verde
+stream_service_white = random.Random()  # Per generare i tempi di servizio per il codice bianco
+stream_code_assignment = random.Random()  # Per assegnare i codici colore
+
+# Inizializza le statistiche
+stats = Statistics()
+
 INF = float('inf')
 SERVERS_1 = 5  # Numero di serventi nella prima coda (Hub)
 SERVERS_2 = 3  # Numero di serventi nella seconda coda (Codice Rosso)
@@ -13,6 +27,7 @@ class Server:
         self.service_time = INF  # indica che non sta facendo nulla
         self.occupied = False
         self.color = None
+        self.start_time = None  # Aggiungi una variabile per tracciare l'inizio del servizio
 
 
 class Event:
@@ -44,17 +59,17 @@ white_number = 0
 
 # Simulazione del tempo di arrivo
 def get_arrival():
-    return random.expovariate(1 / 5)  # Es: tempo medio tra arrivi = 5 minuti
+    return stream_arrival.expovariate(1 / 5)  # Es: tempo medio tra arrivi = 5 minuti
 
 
 # Simulazione del tempo di servizio
-def get_service(params):
-    return random.expovariate(1 / params)  # Es: servizio medio
+def get_service(stream, params):
+    return stream.expovariate(1 / params)  # Es: servizio medio
 
 
 # Assegnazione del codice
 def assign_code():
-    p = random.uniform(0, 100)
+    p = stream_code_assignment.uniform(0, 100)
     if p < 25:
         return "red"
     elif p < 50:
@@ -74,88 +89,62 @@ def process_arrival(t, servers_hub):
 
     index = next((i for i, server in enumerate(servers_hub) if not server.occupied), None)
     if index is not None:
-        servers_hub[index].service_time = t.current + get_service(SERVERS_1)
+        servers_hub[index].service_time = t.current + get_service(stream_service_hub, SERVERS_1)
         servers_hub[index].occupied = True
+        servers_hub[index].start_time = t.current  # Registra l'inizio del servizio
         t.hub_completion = min(server.service_time for server in servers_hub if server.occupied)
     else:
         t.hub_completion = INF  # Non ci sono servitori liberi
 
 
-def process_red(t, servers_red):
-    global red_number
-    print(f"Completed red job at time {t.current}\n")
-    red_number -= 1  # Decrementa il numero di job nel red
-    index = next((i for i, server in enumerate(servers_red) if server.service_time == t.current), None)
+# Processamento generico del job completato
+def process_completion(t, servers, color):
+    global red_number, yellow_number, green_number, white_number
+    print(f"Completed {color} job at time {t.current}\n")
+
+    if color == 'red':
+        red_number -= 1
+    elif color == 'yellow':
+        yellow_number -= 1
+    elif color == 'green':
+        green_number -= 1
+    elif color == 'white':
+        white_number -= 1
+
+    index = next((i for i, server in enumerate(servers) if server.service_time == t.current), None)
     if index is not None:
-        servers_red[index].occupied = False
-        servers_red[index].service_time = INF
+        response_time = t.current - servers[index].start_time
+        stats.record_response_time(response_time)  # Registra il tempo di risposta
+        servers[index].occupied = False
+        servers[index].service_time = INF
 
-    if any(server.occupied for server in servers_red):
-        t.red_completion = min(server.service_time for server in servers_red if server.occupied)
+    # Aggiorna il tempo di completamento basato sul colore
+    if any(server.occupied for server in servers):
+        if color == 'red':
+            t.red_completion = min(server.service_time for server in servers if server.occupied)
+        elif color == 'yellow':
+            t.yellow_completion = min(server.service_time for server in servers if server.occupied)
+        elif color == 'green':
+            t.green_completion = min(server.service_time for server in servers if server.occupied)
+        elif color == 'white':
+            t.white_completion = min(server.service_time for server in servers if server.occupied)
     else:
-        t.red_completion = INF
-
-
-def process_yellow(t, servers_yellow):
-    global yellow_number
-    print(f"Completed yellow job at time {t.current}\n")
-    yellow_number -= 1  # Decrementa il numero di job nel white
-    index = next((i for i, server in enumerate(servers_yellow) if server.service_time == t.current), None)
-    if index is not None:
-        servers_yellow[index].occupied = False
-        servers_yellow[index].service_time = INF
-
-    if any(server.occupied for server in servers_yellow):
-        t.yellow_completion = min(server.service_time for server in servers_yellow if server.occupied)
-    else:
-        t.yellow_completion = INF
-
-
-def process_green(t, servers_green):
-    global green_number
-    print(f"Completed green job at time {t.current}\n")
-    green_number -= 1  # Decrementa il numero di job nel white
-    index = next((i for i, server in enumerate(servers_green) if server.service_time == t.current), None)
-    if index is not None:
-        servers_green[index].occupied = False
-        servers_green[index].service_time = INF
-
-    if any(server.occupied for server in servers_green):
-        t.green_completion = min(server.service_time for server in servers_green if server.occupied)
-    else:
-        t.green_completion = INF
-
-
-def process_white(t, servers_white):
-    global white_number
-    print(f"Completed white job at time {t.current}\n")
-    white_number -= 1  # Decrementa il numero di job nel white
-    index = next((i for i, server in enumerate(servers_white) if server.service_time == t.current), None)
-    if index is not None:
-        servers_white[index].occupied = False
-        servers_white[index].service_time = INF
-
-    if any(server.occupied for server in servers_white):
-        t.white_completion = min(server.service_time for server in servers_white if server.occupied)
-    else:
-        t.white_completion = INF
+        if color == 'red':
+            t.red_completion = INF
+        elif color == 'yellow':
+            t.yellow_completion = INF
+        elif color == 'green':
+            t.green_completion = INF
+        elif color == 'white':
+            t.white_completion = INF
 
 
 # Dizionario che mappa i colori alle funzioni di gestione
 color_handlers = {
-    "red": process_red,
-    "yellow": process_yellow,
-    "green": process_green,
-    "white": process_white,
-
-}
-
-# Mappatura tra colori e server
-color_to_servers = {
-    'red': servers_red,
-    'yellow': servers_yellow,
-    'green': servers_green,
-    'white': servers_white,
+    "red": servers_red,
+    "yellow": servers_yellow,
+    "green": servers_green,
+    "white": servers_white,
 }
 
 
@@ -175,8 +164,8 @@ def hub_completion(t, servers, next_event_function):
             hub_number -= 1  # Decrementa il numero di job nel hub
 
             # Ottieni la lista dei server corretta in base al colore
-            if color in color_to_servers:
-                next_event_function(t, color_to_servers[color], color)
+            if color in color_handlers:
+                next_event_function(t, color_handlers[color], color)
 
             # Aggiorna il tempo di completamento del hub
             if any(server.occupied for server in servers_hub):
@@ -212,11 +201,20 @@ def hub_completion(t, servers, next_event_function):
 
 
 def next_event_function(t, servers, color):
+    stream_map = {
+        'red': stream_service_red,
+        'yellow': stream_service_yellow,
+        'green': stream_service_green,
+        'white': stream_service_white
+    }
+
     index = next((i for i, server in enumerate(servers) if not server.occupied), None)
 
     if index is not None:
-        servers[index].service_time = t.current + get_service(len(servers))
+        stream = stream_map[color]
+        servers[index].service_time = t.current + get_service(stream, len(servers))
         servers[index].occupied = True
+        servers[index].start_time = t.current  # Registra l'inizio del servizio
 
         # Aggiorna il tempo di completamento basato sul colore
         if color == 'red':
@@ -268,14 +266,18 @@ def run_simulation(stop_time):
         elif t.current == t.hub_completion:
             hub_completion(t, servers_hub, next_event_function)
         elif t.current == t.red_completion:
-            process_red(t, servers_red)  # Chiama direttamente la funzione di completamento red
+            process_completion(t, servers_red, 'red')
         elif t.current == t.yellow_completion:
-            process_yellow(t, servers_yellow)  # Chiama direttamente la funzione di completamento yellow
+            process_completion(t, servers_yellow, 'yellow')
         elif t.current == t.green_completion:
-            process_green(t, servers_green)  # Chiama direttamente la funzione di completamento green
+            process_completion(t, servers_green, 'green')
         elif t.current == t.white_completion:
-            process_white(t, servers_white)  # Chiama direttamente la funzione di completamento white
-
+            process_completion(t, servers_white, 'white')
 
 
 run_simulation(100)
+
+# Stampa le statistiche finali
+print(f"\nSimulation Results:")
+print(f"Total Jobs Completed: {stats.completed_jobs}")
+print(f"Mean Response Time: {stats.mean_response_time()}")
