@@ -92,8 +92,8 @@ def process_completion(t, servers, color):
     index = next((i for i, server in enumerate(servers) if server.service_time == t.current), None)
     if index is not None:
         response_time = t.current - servers[index].start_time
-        stats.system_response_time(response_time)  # Registra il tempo di risposta
-        stats.code_response_time(color, response_time)
+        stats.add_system_response_time(response_time)  # Registra il tempo di risposta
+        stats.add_color_response_time(color, response_time)
 
         servers[index].occupied = False
         servers[index].service_time = INF
@@ -136,7 +136,7 @@ def hub_completion(t, servers, next_event_function):
     if index is not None:
 
         response_time = t.current - servers[index].start_time
-        stats.hub_response_time(response_time)
+        stats.add_hub_response_time(response_time)
 
         servers[index].occupied = False
         servers[index].service_time = INF
@@ -268,7 +268,7 @@ print(f"Mean Response Time: {stats.mean_response_time()}")
 
 print(f"\nHUB QUEUE STATISTICS")
 print(f"Total hub Jobs Completed: {len(stats.hub_jobs_response_time)}")
-print(f"Mean hub Response Time: {stats.hub_mean_response_time()}")
+print(f"Mean hub Response Time: {stats.get_hub_mean_response_time()}")
 print(f"\n")
 for response_time in stats.hub_jobs_response_time:
     print(f"{response_time}")
