@@ -1,10 +1,13 @@
 import random
 
+from utils.constants import *
+from utils.printer import *
 from utils.statistics import Statistics
+
 from simulation.event import Event
 from simulation.server import Server
 
-from utils.constants import *
+
 
 # Creazione degli stream separati
 stream_arrival = random.Random()  # Per generare i tempi di arrivo
@@ -32,9 +35,18 @@ green_number = 0
 white_number = 0
 
 
+# Dizionario che mappa i colori alle funzioni di gestione
+color_handlers = {
+    "red": servers_red,
+    "yellow": servers_yellow,
+    "green": servers_green,
+    "white": servers_white,
+}
+
+
 # Simulazione del tempo di arrivo
-def get_arrival():
-    return stream_arrival.expovariate(1 / MEAN_ARRIVAL_TIME)  # Es: tempo medio tra arrivi = 5 minuti
+def generate_next_arrival_time():
+    return stream_arrival.expovariate(1 / MEAN_ARRIVAL_TIME)
 
 
 # Simulazione del tempo di servizio
@@ -57,14 +69,14 @@ def assign_code():
 
 # Processamento dell'arrivo nell'hub
 def process_arrival(t, servers_hub):
+    # TODO t -> event ??
     global hub_number
-    print(f"Job arrived at time {t.current}\n")
+    print(f"Job arrived at hub at time {t.current}\n")
     hub_number += 1
-    t.arrival = get_arrival() + t.current
+    t.arrival = generate_next_arrival_time() + t.current
 
     index = next((i for i, server in enumerate(servers_hub) if not server.occupied), None)
     if index is not None:
-
         servers_hub[index].service_time = t.current + get_service(stream_service_hub, SERVERS_1)
         servers_hub[index].occupied = True
 
@@ -117,15 +129,6 @@ def process_completion(t, servers, color):
             t.green_completion = INF
         elif color == 'white':
             t.white_completion = INF
-
-
-# Dizionario che mappa i colori alle funzioni di gestione
-color_handlers = {
-    "red": servers_red,
-    "yellow": servers_yellow,
-    "green": servers_green,
-    "white": servers_white,
-}
 
 
 def hub_completion(t, servers, next_event_function):
@@ -223,7 +226,7 @@ def next_event_function(t, servers, color):
 
 def run_simulation(stop_time):
     global hub_number, red_number, yellow_number, green_number, white_number
-    t = Event(0, get_arrival(), INF, INF, INF, INF, INF)
+    t = Event(0, generate_next_arrival_time(), INF, INF, INF, INF, INF)
 
     while t.current < stop_time:
         # Gestisci la situazione in cui tutti i tempi sono INF (nessun evento futuro)
@@ -233,12 +236,17 @@ def run_simulation(stop_time):
             print("Simulation complete: no more events.")
             break
 
-        print(f"Current time: {t.current}")
-        print(
-            f"Next events - Arrival: {t.arrival}, Hub completion: {t.hub_completion}, "
-            f"Red completion: {t.red_completion}, "
-            f"Yellow completion: {t.yellow_completion}, Green completion: {t.green_completion}, "
-            f"White completion: {t.white_completion}")
+            # Prepara i dati per la stampa
+        events = {
+            'arrival': t.arrival,
+            'hub_completion': t.hub_completion,
+            'red_completion': t.red_completion,
+            'yellow_completion': t.yellow_completion,
+            'green_completion': t.green_completion,
+            'white_completion': t.white_completion
+        }
+
+        print_simulation_status(t, events)
 
         next_event_time = min(t.arrival, t.hub_completion, t.red_completion, t.yellow_completion, t.green_completion,
                               t.white_completion)
@@ -259,44 +267,25 @@ def run_simulation(stop_time):
             process_completion(t, servers_white, 'white')
 
 
-run_simulation(100)
+run_simulation(50)
 
-# Stampa le statistiche finali
-print(f"\nSYSTEM STATISTICS")
+# Stampa delle statistiche
+print_section_title("SYSTEM STATISTICS")
 print(f"Total Jobs Completed: {stats.completed_jobs}")
-print(f"Mean Response Time: {stats.mean_response_time()}")
+print(f"Mean Response Time: {stats.mean_response_time()}\n")
 
-print(f"\nHUB QUEUE STATISTICS")
+print_section_title("HUB QUEUE STATISTICS")
 print(f"Total hub Jobs Completed: {len(stats.hub_jobs_response_time)}")
 print(f"Mean hub Response Time: {stats.get_hub_mean_response_time()}")
-print(f"\n")
+print(f"Response Times:")
 for response_time in stats.hub_jobs_response_time:
     print(f"{response_time}")
+print()
 
-print(f"\nRED QUEUE STATISTICS")
-print(f"Total Red Jobs Completed: {len(stats.red_jobs_response_time)}")
-print(f"Mean Red Response Time: {stats.code_mean_response_time("red")}")
-print(f"\n")
-for response_time in stats.red_jobs_response_time:
-    print(f"{response_time}")
+print_queue_statistics("red", stats.red_jobs_response_time, stats)
+print_queue_statistics("yellow", stats.yellow_jobs_response_time, stats)
+print_queue_statistics("green", stats.green_jobs_response_time, stats)
+print_queue_statistics("white", stats.white_jobs_response_time, stats)
 
-print(f"\nYELLOW QUEUE STATISTICS")
-print(f"Total yellow Jobs Completed: {len(stats.yellow_jobs_response_time)}")
-print(f"Mean yellow Response Time: {stats.code_mean_response_time("yellow")}")
-print(f"\n")
-for response_time in stats.yellow_jobs_response_time:
-    print(f"{response_time}")
-
-print(f"\nGREEN QUEUE STATISTICS")
-print(f"Total green Jobs Completed: {len(stats.green_jobs_response_time)}")
-print(f"Mean green Response Time: {stats.code_mean_response_time("green")}")
-print(f"\n")
-for response_time in stats.green_jobs_response_time:
-    print(f"{response_time}")
-
-print(f"\nWHITE QUEUE STATISTICS")
-print(f"Total white Jobs Completed: {len(stats.white_jobs_response_time)}")
-print(f"Mean white Response Time: {stats.code_mean_response_time("white")}")
-print(f"\n")
-for response_time in stats.white_jobs_response_time:
-    print(f"{response_time}")
+print_separator()
+print("End of Simulation Report")
