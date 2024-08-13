@@ -89,9 +89,12 @@ def process_arrival(t, servers_hub):
 
     index = next((i for i, server in enumerate(servers_hub) if not server.occupied), None)
     if index is not None:
+
         servers_hub[index].service_time = t.current + get_service(stream_service_hub, SERVERS_1)
         servers_hub[index].occupied = True
+
         servers_hub[index].start_time = t.current  # Registra l'inizio del servizio
+
         t.hub_completion = min(server.service_time for server in servers_hub if server.occupied)
     else:
         t.hub_completion = INF  # Non ci sono servitori liberi
@@ -114,7 +117,9 @@ def process_completion(t, servers, color):
     index = next((i for i, server in enumerate(servers) if server.service_time == t.current), None)
     if index is not None:
         response_time = t.current - servers[index].start_time
-        stats.record_response_time(response_time)  # Registra il tempo di risposta
+        stats.system_response_time(response_time)  # Registra il tempo di risposta
+        stats.code_response_time(color, response_time)
+
         servers[index].occupied = False
         servers[index].service_time = INF
 
@@ -154,6 +159,10 @@ def hub_completion(t, servers, next_event_function):
     index = next((i for i, server in enumerate(servers) if server.service_time == t.current), None)
 
     if index is not None:
+
+        response_time = t.current - servers[index].start_time
+        stats.hub_response_time(response_time)
+
         servers[index].occupied = False
         servers[index].service_time = INF
 
@@ -278,6 +287,41 @@ def run_simulation(stop_time):
 run_simulation(100)
 
 # Stampa le statistiche finali
-print(f"\nSimulation Results:")
+print(f"\nSYSTEM STATISTICS")
 print(f"Total Jobs Completed: {stats.completed_jobs}")
 print(f"Mean Response Time: {stats.mean_response_time()}")
+
+print(f"\nHUB QUEUE STATISTICS")
+print(f"Total hub Jobs Completed: {len(stats.hub_jobs_response_time)}")
+print(f"Mean hub Response Time: {stats.hub_mean_response_time()}")
+print(f"\n")
+for response_time in stats.hub_jobs_response_time:
+    print(f"{response_time}")
+
+print(f"\nRED QUEUE STATISTICS")
+print(f"Total Red Jobs Completed: {len(stats.red_jobs_response_time)}")
+print(f"Mean Red Response Time: {stats.code_mean_response_time("red")}")
+print(f"\n")
+for response_time in stats.red_jobs_response_time:
+    print(f"{response_time}")
+
+print(f"\nYELLOW QUEUE STATISTICS")
+print(f"Total yellow Jobs Completed: {len(stats.yellow_jobs_response_time)}")
+print(f"Mean yellow Response Time: {stats.code_mean_response_time("yellow")}")
+print(f"\n")
+for response_time in stats.yellow_jobs_response_time:
+    print(f"{response_time}")
+
+print(f"\nGREEN QUEUE STATISTICS")
+print(f"Total green Jobs Completed: {len(stats.green_jobs_response_time)}")
+print(f"Mean green Response Time: {stats.code_mean_response_time("green")}")
+print(f"\n")
+for response_time in stats.green_jobs_response_time:
+    print(f"{response_time}")
+
+print(f"\nWHITE QUEUE STATISTICS")
+print(f"Total white Jobs Completed: {len(stats.white_jobs_response_time)}")
+print(f"Mean white Response Time: {stats.code_mean_response_time("white")}")
+print(f"\n")
+for response_time in stats.white_jobs_response_time:
+    print(f"{response_time}")
