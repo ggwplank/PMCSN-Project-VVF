@@ -1,47 +1,22 @@
 import random
 
-from Statistics import Statistics
+from utils.statistics import Statistics
+from simulation.event import Event
+from simulation.server import Server
+
+from utils.constants import *
 
 # Creazione degli stream separati
 stream_arrival = random.Random()  # Per generare i tempi di arrivo
-stream_service_hub = random.Random()  # Per generare i tempi di servizio per il hub
-stream_service_red = random.Random()  # Per generare i tempi di servizio per il codice rosso
-stream_service_yellow = random.Random()  # Per generare i tempi di servizio per il codice giallo
-stream_service_green = random.Random()  # Per generare i tempi di servizio per il codice verde
-stream_service_white = random.Random()  # Per generare i tempi di servizio per il codice bianco
+stream_service_hub = random.Random()  # Per generare i tempi di servizio per centralino/hub
+stream_service_red = random.Random()  # Per generare i tempi di servizio per emergenza massima/codice rosso
+stream_service_yellow = random.Random()  # Per generare i tempi di servizio per emergenza alta/codice giallo
+stream_service_green = random.Random()  # Per generare i tempi di servizio per emergenza media/codice verde
+stream_service_white = random.Random()  # Per generare i tempi di servizio per emergenza bassa/codice bianco
 stream_code_assignment = random.Random()  # Per assegnare i codici colore
 
 # Inizializza le statistiche
 stats = Statistics()
-
-INF = float('inf')
-SERVERS_1 = 5  # Numero di serventi nella prima coda (Hub)
-SERVERS_2 = 3  # Numero di serventi nella seconda coda (Codice Rosso)
-SERVERS_3 = 4
-SERVERS_4 = 3
-SERVERS_5 = 2
-
-
-class Server:
-    def __init__(self):
-        self.service_time = INF  # indica che non sta facendo nulla
-        self.occupied = False
-        self.color = None
-        self.start_time = None  # Aggiungi una variabile per tracciare l'inizio del servizio
-
-
-class Event:
-    def __init__(self, current_time, arrival_time, hub_completion, red_completion, yellow_completion, green_completion,
-                 white_completion, color=None):
-        self.current = current_time
-        self.arrival = arrival_time
-        self.color = color
-        self.hub_completion = hub_completion
-        self.red_completion = red_completion
-        self.yellow_completion = yellow_completion
-        self.green_completion = green_completion
-        self.white_completion = white_completion
-
 
 # Variabili di stato del sistema
 servers_hub = [Server() for _ in range(SERVERS_1)]
@@ -59,7 +34,7 @@ white_number = 0
 
 # Simulazione del tempo di arrivo
 def get_arrival():
-    return stream_arrival.expovariate(1 / 5)  # Es: tempo medio tra arrivi = 5 minuti
+    return stream_arrival.expovariate(1 / MEAN_ARRIVAL_TIME)  # Es: tempo medio tra arrivi = 5 minuti
 
 
 # Simulazione del tempo di servizio
@@ -70,11 +45,11 @@ def get_service(stream, params):
 # Assegnazione del codice
 def assign_code():
     p = stream_code_assignment.uniform(0, 100)
-    if p < 25:
+    if p < CODE_ASSIGNMENT_PROBS['red']:
         return "red"
-    elif p < 50:
+    elif p < CODE_ASSIGNMENT_PROBS['yellow']:
         return "yellow"
-    elif p < 75:
+    elif p < CODE_ASSIGNMENT_PROBS['green']:
         return "green"
     else:
         return "white"

@@ -5,9 +5,8 @@ def evaluate_queue_mean_response_time(jobs_response_time):
 
     if len(jobs_response_time) > 0:
         for response_time in jobs_response_time:
-
             code_mean_response_time += response_time
-        return code_mean_response_time/len(jobs_response_time)
+        return code_mean_response_time / len(jobs_response_time)
     else:
         return 0.0
 
@@ -37,7 +36,7 @@ class Statistics:
         self.hub_jobs_response_time.append(response_time)
 
     def hub_mean_response_time(self):
-        evaluate_queue_mean_response_time(self.hub_jobs_response_time)
+        return evaluate_queue_mean_response_time(self.hub_jobs_response_time)
 
     def code_response_time(self, color, response_time):
         if color == 'red':
