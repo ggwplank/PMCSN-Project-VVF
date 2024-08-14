@@ -4,12 +4,13 @@ class Statistics:
         self.completed_jobs = 0  # numero di job completati
 
         # liste per i tempi di risposta per ogni tipologia di richiesta
-        self.hub_jobs_response_time = []
-        self.red_jobs_response_time = []
-        self.yellow_jobs_response_time = []
-        self.green_jobs_response_time = []
-        self.white_jobs_response_time = []
+        self.hub_jobs_response_times = []
+        self.red_jobs_response_times = []
+        self.yellow_jobs_response_times = []
+        self.green_jobs_response_times = []
+        self.white_jobs_response_times = []
 
+    #TODO questo non è di sistema, ma dovrebbe essere rispetto a un singolo centro?
     def add_system_response_time(self, response_time):
         self.total_response_time += response_time
         self.completed_jobs += 1
@@ -27,7 +28,7 @@ class Statistics:
         Parametri:
         - response_time (float): Tempo di risposta del job completato nell'hub.
         """
-        self.hub_jobs_response_time.append(response_time)
+        self.hub_jobs_response_times.append(response_time)
 
     def get_hub_mean_response_time(self):
         """
@@ -36,7 +37,7 @@ class Statistics:
         Ritorna:
         - float: Il tempo medio di risposta per l'hub.
         """
-        return evaluate_queue_mean_response_time(self.hub_jobs_response_time)
+        return evaluate_queue_mean_response_time(self.hub_jobs_response_times)
 
     def add_color_response_time(self, color, response_time):
         """
@@ -44,16 +45,16 @@ class Statistics:
 
         Parametri:
         - color (str): Il colore del centro in cui il job è stato completato.
-        - response_time (float): Tempo di risposta del job completato nel centor specificato.
+        - response_time (float): Tempo di risposta del job completato nel centro specificato.
         """
         if color == 'red':
-            self.red_jobs_response_time.append(response_time)
+            self.red_jobs_response_times.append(response_time)
         elif color == 'yellow':
-            self.yellow_jobs_response_time.append(response_time)
+            self.yellow_jobs_response_times.append(response_time)
         elif color == 'green':
-            self.green_jobs_response_time.append(response_time)
+            self.green_jobs_response_times.append(response_time)
         elif color == 'white':
-            self.white_jobs_response_time.append(response_time)
+            self.white_jobs_response_times.append(response_time)
 
     def code_mean_response_time(self, color):
         """
@@ -66,13 +67,13 @@ class Statistics:
         - float: Il tempo medio di risposta per il centro specificato.
         """
         if color == 'red':
-            return evaluate_queue_mean_response_time(self.red_jobs_response_time)
+            return evaluate_queue_mean_response_time(self.red_jobs_response_times)
         elif color == 'yellow':
-            return evaluate_queue_mean_response_time(self.yellow_jobs_response_time)
+            return evaluate_queue_mean_response_time(self.yellow_jobs_response_times)
         elif color == 'green':
-            return evaluate_queue_mean_response_time(self.green_jobs_response_time)
+            return evaluate_queue_mean_response_time(self.green_jobs_response_times)
         elif color == 'white':
-            return evaluate_queue_mean_response_time(self.white_jobs_response_time)
+            return evaluate_queue_mean_response_time(self.white_jobs_response_times)
 
 
 def evaluate_queue_mean_response_time(jobs_response_time):
