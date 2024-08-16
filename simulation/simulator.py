@@ -72,27 +72,27 @@ def assign_color():
 # Processamento di un arrivo nell'hub
 def process_arrival_at_hub(t, servers_hub):
     global jobs_in_hub
-    print(f"Job arrived at hub at time {t.current}")
+    print(f"Job arrived at hub at time {t.current_time}")
     jobs_in_hub += 1
-    t.arrival = generate_next_arrival_time() + t.current
+    t.next_arrival = generate_next_arrival_time() + t.current_time
 
     # Trova il primo server libero
     index = next((i for i, server in enumerate(servers_hub) if not server.occupied), None)
 
     if index is not None:  # Se c'è un server libero
         if queue_manager.is_queue_empty("hub"):  # Nessun job in coda
-            servers_hub[index].service_time = t.current + get_service_time(stream_service_hub, SERVERS_1)
+            servers_hub[index].end_service_time = t.current_time + get_service_time(stream_service_hub, SERVERS_1)
             servers_hub[index].occupied = True
-            servers_hub[index].start_time = t.current
-            t.hub_completion = servers_hub[index].service_time
+            servers_hub[index].start_service_time = t.current_time
+            t.hub_completion = servers_hub[index].end_service_time
         else:  # C'è un job in coda
             next_job_time = queue_manager.get_from_queue('hub')
-            servers_hub[index].service_time = t.current + get_service_time(stream_service_hub, SERVERS_1)
+            servers_hub[index].end_service_time = t.current_time + get_service_time(stream_service_hub, SERVERS_1)
             servers_hub[index].occupied = True
-            servers_hub[index].start_time = next_job_time
-            t.hub_completion = servers_hub[index].service_time
+            servers_hub[index].start_service_time = next_job_time
+            t.hub_completion = servers_hub[index].end_service_time
     else:  # Nessun server libero, il job va in coda
-        queue_manager.add_to_queue('hub', t.current)
+        queue_manager.add_to_queue('hub', t.current_time)
 
     update_completion_time(t)
 
@@ -101,16 +101,16 @@ def process_job_completion_at_hub(t, servers, next_event_function):
     global jobs_in_hub
 
     # Trova il server che ha completato il job
-    index = next((i for i, server in enumerate(servers) if server.service_time == t.current), None)
+    index = next((i for i, server in enumerate(servers) if server.end_service_time == t.current_time), None)
     if index is not None:
-        response_time = t.current - servers[index].start_time
+        response_time = t.current_time - servers[index].start_service_time
         stats.add_hub_response_time(response_time)
 
         servers[index].occupied = False
-        servers[index].service_time = INF
+        servers[index].end_service_time = INF
 
         if servers == servers_hub:
-            print(f"Job in hub completed at time {t.current}")
+            print(f"Job in hub completed at time {t.current_time}")
             color = assign_color()
             t.color = color
             jobs_in_hub -= 1
@@ -118,9 +118,9 @@ def process_job_completion_at_hub(t, servers, next_event_function):
             if not queue_manager.is_queue_empty("hub"):
                 next_job_time = queue_manager.get_from_queue('hub')
                 service_time = get_service_time(stream_service_hub, SERVERS_1)
-                servers[index].service_time = t.current + service_time
+                servers[index].end_service_time = t.current_time + service_time
                 servers[index].occupied = True
-                servers[index].start_time = next_job_time
+                servers[index].start_service_time = next_job_time
 
             update_completion_time(t)
             # Assegna il job completato a una coda colorata
@@ -133,7 +133,7 @@ def process_job_completion_at_hub(t, servers, next_event_function):
 def update_completion_time(t):
     for color, servers in [('hub', servers_hub), ('red', servers_red), ('yellow', servers_yellow), ('green', servers_green)]:
         if any(server.occupied for server in servers):
-            setattr(t, f'{color}_completion', min(server.service_time for server in servers if server.occupied))
+            setattr(t, f'{color}_completion', min(server.end_service_time for server in servers if server.occupied))
         else:
             setattr(t, f'{color}_completion', INF)
 
@@ -151,33 +151,32 @@ def process_arrival_at_colors(t, servers, color):
 
     if index is not None:
         if queue_manager.is_queue_empty(color):
-            servers[index].service_time = t.current + get_service_time(streams_colors[color], len(servers) * 10)
+            servers[index].end_service_time = t.current_time + get_service_time(streams_colors[color], len(servers) * 10)
             servers[index].occupied = True
-            servers[index].start_time = t.current
+            servers[index].start_service_time = t.current_time
 
         else:
             next_job_time = queue_manager.get_from_queue(color)
-            servers[index].service_time = t.current + get_service_time(streams_colors[color], len(servers) * 10)
+            servers[index].end_service_time = t.current_time + get_service_time(streams_colors[color], len(servers) * 10)
             servers[index].occupied = True
-            servers[index].start_time = next_job_time
+            servers[index].start_service_time = next_job_time
 
         # Imposta il tempo di completamento dinamicamente in base al colore
         if color == 'red':
-            t.red_completion = min(server.service_time for server in servers if server.occupied)
+            t.red_completion = min(server.end_service_time for server in servers if server.occupied)
         elif color == 'yellow':
-            t.yellow_completion = min(server.service_time for server in servers if server.occupied)
+            t.yellow_completion = min(server.end_service_time for server in servers if server.occupied)
         elif color == 'green':
-            t.green_completion = min(server.service_time for server in servers if server.occupied)
+            t.green_completion = min(server.end_service_time for server in servers if server.occupied)
     else:
-        queue_manager.add_to_queue(color, t.current)
+        queue_manager.add_to_queue(color, t.current_time)
 
-    #update_completion_time(t)
 
 
 # un job nei colori viene completato
 def process_job_completion_at_colors(t, servers, color):
     global jobs_in_red, jobs_in_yellow, jobs_in_green
-    print(f"Completed {color} job at time {t.current}")
+    print(f"Completed {color} job at time {t.current_time}")
 
     if color == 'red':
         jobs_in_red -= 1
@@ -186,20 +185,20 @@ def process_job_completion_at_colors(t, servers, color):
     elif color == 'green':
         jobs_in_green -= 1
 
-    index = next((i for i, server in enumerate(servers) if server.service_time == t.current), None)
+    index = next((i for i, server in enumerate(servers) if server.end_service_time == t.current_time), None)
     if index is not None:
-        response_time = t.current - servers[index].start_time
+        response_time = t.current_time - servers[index].start_service_time
         stats.add_system_response_time(response_time)  # non c'è distinzione di colore
         stats.add_color_response_time(color, response_time)
 
         servers[index].occupied = False
-        servers[index].service_time = INF
+        servers[index].end_service_time = INF
 
         if not queue_manager.is_queue_empty(color):
             next_job_time = queue_manager.get_from_queue(color)
-            servers[index].service_time = t.current + get_service_time(streams_colors[color], len(servers) * 10)
+            servers[index].end_service_time = t.current_time + get_service_time(streams_colors[color], len(servers) * 10)
             servers[index].occupied = True
-            servers[index].start_time = next_job_time
+            servers[index].start_service_time = next_job_time
     update_completion_time(t)
 
 
@@ -208,15 +207,15 @@ def run_simulation(stop_time):
 
     t = Event(0, generate_next_arrival_time(), INF, INF, INF, INF, INF)
 
-    while t.current < stop_time:
+    while t.current_time < stop_time:
         # Gestisci la situazione in cui tutti i tempi sono INF (nessun evento futuro)
         if all(x == INF for x in
-               [t.arrival, t.hub_completion, t.red_completion, t.yellow_completion, t.green_completion]):
+               [t.next_arrival, t.hub_completion, t.red_completion, t.yellow_completion, t.green_completion]):
             print("Simulation complete: no more events.")
             break
 
         events = {
-            'arrival': t.arrival,
+            'arrival': t.next_arrival,
             'hub_completion': t.hub_completion,
             'red_completion': t.red_completion,
             'yellow_completion': t.yellow_completion,
@@ -225,20 +224,20 @@ def run_simulation(stop_time):
 
         print_simulation_status(t, events)
 
-        next_event_time = min(t.arrival, t.hub_completion,
+        next_event_time = min(t.next_arrival, t.hub_completion,
                               t.red_completion, t.yellow_completion, t.green_completion)
 
-        t.current = next_event_time
+        t.current_time = next_event_time
 
-        if t.current == t.arrival:
+        if t.current_time == t.next_arrival:
             process_arrival_at_hub(t, servers_hub)
-        elif t.current == t.hub_completion:
+        elif t.current_time == t.hub_completion:
             process_job_completion_at_hub(t, servers_hub, process_arrival_at_colors)
-        elif t.current == t.red_completion:
+        elif t.current_time == t.red_completion:
             process_job_completion_at_colors(t, servers_red, 'red')
-        elif t.current == t.yellow_completion:
+        elif t.current_time == t.yellow_completion:
             process_job_completion_at_colors(t, servers_yellow, 'yellow')
-        elif t.current == t.green_completion:
+        elif t.current_time == t.green_completion:
             process_job_completion_at_colors(t, servers_green, 'green')
 
         print_queue_status(queue_manager)

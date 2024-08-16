@@ -23,7 +23,7 @@ def print_queue_statistics(color, response_times, stats):
 
 def print_simulation_status(t, events):
     print_separator()
-    print(f"Current Time: {t.current:.6f}")
+    print(f"Current Time: {t.current_time:.6f}")
     print("Next Events:")
     print(f"  Arrival:         {events['arrival'] if events['arrival'] != INF else 'inf'}")
     print(f"  Hub Completion:  {events['hub_completion'] if events['hub_completion'] != INF else 'inf'}")
