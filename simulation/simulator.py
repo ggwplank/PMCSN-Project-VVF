@@ -72,7 +72,7 @@ def assign_color():
 # Processamento di un arrivo nell'hub
 def process_arrival_at_hub(t, servers_hub):
     global jobs_in_hub
-    print(f"Job arrived at hub at time {t.current}\n")
+    print(f"Job arrived at hub at time {t.current}")
     jobs_in_hub += 1
     t.arrival = generate_next_arrival_time() + t.current
 
@@ -110,7 +110,7 @@ def process_job_completion_at_hub(t, servers, next_event_function):
         servers[index].service_time = INF
 
         if servers == servers_hub:
-            print(f"Job in hub completed at time {t.current}\n")
+            print(f"Job in hub completed at time {t.current}")
             color = assign_color()
             t.color = color
             jobs_in_hub -= 1
@@ -193,7 +193,7 @@ def process_arrival_at_colors(t, servers, color):
 # TODO forse è meglio solo job_completion?
 def process_job_completion_at_colors(t, servers, color):
     global jobs_in_red, jobs_in_yellow, jobs_in_green
-    print(f"Completed {color} job at time {t.current}\n")
+    print(f"Completed {color} job at time {t.current}")
 
     if color == 'red':
         jobs_in_red -= 1
@@ -257,18 +257,12 @@ def run_simulation(stop_time):
         elif t.current == t.green_completion:
             process_job_completion_at_colors(t, servers_green, 'green')
 
-        print("#############################hub#############################################")
-        print(queue_manager.queues['hub'])
-        print("#############################red#############################################")
-        print(queue_manager.queues['red'])
-        print("#############################yellow#############################################")
-        print(queue_manager.queues['yellow'])
-        print("#############################green#############################################")
-        print(queue_manager.queues['green'])
+        print_queue_status(queue_manager)
 
 
-run_simulation(1000)
+run_simulation(100)
 
+"""
 # Stampa delle statistiche
 print_section_title("SYSTEM STATISTICS")
 print(f"Total Jobs Completed: {stats.completed_jobs}")
@@ -285,6 +279,7 @@ print()
 print_queue_statistics("red", stats.red_jobs_response_times, stats)
 print_queue_statistics("yellow", stats.yellow_jobs_response_times, stats)
 print_queue_statistics("green", stats.green_jobs_response_times, stats)
+"""
 
 print_separator()
 print("End of Simulation Report")

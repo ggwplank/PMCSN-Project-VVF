@@ -31,3 +31,13 @@ def print_simulation_status(t, events):
     print(f"  Yellow Completion: {events['yellow_completion'] if events['yellow_completion'] != INF else 'inf'}")
     print(f"  Green Completion:  {events['green_completion'] if events['green_completion'] != INF else 'inf'}")
     print_separator()
+
+
+def print_queue_status(queue_manager):
+    print_section_title("Queue Status")
+    for color, queue in queue_manager.queues.items():
+        queue_list = list(queue)  # conversione per non stampare "deque"
+        print(f"{color.capitalize()} (size: {len(queue)}): {queue_list}")
+    print_separator()
+    print()
+    print()
