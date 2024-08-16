@@ -11,5 +11,5 @@ MEAN_ARRIVAL_TIME = 5  # Tempo medio di arrivo
 CODE_ASSIGNMENT_PROBS = {
     "red": 33,
     "yellow": 67,
-    "green": 10
+    "green": 100
 }

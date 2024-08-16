@@ -131,26 +131,11 @@ def process_job_completion_at_hub(t, servers, next_event_function):
 
 
 def update_completion_time(t):
-    # Dopo ogni completamento, aggiornare i tempi di completamento per evitare loop
-    if any(server.occupied for server in servers_red):
-        t.red_completion = min(server.service_time for server in servers_red if server.occupied)
-    else:
-        t.red_completion = INF
-
-    if any(server.occupied for server in servers_yellow):
-        t.yellow_completion = min(server.service_time for server in servers_yellow if server.occupied)
-    else:
-        t.yellow_completion = INF
-
-    if any(server.occupied for server in servers_green):
-        t.green_completion = min(server.service_time for server in servers_green if server.occupied)
-    else:
-        t.green_completion = INF
-
-    if any(server.occupied for server in servers_hub):
-        t.hub_completion = min(server.service_time for server in servers_hub if server.occupied)
-    else:
-        t.hub_completion = INF
+    for color, servers in [('hub', servers_hub), ('red', servers_red), ('yellow', servers_yellow), ('green', servers_green)]:
+        if any(server.occupied for server in servers):
+            setattr(t, f'{color}_completion', min(server.service_time for server in servers if server.occupied))
+        else:
+            setattr(t, f'{color}_completion', INF)
 
 
 def process_arrival_at_colors(t, servers, color):
@@ -189,8 +174,7 @@ def process_arrival_at_colors(t, servers, color):
     #update_completion_time(t)
 
 
-# Un generico job viene completato
-# TODO forse è meglio solo job_completion?
+# un job nei colori viene completato
 def process_job_completion_at_colors(t, servers, color):
     global jobs_in_red, jobs_in_yellow, jobs_in_green
     print(f"Completed {color} job at time {t.current}")
