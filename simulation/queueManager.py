@@ -8,8 +8,7 @@ class QueueManager:
             "hub": deque(), #deque per ottimizzare le operazioni di append e pop
             "red": deque(),
             "yellow": deque(),
-            "green": deque(),
-            "white": deque()
+            "green": deque()
         }
 
     def validate_color(self, color):

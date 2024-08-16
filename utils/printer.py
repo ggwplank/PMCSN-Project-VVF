@@ -30,5 +30,4 @@ def print_simulation_status(t, events):
     print(f"  Red Completion:  {events['red_completion'] if events['red_completion'] != INF else 'inf'}")
     print(f"  Yellow Completion: {events['yellow_completion'] if events['yellow_completion'] != INF else 'inf'}")
     print(f"  Green Completion:  {events['green_completion'] if events['green_completion'] != INF else 'inf'}")
-    print(f"  White Completion:  {events['white_completion'] if events['white_completion'] != INF else 'inf'}")
     print_separator()

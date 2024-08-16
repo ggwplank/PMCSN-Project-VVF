@@ -5,9 +5,8 @@ class Event:
         self.arrival = arrival_time # tempo del prossimo arrivo nel sistema #TODO arrival->next_arrival?
         self.color = color  # colore associato all'evento, se applicabile (tipo di richiesta)
         self.hub_completion = hub_completion    # tempo di completamento del prossimo job nel centralino
-        self.red_completion = red_completion    # tempo di completamento del prossimo job in emergenza massima
-        self.yellow_completion = yellow_completion  # tempo di completamento del prossimo job in emergenza alta
-        self.green_completion = green_completion    # tempo di completamento del prossimo job in emergenza media
-        self.white_completion = white_completion    # tempo di completamento del prossimo job in emergenza bassa
+        self.red_completion = red_completion    # tempo di completamento del prossimo job in codice rosso
+        self.yellow_completion = yellow_completion  # tempo di completamento del prossimo job in codice giallo
+        self.green_completion = green_completion    # tempo di completamento del prossimo job in codice verde
 
 #TODO perché è tutto del prossimo job? Ho sbagliato io a scrivere i commenti o erano già così?

@@ -8,7 +8,6 @@ class Statistics:
         self.red_jobs_response_times = []
         self.yellow_jobs_response_times = []
         self.green_jobs_response_times = []
-        self.white_jobs_response_times = []
 
     #TODO questo non è di sistema, ma dovrebbe essere rispetto a un singolo centro?
     def add_system_response_time(self, response_time):
@@ -53,8 +52,6 @@ class Statistics:
             self.yellow_jobs_response_times.append(response_time)
         elif color == 'green':
             self.green_jobs_response_times.append(response_time)
-        elif color == 'white':
-            self.white_jobs_response_times.append(response_time)
 
     def code_mean_response_time(self, color):
         """
@@ -72,8 +69,6 @@ class Statistics:
             return evaluate_queue_mean_response_time(self.yellow_jobs_response_times)
         elif color == 'green':
             return evaluate_queue_mean_response_time(self.green_jobs_response_times)
-        elif color == 'white':
-            return evaluate_queue_mean_response_time(self.white_jobs_response_times)
 
 
 def evaluate_queue_mean_response_time(jobs_response_time):
