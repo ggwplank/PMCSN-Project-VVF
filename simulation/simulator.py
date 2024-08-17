@@ -52,14 +52,12 @@ def process_job_arrival_at_hub(t, servers_hub):
     t.next_arrival = get_next_arrival_time(stream_arrival, MEAN_ARRIVAL_TIME) + t.current_time
 
     # Trova il primo server libero
-    index = next((i for i, server in enumerate(servers_hub) if not server.occupied), None)
-    # TODO è meglio questo ??? free_server = next((server for server in servers_hub if not server.occupied), None)
-    # if free_server:
-    if index is not None:
-        servers_hub[index].occupied = True
-        servers_hub[index].start_service_time = t.current_time
-        servers_hub[index].end_service_time = t.current_time + get_service_time(stream_service_hub, HUB_SERVERS)
-        t.hub_completion = servers_hub[index].end_service_time
+    free_server = next((server for server in servers_hub if not server.occupied), None)
+    if free_server:
+        free_server.occupied = True
+        free_server.start_service_time = t.current_time
+        free_server.end_service_time = t.current_time + get_service_time(stream_service_hub, HUB_SERVERS)
+        t.hub_completion = free_server.end_service_time
     else:
         queue_manager.add_to_queue('hub', t.current_time)
 
@@ -71,12 +69,10 @@ def process_job_completion_at_hub(t, servers, next_event_function):
     global jobs_in_hub
 
     # Trova il server che ha completato il job
-    index = next((i for i, server in enumerate(servers) if server.end_service_time == t.current_time), None)
-    # TODO è meglio questo ??? completed_server = next((server for server in servers_hub if server.end_service_time == t.current_time), None)
-    # if completed_server:
-    if index is not None:
+    completed_server = next((server for server in servers_hub if server.end_service_time == t.current_time), None)
+    if completed_server:
         jobs_in_hub -= 1
-        release_server(servers[index])
+        release_server(completed_server)
 
         color = assign_color(stream_code_assignment, CODE_ASSIGNMENT_PROBS)
         t.type = color
@@ -85,9 +81,9 @@ def process_job_completion_at_hub(t, servers, next_event_function):
         # ci sono job in coda
         if not queue_manager.is_queue_empty("hub"):
             next_job_time = queue_manager.get_from_queue('hub')
-            servers[index].occupied = True
-            servers[index].start_service_time = next_job_time
-            servers[index].end_service_time = t.current_time + get_service_time(stream_service_hub, HUB_SERVERS)
+            completed_server.occupied = True
+            completed_server.start_service_time = next_job_time
+            completed_server.end_service_time = t.current_time + get_service_time(stream_service_hub, HUB_SERVERS)
 
         update_completion_time(t)
         next_event_function(t, color)  # Assegna il job completato a una coda colorata
@@ -106,7 +102,7 @@ def process_job_arrival_at_colors(t, color):
 
     # il server è libero, processa subito il job
     if not squadra.occupied or (color == 'green' and not modulo.occupied):
-        start_service_time = t.current_time  # TODO sistemare assign_server, tanto gli passiamo due volte current_time
+        start_service_time = t.current_time
         assign_server(t, color, start_service_time, t.current_time)
     else:  # il server è occupato, aggiungi il job alla coda del colore corrispondente
         queue_manager.add_to_queue(color, t.current_time)
@@ -178,12 +174,6 @@ def process_job_completion_at_colors(t, server, color):
 def update_completion_time(t):
     global squad_completion
 
-    """
-        if any(server.occupied for server in servers_hub):
-        t.hub_completion = min(server.end_service_time for server in servers_hub if server.occupied)
-    else:
-        t.hub_completion = INF  # Se nessun server è occupato, imposta il completamento dell'hub a INF
-    """
     t.hub_completion = min((server.end_service_time for server in servers_hub if server.occupied), default=INF)
 
     if squadra.occupied:
@@ -219,7 +209,7 @@ def run_simulation(stop_time):
 
         print_simulation_status(t, events)
 
-        next_event_time = min(events.values())
+        next_event_time = min(t.next_arrival, t.hub_completion, t.red_completion, t.yellow_completion, t.green_completion_squadra, t.green_completion_modulo )
         t.current_time = next_event_time
 
         if t.current_time == t.next_arrival:
