@@ -25,10 +25,8 @@ stats = Statistics()  # Raccolta delle statistiche
 # Inizializzazione dei server
 servers_hub = [Server() for _ in range(HUB_SERVERS)]
 operative_servers = [Server() for _ in range(OPERATIVE_SERVERS)]
-squadra = operative_servers[0]
-squadra.type = SQUADRA
-modulo = operative_servers[1]
-modulo.type = MODULO
+squadra, modulo = operative_servers[0], operative_servers[1]
+squadra.type, modulo.type = SQUADRA, MODULO
 
 # Inizializzazione delle variabili di stato
 squad_completion = INF
@@ -50,11 +48,13 @@ def process_job_arrival_at_hub(t, servers_hub):
     global jobs_in_hub
     print(f"Job arrived at hub at time {t.current_time}")
     jobs_in_hub += 1
+
     t.next_arrival = get_next_arrival_time(stream_arrival, MEAN_ARRIVAL_TIME) + t.current_time
 
     # Trova il primo server libero
     index = next((i for i, server in enumerate(servers_hub) if not server.occupied), None)
-
+    # TODO è meglio questo ??? free_server = next((server for server in servers_hub if not server.occupied), None)
+    # if free_server:
     if index is not None:
         servers_hub[index].occupied = True
         servers_hub[index].start_service_time = t.current_time
@@ -72,9 +72,11 @@ def process_job_completion_at_hub(t, servers, next_event_function):
 
     # Trova il server che ha completato il job
     index = next((i for i, server in enumerate(servers) if server.end_service_time == t.current_time), None)
+    # TODO è meglio questo ??? completed_server = next((server for server in servers_hub if server.end_service_time == t.current_time), None)
+    # if completed_server:
     if index is not None:
-        release_server(servers[index])
         jobs_in_hub -= 1
+        release_server(servers[index])
 
         color = assign_color(stream_code_assignment, CODE_ASSIGNMENT_PROBS)
         t.type = color
@@ -83,15 +85,12 @@ def process_job_completion_at_hub(t, servers, next_event_function):
         # ci sono job in coda
         if not queue_manager.is_queue_empty("hub"):
             next_job_time = queue_manager.get_from_queue('hub')
-            service_time = get_service_time(stream_service_hub, HUB_SERVERS)
-            servers[index].end_service_time = t.current_time + service_time
             servers[index].occupied = True
-            servers[index].start_service_time = next_job_time  # Assicurati di usare il tempo corrente
+            servers[index].start_service_time = next_job_time
+            servers[index].end_service_time = t.current_time + get_service_time(stream_service_hub, HUB_SERVERS)
 
         update_completion_time(t)
-
-        # Assegna il job completato a una coda colorata
-        next_event_function(t, color)
+        next_event_function(t, color)  # Assegna il job completato a una coda colorata
 
     update_completion_time(t)
 
