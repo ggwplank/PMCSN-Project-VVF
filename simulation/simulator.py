@@ -105,12 +105,19 @@ def process_job_arrival_at_colors(t, color):
         start_service_time = t.current_time
         assign_server(t, color, start_service_time, t.current_time)
     else:  # il server è occupato, aggiungi il job alla coda del colore corrispondente
-        queue_manager.add_to_queue(color, t.current_time)
+        assign_server(t, color, t.current_time, t.current_time)
 
     update_completion_time(t)
 
 
+def preempt_current_job(server, t):
+    print(f"Preempting current job {server.job_color.upper()} at time {t.current_time}")
+    #queue_manager.add_to_queue(server.job_color, server.start_service_time)
+    release_server(server)
+
+
 def assign_server(t, color, start_service_time, current_time):
+    # Funzione per assegnare un server a un job, con gestione della prelazione
     if not squadra.occupied:
         service_time = get_service_time(streams_colors[color], 5 * 10)
         squadra.end_service_time = current_time + service_time
@@ -119,9 +126,15 @@ def assign_server(t, color, start_service_time, current_time):
         squadra.job_color = color
         print(
             f"Squadra assegnata al job di colore {color} con start {squadra.start_service_time}, con tempo di completamento {squadra.end_service_time}")
-
-    elif squadra.occupied and color == 'green':
-        if not modulo.occupied:
+    else:
+        # Gestione della prelazione
+        if color == 'red' and squadra.job_color in ['yellow', 'green']:
+            preempt_current_job(squadra, t)
+            assign_server(t, color, start_service_time, current_time)
+        elif color == 'yellow' and squadra.job_color == 'green':
+            preempt_current_job(squadra, t)
+            assign_server(t, color, start_service_time, current_time)
+        elif color == 'green' and not modulo.occupied:
             modulo.end_service_time = current_time + get_service_time(streams_colors[color], 5 * 10)
             modulo.occupied = True
             modulo.start_service_time = start_service_time
@@ -131,9 +144,6 @@ def assign_server(t, color, start_service_time, current_time):
         else:
             queue_manager.add_to_queue(color, start_service_time)
             print(f"Job di colore {color} aggiunto alla coda poiché sia squadra che modulo sono occupati")
-    else:
-        queue_manager.add_to_queue(color, start_service_time)
-        print(f"Job di colore {color} aggiunto alla coda poiché la squadra è occupata")
 
     update_completion_time(t)
 
@@ -209,7 +219,8 @@ def run_simulation(stop_time):
 
         print_simulation_status(t, events)
 
-        next_event_time = min(t.next_arrival, t.hub_completion, t.red_completion, t.yellow_completion, t.green_completion_squadra, t.green_completion_modulo )
+        next_event_time = min(t.next_arrival, t.hub_completion, t.red_completion, t.yellow_completion,
+                              t.green_completion_squadra, t.green_completion_modulo)
         t.current_time = next_event_time
 
         if t.current_time == t.next_arrival:
