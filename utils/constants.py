@@ -11,7 +11,7 @@ MODULO = "modulo"
 
 # Probabilità di assegnazione dei codici colore
 CODE_ASSIGNMENT_PROBS = {
-    "red": 33,
-    "yellow": 67,
+    "red": 10,
+    "yellow": 30,
     "green": 100
 }

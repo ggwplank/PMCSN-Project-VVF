@@ -16,6 +16,9 @@ stream_service_yellow = random.Random()  # Per generare i tempi di servizio per 
 stream_service_green = random.Random()  # Per generare i tempi di servizio per codice verde
 stream_code_assignment = random.Random()  # Per assegnare i codici colore
 
+#Tempo di completamento della squadra
+squad_completion = INF
+
 # Inizializza il queueManager
 queue_manager = QueueManager()
 
@@ -100,6 +103,7 @@ def process_job_completion_at_hub(t, servers, next_event_function):
         print(f"Job in hub completed at time {t.current_time}")
         color = assign_color()
         t.type = color
+        print(f"job sent at {color}")
         jobs_in_hub -= 1
 
         # Se ci sono job in coda, assegna il prossimo job al server che si è liberato
@@ -108,7 +112,7 @@ def process_job_completion_at_hub(t, servers, next_event_function):
             service_time = get_service_time(stream_service_hub, HUB_SERVERS)
             servers[index].end_service_time = t.current_time + service_time
             servers[index].occupied = True
-            servers[index].start_service_time = t.current_time  # Assicurati di usare il tempo corrente
+            servers[index].start_service_time = next_job_time  # Assicurati di usare il tempo corrente
 
         update_completion_time(t)
         # Assegna il job completato a una coda colorata
@@ -116,31 +120,6 @@ def process_job_completion_at_hub(t, servers, next_event_function):
         next_event_function(t, color)
 
     update_completion_time(t)
-
-
-def update_completion_time(t):
-    if any(server.occupied for server in servers_hub):
-        t.hub_completion = min(server.end_service_time for server in servers_hub if server.occupied)
-    else:
-        t.hub_completion = INF  # Se nessun server è occupato, imposta il completamento dell'hub a INF
-
-    if squadra.occupied:
-        if squadra.job_color == 'red':
-            t.red_completion = squadra.end_service_time
-        else:
-            t.red_completion = INF
-        if squadra.job_color == 'yellow':
-            t.yellow_completion = squadra.end_service_time
-        else:
-            t.yellow_completion = INF
-    else:
-        t.red_completion = INF
-        t.yellow_completion = INF
-
-    if modulo.occupied:
-        t.green_completion = modulo.end_service_time
-    else:
-        t.green_completion = INF
 
 
 def process_arrival_at_colors(t, color):
@@ -152,57 +131,49 @@ def process_arrival_at_colors(t, color):
     elif color == 'green':
         jobs_in_green += 1
 
-    if queue_manager.is_queue_empty(color):
-
+    # Se il server è libero, processa subito il job
+    if not squadra.occupied or (color == 'green' and not modulo.occupied):
         start_service_time = t.current_time
-
-        assign_server(t, color, start_service_time)
-
+        assign_server(t, color, start_service_time, t.current_time)
     else:
-        next_job_time = queue_manager.get_from_queue(color)
-
-        assign_server(t, color, next_job_time)
-
-    # Imposta il tempo di completamento dinamicamente in base al colore
-    if color == 'red':
-        t.red_completion = squadra.end_service_time
-    elif color == 'yellow':
-        t.yellow_completion = squadra.end_service_time
-    elif color == 'green':
-        t.green_completion = min(squadra.end_service_time, modulo.end_service_time)
-    else:
+        # Altrimenti, aggiungilo alla coda del colore corrispondente
         queue_manager.add_to_queue(color, t.current_time)
 
+    # Aggiorna i tempi di completamento
+    update_completion_time(t)
 
-def assign_server(t, color, start_service_time):
+
+def assign_server(t, color, start_service_time, current_time):
     if not squadra.occupied:
-        squadra.end_service_time = t.current_time + get_service_time(streams_colors[color],
-                                                                     # TODO metti come servente la squadra
-                                                                     5 * 10)
+        service_time = get_service_time(streams_colors[color], 5 * 10)
+        squadra.end_service_time = current_time + service_time
         squadra.occupied = True
         squadra.start_service_time = start_service_time
         squadra.job_color = color
-
-    elif squadra.occupied and not color == 'green':
-        queue_manager.add_to_queue(color, t.current_time)
+        print(
+            f"Squadra assegnata al job di colore {color} con start {squadra.start_service_time}, con tempo di completamento {squadra.end_service_time}")
 
     elif squadra.occupied and color == 'green':
-
         if not modulo.occupied:
-            modulo.end_service_time = t.current_time + get_service_time(streams_colors[color],
-                                                                        # TODO metti come servente il modulo
-                                                                        5 * 10)
-            squadra.occupied = True
+            modulo.end_service_time = current_time + get_service_time(streams_colors[color], 5 * 10)
+            modulo.occupied = True
             modulo.start_service_time = start_service_time
             modulo.job_color = color
+            print(
+                f"Modulo assegnato al job di colore {color} con start {modulo.start_service_time}, con tempo di completamento {modulo.end_service_time}")
         else:
-            queue_manager.add_to_queue(color, t.current_time)
+            queue_manager.add_to_queue(color, start_service_time)
+            print(f"Job di colore {color} aggiunto alla coda poiché sia squadra che modulo sono occupati")
+    else:
+        queue_manager.add_to_queue(color, start_service_time)
+        print(f"Job di colore {color} aggiunto alla coda poiché la squadra è occupata")
+
+    update_completion_time(t)
 
 
-# un job nei colori viene completato
 def process_job_completion_at_colors(t, server, color):
     global jobs_in_red, jobs_in_yellow, jobs_in_green
-    print(f"Completed {color} job at time {t.current_time}")
+    print(f"Completato job di colore {color} al tempo {t.current_time} (Server: {server.type})")
 
     if color == 'red':
         jobs_in_red -= 1
@@ -212,17 +183,63 @@ def process_job_completion_at_colors(t, server, color):
         jobs_in_green -= 1
 
     response_time = t.current_time - server.start_service_time
-    stats.add_system_response_time(response_time)  # non c'è distinzione di colore
+    stats.add_system_response_time(response_time)
     stats.add_color_response_time(color, response_time)
 
     server.occupied = False
     server.end_service_time = INF
 
-    if not queue_manager.is_queue_empty(color):
-        next_job_time = queue_manager.get_from_queue(color)
-        assign_server(t, color, next_job_time)
+    if server == squadra:
+        # La squadra gestisce i job in quest'ordine di priorità: red, yellow, green
+        if not queue_manager.is_queue_empty('red'):
+            next_job_time = queue_manager.get_from_queue('red')
+            assign_server(t, 'red', next_job_time, t.current_time)
+        elif not queue_manager.is_queue_empty('yellow'):
+            next_job_time = queue_manager.get_from_queue('yellow')
+            assign_server(t, 'yellow', next_job_time, t.current_time)
+        elif not queue_manager.is_queue_empty('green'):
+            next_job_time = queue_manager.get_from_queue('green')
+            assign_server(t, 'green', next_job_time, t.current_time)
+    elif server == modulo:
+        # Il modulo gestisce solo job green
+        if not queue_manager.is_queue_empty('green'):
+            next_job_time = queue_manager.get_from_queue('green')
+            assign_server(t, 'green', next_job_time, t.current_time)
 
     update_completion_time(t)
+
+    # Assicurati di aggiornare il tempo di completamento per il job successivo in coda
+    if server == squadra:
+        t.red_completion = squadra.end_service_time if squadra.job_color == 'red' else INF
+        t.yellow_completion = squadra.end_service_time if squadra.job_color == 'yellow' else INF
+        t.green_completion_squadra = squadra.end_service_time if squadra.job_color == 'green' else INF
+    elif server == modulo:
+        t.green_completion_modulo = modulo.end_service_time
+
+
+def update_completion_time(t):
+
+    global squad_completion
+
+    if any(server.occupied for server in servers_hub):
+        t.hub_completion = min(server.end_service_time for server in servers_hub if server.occupied)
+    else:
+        t.hub_completion = INF  # Se nessun server è occupato, imposta il completamento dell'hub a INF
+
+    if squadra.occupied:
+        squad_completion = squadra.end_service_time
+        t.red_completion = squadra.end_service_time if squadra.job_color == 'red' else INF
+        t.yellow_completion = squadra.end_service_time if squadra.job_color == 'yellow' else INF
+        t.green_completion_squadra = squadra.end_service_time if squadra.job_color == 'green' else INF
+    else:
+        t.red_completion = INF
+        t.yellow_completion = INF
+        t.green_completion_squadra = INF
+
+    if modulo.occupied:
+        t.green_completion_modulo = modulo.end_service_time
+    else:
+        t.green_completion_modulo = INF
 
 
 def run_simulation(stop_time):
@@ -233,7 +250,7 @@ def run_simulation(stop_time):
     while t.current_time < stop_time:
         # Gestisci la situazione in cui tutti i tempi sono INF (nessun evento futuro)
         if all(x == INF for x in
-               [t.next_arrival, t.hub_completion, t.red_completion, t.yellow_completion, t.green_completion]):
+               [t.next_arrival, t.hub_completion, t.red_completion, t.yellow_completion, t.green_completion_squadra, t.green_completion_modulo]):
             print("Simulation complete: no more events.")
             break
 
@@ -242,13 +259,15 @@ def run_simulation(stop_time):
             'hub_completion': t.hub_completion,
             'red_completion': t.red_completion,
             'yellow_completion': t.yellow_completion,
-            'green_completion': t.green_completion
+            'green_completion_squadra': t.green_completion_squadra,
+            'green_completion_modulo': t.green_completion_modulo,
+            'squad_completion': squad_completion
         }
 
         print_simulation_status(t, events)
 
         next_event_time = min(t.next_arrival, t.hub_completion,
-                              t.red_completion, t.yellow_completion, t.green_completion)
+                              t.red_completion, t.yellow_completion, t.green_completion_squadra, t.green_completion_modulo)
 
         t.current_time = next_event_time
 
@@ -256,39 +275,18 @@ def run_simulation(stop_time):
             process_arrival_at_hub(t, servers_hub)
         elif t.current_time == t.hub_completion:
             process_job_completion_at_hub(t, servers_hub, process_arrival_at_colors)
-        elif t.current_time == t.red_completion:
+        elif t.current_time == t.red_completion and squadra.job_color == 'red':
             process_job_completion_at_colors(t, squadra, 'red')
-        elif t.current_time == t.yellow_completion:
+        elif t.current_time == t.yellow_completion and squadra.job_color == 'yellow':
             process_job_completion_at_colors(t, squadra, 'yellow')
-        elif t.current_time == t.green_completion:
-            if not modulo.occupied:
-                process_job_completion_at_colors(t, squadra, 'green')
-            elif squadra.occupied and modulo.occupied and not squadra.job_color == 'green':
-                process_job_completion_at_colors(t, modulo, 'green')
+        elif t.current_time == t.green_completion_squadra:
+            process_job_completion_at_colors(t, squadra, 'green')
+        elif t.current_time == t.green_completion_modulo:
+            process_job_completion_at_colors(t, modulo, 'green')
 
         print_queue_status(queue_manager)
 
-
-run_simulation(100)
-
-"""
-# Stampa delle statistiche
-print_section_title("SYSTEM STATISTICS")
-print(f"Total Jobs Completed: {stats.completed_jobs}")
-print(f"Mean Response Time: {stats.mean_response_time()}\n")
-
-print_section_title("HUB QUEUE STATISTICS")
-print(f"Total hub Jobs Completed: {len(stats.hub_jobs_response_times)}")
-print(f"Mean hub Response Time: {stats.get_hub_mean_response_time()}")
-print(f"Response Times:")
-for response_time in stats.hub_jobs_response_times:
-    print(f"{response_time}")
-print()
-
-print_queue_statistics("red", stats.red_jobs_response_times, stats)
-print_queue_statistics("yellow", stats.yellow_jobs_response_times, stats)
-print_queue_statistics("green", stats.green_jobs_response_times, stats)
-"""
+run_simulation(500)
 
 print_separator()
 print("End of Simulation Report")

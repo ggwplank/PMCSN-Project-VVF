@@ -29,7 +29,9 @@ def print_simulation_status(t, events):
     print(f"  Hub Completion:  {events['hub_completion'] if events['hub_completion'] != INF else 'inf'}")
     print(f"  Red Completion:  {events['red_completion'] if events['red_completion'] != INF else 'inf'}")
     print(f"  Yellow Completion: {events['yellow_completion'] if events['yellow_completion'] != INF else 'inf'}")
-    print(f"  Green Completion:  {events['green_completion'] if events['green_completion'] != INF else 'inf'}")
+    print(f"  Green Squad Completion:  {events['green_completion_squadra'] if events['green_completion_squadra'] != INF else 'inf'}")
+    print(f"  Green Modulo Completion:  {events['green_completion_modulo'] if events['green_completion_modulo'] != INF else 'inf'}")
+    print(f"  Squad Completion:   {events['squad_completion'] if events['squad_completion'] != INF else 'inf'}")
     print_separator()
 
 
