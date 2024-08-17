@@ -3,7 +3,6 @@ from collections import deque
 
 class QueueManager:
     def __init__(self):
-        # inizializzazione code per colori e hub
         self.queues = {
             "hub": deque(), #deque per ottimizzare le operazioni di append e pop
             "red": deque(),
