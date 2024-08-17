@@ -112,7 +112,6 @@ def process_job_arrival_at_colors(t, color):
 
 def preempt_current_job(server, t):
     print(f"Preempting current job {server.job_color.upper()} at time {t.current_time}")
-    #queue_manager.add_to_queue(server.job_color, server.start_service_time)
     release_server(server)
 
 
@@ -222,6 +221,9 @@ def run_simulation(stop_time):
         next_event_time = min(t.next_arrival, t.hub_completion, t.red_completion, t.yellow_completion,
                               t.green_completion_squadra, t.green_completion_modulo)
         t.current_time = next_event_time
+
+        queue_manager.discard_job_from_green_queue()
+        queue_manager.discard_job_from_yellow_queue()
 
         if t.current_time == t.next_arrival:
             process_job_arrival_at_hub(t, servers_hub)

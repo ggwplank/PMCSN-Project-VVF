@@ -1,10 +1,11 @@
+import random
 from collections import deque
 
 
 class QueueManager:
     def __init__(self):
         self.queues = {
-            "hub": deque(), #deque per ottimizzare le operazioni di append e pop
+            "hub": deque(),  #deque per ottimizzare le operazioni di append e pop
             "red": deque(),
             "yellow": deque(),
             "green": deque()
@@ -36,3 +37,38 @@ class QueueManager:
         """Restituisce la lunghezza della coda specificata dal colore."""
         if self.validate_color(color):
             return len(self.queues[color])
+
+    import random
+
+    def discard_job_from_green_queue(self):
+        deque = self.queues["green"]
+        jobs_to_remove = []  # Lista temporanea per i job da rimuovere
+
+        for job in deque:
+            if random.uniform(0, 100) < 15:  # Probabilità del 15%
+                print(f"{job} removed from green queue, AUTORESOLVED YEEY")
+                jobs_to_remove.append(job)
+
+        # Rimuovi i job dalla coda verde
+        for job in jobs_to_remove:
+            deque.remove(job)
+
+        # Aggiorna la coda verde
+        self.queues["green"] = deque
+
+    def discard_job_from_yellow_queue(self):
+
+        deque = self.queues["yellow"]
+        jobs_to_remove = []  # Lista temporanea per i job da rimuovere
+
+        for job in deque:
+            if random.uniform(0, 100) < 3:  # Probabilità del 15%
+                print(f"{job} removed from yellow queue, AUTORESOLVED YEEY")
+                jobs_to_remove.append(job)
+
+        # Rimuovi i job dalla coda verde
+        for job in jobs_to_remove:
+            deque.remove(job)
+
+        # Aggiorna la coda verde
+        self.queues["yellow"] = deque
