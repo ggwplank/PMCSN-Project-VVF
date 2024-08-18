@@ -55,10 +55,19 @@ def process_job_arrival_at_hub(t, servers_hub):
     # Trova il primo server libero
     free_server = next((server for server in servers_hub if not server.occupied), None)
     if free_server:
+
         free_server.occupied = True
         free_server.start_service_time = t.current_time
-        free_server.end_service_time = t.current_time + get_service_time(stream_service_hub, HUB_SERVERS)
+        service_time = get_service_time(stream_service_hub, MEAN_HUB_SERVICE_TIME)
+        free_server.end_service_time = t.current_time + service_time
         t.hub_completion = free_server.end_service_time
+
+        # stats
+        stats.increment_total_N_queue_hub()
+        stats.increment_queue_hub_time(0)
+        stats.increment_service_hub_time(service_time)
+        stats.increment_response_hub_time(service_time)
+
     else:
         queue_manager.add_to_queue('hub', t.current_time)
 
@@ -84,7 +93,14 @@ def process_job_completion_at_hub(t, next_event_function):
             next_job_time = queue_manager.get_from_queue('hub')
             completed_server.occupied = True
             completed_server.start_service_time = next_job_time
-            completed_server.end_service_time = t.current_time + get_service_time(stream_service_hub, HUB_SERVERS)
+            service_time = get_service_time(stream_service_hub, MEAN_HUB_SERVICE_TIME)
+            completed_server.end_service_time = t.current_time + service_time
+
+            # stats
+            stats.increment_total_N_queue_hub()
+            stats.increment_queue_hub_time(t.current_time - next_job_time)
+            stats.increment_service_hub_time(service_time)
+            stats.increment_response_hub_time(t.current_time - next_job_time + service_time)
 
         update_completion_time(t)
         next_event_function(t, color)  # Assegna il job completato a una coda colorata
@@ -192,6 +208,8 @@ def update_completion_time(t):
 
 
 def run_simulation(stop_time):
+    stats.set_stop_time(stop_time)
+
     t = Event(0, get_next_arrival_time(stream_arrival, MEAN_ARRIVAL_TIME), INF, INF, INF, INF, INF)
 
     while t.current_time < stop_time:
@@ -237,6 +255,8 @@ def run_simulation(stop_time):
 
 
 run_simulation(500)
+stats.calculate_statistics()
+print_queue_statistics("hub", stats)
 
 print_separator()
 print("End of Simulation Report")

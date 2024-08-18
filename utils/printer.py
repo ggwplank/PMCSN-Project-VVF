@@ -11,13 +11,14 @@ def print_section_title(title):
     print_separator()
 
 
-def print_queue_statistics(color, response_times, stats):
-    print_section_title(f"{color} QUEUE STATISTICS")
-    print(f"Total {color.capitalize()} Jobs Completed: {len(response_times)}")
-    print(f"Mean {color.capitalize()} Response Time: {stats.code_mean_response_time(color)}")
-    print("\nResponse Times:")
-    for response_time in response_times:
-        print(f"{response_time}")
+def print_queue_statistics(color, stats):
+    print_separator()
+    print_section_title(f"{color.upper()} QUEUE STATISTICS")
+    print(f"Mean queue hub time: {stats.mean_queue_hub_time}")
+    print(f"Mean N queue hub : {stats.mean_N_queue_hub}")
+    print(f"Mean service hub time: {stats.mean_service_hub_time}")
+    print(f"Mean response hub time : {stats.mean_response_hub_time}")
+    print(f"rho hub: {stats.hub_rho}")
     print()
 
 
@@ -29,8 +30,10 @@ def print_simulation_status(t, events):
     print(f"  Hub Completion:  {events['hub_completion'] if events['hub_completion'] != INF else 'inf'}")
     print(f"  Red Completion:  {events['red_completion'] if events['red_completion'] != INF else 'inf'}")
     print(f"  Yellow Completion: {events['yellow_completion'] if events['yellow_completion'] != INF else 'inf'}")
-    print(f"  Green Squad Completion:  {events['green_completion_squadra'] if events['green_completion_squadra'] != INF else 'inf'}")
-    print(f"  Green Modulo Completion:  {events['green_completion_modulo'] if events['green_completion_modulo'] != INF else 'inf'}")
+    print(
+        f"  Green Squad Completion:  {events['green_completion_squadra'] if events['green_completion_squadra'] != INF else 'inf'}")
+    print(
+        f"  Green Modulo Completion:  {events['green_completion_modulo'] if events['green_completion_modulo'] != INF else 'inf'}")
     print(f"  Squad Completion:   {events['squad_completion'] if events['squad_completion'] != INF else 'inf'}")
     print_separator()
 
