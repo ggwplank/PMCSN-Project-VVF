@@ -15,3 +15,7 @@ CODE_ASSIGNMENT_PROBS = {
     "yellow": 30,
     "green": 100
 }
+
+# Probabilità di autorisoluzione dei job in coda
+AUTORESOLUTION_GREEN_PROB = 15
+AUTORESOLUTION_YELLOW_PROB = 3

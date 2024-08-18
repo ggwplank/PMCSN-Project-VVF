@@ -27,3 +27,8 @@ def assign_color(stream, probabilities):
 def release_server(server):
     server.occupied = False
     server.end_service_time = INF
+
+
+def preempt_current_job(server, t):
+    print(f"Preempting current job {server.job_color.upper()} at time {t.current_time}")
+    release_server(server)

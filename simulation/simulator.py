@@ -1,7 +1,8 @@
 import random
 
 from simulation.queue_manager import QueueManager
-from simulation.sim_utils import get_next_arrival_time, get_service_time, assign_color, release_server
+from simulation.sim_utils import get_next_arrival_time, get_service_time, assign_color, release_server, \
+    preempt_current_job
 
 from utils.constants import *
 from utils.printer import *
@@ -65,7 +66,7 @@ def process_job_arrival_at_hub(t, servers_hub):
 
 
 # Processa il completamento di un job nell'hub
-def process_job_completion_at_hub(t, servers, next_event_function):
+def process_job_completion_at_hub(t, next_event_function):
     global jobs_in_hub
 
     # Trova il server che ha completato il job
@@ -110,23 +111,17 @@ def process_job_arrival_at_colors(t, color):
     update_completion_time(t)
 
 
-def preempt_current_job(server, t):
-    print(f"Preempting current job {server.job_color.upper()} at time {t.current_time}")
-    release_server(server)
-
-
 def assign_server(t, color, start_service_time, current_time):
-    # Funzione per assegnare un server a un job, con gestione della prelazione
+    # funzione per assegnare un server a un job, con gestione della prelazione
     if not squadra.occupied:
-        service_time = get_service_time(streams_colors[color], 5 * 10)
-        squadra.end_service_time = current_time + service_time
         squadra.occupied = True
         squadra.start_service_time = start_service_time
+        squadra.end_service_time = current_time + get_service_time(streams_colors[color], 5 * 10)
         squadra.job_color = color
         print(
             f"Squadra assegnata al job di colore {color} con start {squadra.start_service_time}, con tempo di completamento {squadra.end_service_time}")
     else:
-        # Gestione della prelazione
+        # gestione della prelazione
         if color == 'red' and squadra.job_color in ['yellow', 'green']:
             preempt_current_job(squadra, t)
             assign_server(t, color, start_service_time, current_time)
@@ -228,7 +223,7 @@ def run_simulation(stop_time):
         if t.current_time == t.next_arrival:
             process_job_arrival_at_hub(t, servers_hub)
         elif t.current_time == t.hub_completion:
-            process_job_completion_at_hub(t, servers_hub, process_job_arrival_at_colors)
+            process_job_completion_at_hub(t, process_job_arrival_at_colors)
         elif t.current_time == t.red_completion and squadra.job_color == 'red':
             process_job_completion_at_colors(t, squadra, 'red')
         elif t.current_time == t.yellow_completion and squadra.job_color == 'yellow':
