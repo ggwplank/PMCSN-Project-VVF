@@ -1,5 +1,4 @@
-import random
-
+from libs import rngs
 from simulation.queue_manager import QueueManager
 from simulation.sim_utils import get_next_arrival_time, get_service_time, assign_color, release_server, \
     preempt_current_job
@@ -11,13 +10,18 @@ from utils.statistics import Statistics
 from simulation.event import Event
 from simulation.server import Server
 
+# seed
+rngs.plantSeeds(SEED)
+
+"""
 # Creazione degli stream separati
-stream_arrival = random.Random()  # Genera tempi di arrivo
-stream_service_hub = random.Random()  # Genera tempi di servizio per centralino/hub
-stream_service_red = random.Random()  # Genera tempi di servizio per codice rosso
-stream_service_yellow = random.Random()  # Genera tempi di servizio per codice giallo
-stream_service_green = random.Random()  # Genera tempi di servizio per codice verde
-stream_code_assignment = random.Random()  # Assegna i codici colore
+stream_arrival = rngs.selectStream(0)  # Genera tempi di arrivo
+stream_service_hub = rngs.selectStream(1)  # Genera tempi di servizio per centralino/hub
+stream_service_red = rngs.selectStream(2)  # Genera tempi di servizio per codice rosso
+stream_service_yellow = rngs.selectStream(3)  # Genera tempi di servizio per codice giallo
+stream_service_green = rngs.selectStream(4)  # Genera tempi di servizio per codice verde
+stream_code_assignment = rngs.selectStream(5)  # Assegna i codici colore
+"""
 
 # Inizializzazione degli Oggetti di Simulazione
 queue_manager = QueueManager()  # Gestione delle code
@@ -36,12 +40,14 @@ jobs_in_red = 0
 jobs_in_yellow = 0
 jobs_in_green = 0
 
+"""
 # Dizionario che mappa i colori agli stream
 streams_colors = {
     'red': stream_service_red,
     'yellow': stream_service_yellow,
     'green': stream_service_green,
 }
+"""
 
 
 # Processa l'arrivo di un job all'hub
@@ -50,7 +56,7 @@ def process_job_arrival_at_hub(t, servers_hub):
     print(f"Job arrived at hub at time {t.current_time}")
     jobs_in_hub += 1
 
-    t.next_arrival = get_next_arrival_time(stream_arrival, MEAN_ARRIVAL_TIME) + t.current_time
+    t.next_arrival = get_next_arrival_time(MEAN_ARRIVAL_TIME) + t.current_time
 
     # Trova il primo server libero
     free_server = next((server for server in servers_hub if not server.occupied), None)
@@ -58,15 +64,15 @@ def process_job_arrival_at_hub(t, servers_hub):
 
         free_server.occupied = True
         free_server.start_service_time = t.current_time
-        service_time = get_service_time(stream_service_hub, MEAN_HUB_SERVICE_TIME)
+        service_time = get_service_time('hub')
         free_server.end_service_time = t.current_time + service_time
         t.hub_completion = free_server.end_service_time
 
         # stats
         stats.increment_total_N_queue_hub()
-        stats.increment_queue_hub_time(0)
-        stats.increment_service_hub_time(service_time)
-        stats.increment_response_hub_time(service_time)
+        stats.append_queue_hub_time_list(0)
+        stats.append_service_hub_time_list(service_time)
+        stats.append_response_hub_time(service_time)
 
     else:
         queue_manager.add_to_queue('hub', t.current_time)
@@ -84,7 +90,7 @@ def process_job_completion_at_hub(t, next_event_function):
         jobs_in_hub -= 1
         release_server(completed_server)
 
-        color = assign_color(stream_code_assignment, CODE_ASSIGNMENT_PROBS)
+        color = assign_color(CODE_ASSIGNMENT_PROBS)
         t.type = color
         print(f"Job in hub completed at time {t.current_time} and sent to sent to {color.upper()} queue")
 
@@ -93,14 +99,14 @@ def process_job_completion_at_hub(t, next_event_function):
             next_job_time = queue_manager.get_from_queue('hub')
             completed_server.occupied = True
             completed_server.start_service_time = next_job_time
-            service_time = get_service_time(stream_service_hub, MEAN_HUB_SERVICE_TIME)
+            service_time = get_service_time('hub')
             completed_server.end_service_time = t.current_time + service_time
 
             # stats
             stats.increment_total_N_queue_hub()
-            stats.increment_queue_hub_time(t.current_time - next_job_time)
-            stats.increment_service_hub_time(service_time)
-            stats.increment_response_hub_time(t.current_time - next_job_time + service_time)
+            stats.append_queue_hub_time_list(t.current_time - next_job_time)
+            stats.append_service_hub_time_list(service_time)
+            stats.append_response_hub_time(t.current_time - next_job_time + service_time)
 
         update_completion_time(t)
         next_event_function(t, color)  # Assegna il job completato a una coda colorata
@@ -132,7 +138,7 @@ def assign_server(t, color, start_service_time, current_time):
     if not squadra.occupied:
         squadra.occupied = True
         squadra.start_service_time = start_service_time
-        squadra.end_service_time = current_time + get_service_time(streams_colors[color], 5 * 10)
+        squadra.end_service_time = current_time + get_service_time(color)
         squadra.job_color = color
         print(
             f"Squadra assegnata al job di colore {color} con start {squadra.start_service_time}, con tempo di completamento {squadra.end_service_time}")
@@ -145,7 +151,7 @@ def assign_server(t, color, start_service_time, current_time):
             preempt_current_job(squadra, t)
             assign_server(t, color, start_service_time, current_time)
         elif color == 'green' and not modulo.occupied:
-            modulo.end_service_time = current_time + get_service_time(streams_colors[color], 5 * 10)
+            modulo.end_service_time = current_time + get_service_time(color)
             modulo.occupied = True
             modulo.start_service_time = start_service_time
             modulo.job_color = color
@@ -210,7 +216,7 @@ def update_completion_time(t):
 def run_simulation(stop_time):
     stats.set_stop_time(stop_time)
 
-    t = Event(0, get_next_arrival_time(stream_arrival, MEAN_ARRIVAL_TIME), INF, INF, INF, INF, INF)
+    t = Event(0, get_next_arrival_time(MEAN_ARRIVAL_TIME), INF, INF, INF, INF, INF)
 
     while t.current_time < stop_time:
         if all(x == INF for x in
@@ -254,9 +260,19 @@ def run_simulation(stop_time):
         print_queue_status(queue_manager)
 
 
-run_simulation(500)
-stats.calculate_statistics()
-print_queue_statistics("hub", stats)
+# TODO: resetta il sistema tra una run e l'altra
+filename = "statistics.txt"
+
+# Esegui la simulazione 3 volte e salva i risultati in un file di testo
+with open(filename, "w") as file:
+    for i in range(10):
+        run_simulation(1000)
+        prova = stats.calculate_statistics()  # Suppongo che `calculate_statistics` ritorni un dizionario con le statistiche
+
+        file.write(f"Risultati della simulazione {i + 1}:\n")
+        for key, value in prova.items():
+            file.write(f"{key}: {value}\n")
+        file.write("\n")  # Aggiungi una linea vuota tra le simulazioni
 
 print_separator()
 print("End of Simulation Report")
