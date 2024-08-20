@@ -1,7 +1,8 @@
-import random
-
 from libs import rvms, rngs
-from utils.constants import INF, MEAN_HUB_SERVICE_TIME, MEAN_YELLOW_SERVICE_TIME, MEAN_RED_SERVICE_TIME, \
+
+from simulation.server import release_server
+
+from utils.constants import MEAN_HUB_SERVICE_TIME, MEAN_YELLOW_SERVICE_TIME, MEAN_RED_SERVICE_TIME, \
     MEAN_GREEN_SERVICE_TIME
 
 streams = {
@@ -41,11 +42,6 @@ def assign_color(probabilities):
         return "yellow"
     else:
         return "green"
-
-
-def release_server(server):
-    server.occupied = False
-    server.end_service_time = INF
 
 
 def preempt_current_job(server, t):

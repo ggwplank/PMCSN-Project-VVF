@@ -1,30 +1,25 @@
 import os
-from libs import rngs
-from simulation.queue_manager import QueueManager
-from simulation.sim_utils import get_next_arrival_time, get_service_time, assign_color, release_server, \
-    preempt_current_job
 
-import csv
+from libs import rngs
+
+from simulation.queue_manager import QueueManager
+from simulation.sim_utils import get_next_arrival_time, get_service_time, assign_color, preempt_current_job
+from simulation.event import Event
+from simulation.server import Server, release_server
 
 from utils.constants import *
+from utils.file_manager import *
 from utils.printer import *
 from utils.statistics import Statistics
 
-from simulation.event import Event
-from simulation.server import Server
-
-# seed
 rngs.plantSeeds(SEED)
 
-"""
-# Creazione degli stream separati
-stream_arrival = rngs.selectStream(0)  # Genera tempi di arrivo
-stream_service_hub = rngs.selectStream(1)  # Genera tempi di servizio per centralino/hub
-stream_service_red = rngs.selectStream(2)  # Genera tempi di servizio per codice rosso
-stream_service_yellow = rngs.selectStream(3)  # Genera tempi di servizio per codice giallo
-stream_service_green = rngs.selectStream(4)  # Genera tempi di servizio per codice verde
-stream_code_assignment = rngs.selectStream(5)  # Assegna i codici colore
-"""
+# stream 0 -> arrivi al sistema = arrivi hub
+# stream 1 -> tempi di servizio hub
+# stream 2 -> tempi di servizio red
+# stream 3 -> tempi di servizio yellow
+# stream 4 -> tempi di servizio green
+# stream 5 -> assegnazione colore
 
 # Inizializzazione degli Oggetti di Simulazione
 queue_manager = QueueManager()  # Gestione delle code
@@ -43,15 +38,6 @@ jobs_in_red = 0
 jobs_in_yellow = 0
 jobs_in_green = 0
 
-"""
-# Dizionario che mappa i colori agli stream
-streams_colors = {
-    'red': stream_service_red,
-    'yellow': stream_service_yellow,
-    'green': stream_service_green,
-}
-"""
-
 
 # Processa l'arrivo di un job all'hub
 def process_job_arrival_at_hub(t, servers_hub):
@@ -64,9 +50,9 @@ def process_job_arrival_at_hub(t, servers_hub):
     # Trova il primo server libero
     free_server = next((server for server in servers_hub if not server.occupied), None)
     if free_server:
-
         free_server.occupied = True
         free_server.start_service_time = t.current_time
+
         service_time = get_service_time('hub')
         free_server.end_service_time = t.current_time + service_time
         t.hub_completion = free_server.end_service_time
@@ -76,7 +62,6 @@ def process_job_arrival_at_hub(t, servers_hub):
         stats.append_queue_hub_time_list(0)
         stats.append_service_hub_time_list(service_time)
         stats.append_response_hub_time(service_time)
-
     else:
         queue_manager.add_to_queue('hub', t.current_time)
 
@@ -87,7 +72,7 @@ def process_job_arrival_at_hub(t, servers_hub):
 def process_job_completion_at_hub(t, next_event_function):
     global jobs_in_hub
 
-    # Trova il server che ha completato il job
+    # server che ha completato il job
     completed_server = next((server for server in servers_hub if server.end_service_time == t.current_time), None)
     if completed_server:
         jobs_in_hub -= 1
@@ -100,8 +85,10 @@ def process_job_completion_at_hub(t, next_event_function):
         # ci sono job in coda
         if not queue_manager.is_queue_empty("hub"):
             next_job_time = queue_manager.get_from_queue('hub')
+
             completed_server.occupied = True
             completed_server.start_service_time = next_job_time
+
             service_time = get_service_time('hub')
             completed_server.end_service_time = t.current_time + service_time
 
@@ -112,7 +99,7 @@ def process_job_completion_at_hub(t, next_event_function):
             stats.append_response_hub_time(t.current_time - next_job_time + service_time)
 
         update_completion_time(t)
-        next_event_function(t, color)  # Assegna il job completato a una coda colorata
+        next_event_function(t, color)  # assegnazione job a un colore
 
     update_completion_time(t)
 
@@ -154,9 +141,9 @@ def assign_server(t, color, start_service_time, current_time):
             preempt_current_job(squadra, t)
             assign_server(t, color, start_service_time, current_time)
         elif color == 'green' and not modulo.occupied:
-            modulo.end_service_time = current_time + get_service_time(color)
             modulo.occupied = True
             modulo.start_service_time = start_service_time
+            modulo.end_service_time = current_time + get_service_time(color)
             modulo.job_color = color
             print(
                 f"Modulo assegnato al job di colore {color} con start {modulo.start_service_time}, con tempo di completamento {modulo.end_service_time}")
@@ -263,11 +250,9 @@ def run_simulation(stop_time):
         print_queue_status(queue_manager)
 
 
-# Nome del file CSV
-filename = "temp_file.csv"
-initialize_temp_file(filename)
+initialize_temp_file(TEMP_FILENAME)
 
-# Esegui la simulazione 3 volte
+# Esegui la simulazione 4 volte
 for i in range(4):
     # Reset dell'ambiente
     queue_manager.reset_queues()
@@ -280,18 +265,19 @@ for i in range(4):
 
     # Esegui la simulazione
     run_simulation(1000)
-    write_statistics_to_file(filename, stats.calculate_run_statistics(), i)
 
-extract_statistics_from_csv(filename, stats)
+    # salva le statistiche della simulazione corrente nel file csv
+    write_statistics_to_file(TEMP_FILENAME, stats.calculate_run_statistics(), i)
+
+# estrae le statistiche dal file csv e calcola gli intervalli di confidenza
+extract_statistics_from_csv(TEMP_FILENAME, stats)
 stats.calculate_all_confidence_intervals()
-save_statistics_to_file("SimulationReport.txt", stats)
 
-if os.path.exists(filename):
-    os.remove(filename)
-    print(f"File {filename} eliminato con successo.")
-else:
-    print(f"Il file {filename} non esiste.")
+# salva il report finale in un file di testo
+save_statistics_to_file(REPORT_FILENAME, stats)
 
+# rimuove il file temporaneo (se esiste)
+delete_file(TEMP_FILENAME)
 
 print_separator()
 print("End of Simulation")
