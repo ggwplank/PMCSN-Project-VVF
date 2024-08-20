@@ -37,7 +37,7 @@ def calculate_confidence_interval(data, confidence_level=0.95):
     # Calcolo dell'intervallo di confidenza
     margin_of_error = t_star * (standard_deviation / math.sqrt(n))
 
-    return margin_of_error
+    return mean, margin_of_error
 
 
 class Statistics:
@@ -60,6 +60,13 @@ class Statistics:
         self.mean_response_hub_time = 0.0
 
         self.hub_rho = 0.0
+
+        # Intervalli di confidenza
+        self.mean_queue_hub_time_confidence_interval = 0.0
+        self.mean_N_queue_hub_confidence_interval = 0.0
+        self.mean_service_hub_time_confidence_interval = 0.0
+        self.mean_response_hub_time_confidence_interval = 0.0
+        self.hub_rho_confidence_interval = 0.0
 
     def set_stop_time(self, stop_time):
         self.stop_time = stop_time
@@ -94,9 +101,9 @@ class Statistics:
 
     def calculate_hub_rho(self):
         total_service_hub_time = sum(self.service_hub_time_list)
-        self.hub_rho = (total_service_hub_time / (HUB_SERVERS*self.stop_time))
+        self.hub_rho = (total_service_hub_time / (HUB_SERVERS * self.stop_time))
 
-    def calculate_statistics(self):
+    def calculate_run_statistics(self):
         self.calculate_mean_queue_hub_time()
 
         self.calculate_mean_N_queue_hub()
@@ -116,4 +123,42 @@ class Statistics:
         }
         return stats
 
+    def calculate_all_confidence_intervals(self):
+        """
+        Calcola gli intervalli di confidenza per tutti gli attributi della classe.
+        """
+        self.mean_queue_hub_time, self.mean_queue_hub_time_confidence_interval = calculate_confidence_interval(
+            self.queue_hub_time_list)
+        self.mean_N_queue_hub, self.mean_N_queue_hub_confidence_interval = calculate_confidence_interval(
+            self.N_queue_hub_list)
+        self.mean_service_hub_time, self.mean_service_hub_time_confidence_interval = calculate_confidence_interval(
+            self.service_hub_time_list)
+        self.mean_response_hub_time, self.mean_response_hub_time_confidence_interval = calculate_confidence_interval(
+            self.response_hub_time_list)
+        self.hub_rho, self.hub_rho_confidence_interval = calculate_confidence_interval(self.hub_rho_list)
 
+    def reset_statistics(self):
+
+        # Resetta tutte le variabili numeriche ai loro valori iniziali
+        self.mean_queue_hub_time = 0.0
+        self.mean_N_queue_hub = 0
+        self.mean_service_hub_time = 0.0
+        self.mean_response_hub_time = 0.0
+        self.hub_rho = 0.0
+
+        # Resetta il tempo di stop
+        self.stop_time = None
+
+    def to_dict(self):
+        return {
+            'mean_queue_hub_time': self.mean_queue_hub_time,
+            'mean_queue_hub_time_confidence_interval': self.mean_queue_hub_time_confidence_interval,
+            'mean_N_queue_hub': self.mean_N_queue_hub,
+            'mean_N_queue_hub_confidence_interval': self.mean_N_queue_hub_confidence_interval,
+            'mean_service_hub_time': self.mean_service_hub_time,
+            'mean_service_hub_time_confidence_interval': self.mean_service_hub_time_confidence_interval,
+            'mean_response_hub_time': self.mean_response_hub_time,
+            'mean_response_hub_time_confidence_interval': self.mean_response_hub_time_confidence_interval,
+            'hub_rho': self.hub_rho,
+            'hub_rho_confidence_interval': self.hub_rho_confidence_interval
+        }

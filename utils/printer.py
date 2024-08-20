@@ -1,4 +1,5 @@
 from utils.constants import INF
+import csv
 
 
 def print_separator():
@@ -46,3 +47,71 @@ def print_queue_status(queue_manager):
     print_separator()
     print()
     print()
+
+
+def save_statistics_to_file(filename, stats):
+    """
+    Salva tutte le statistiche e i relativi intervalli di confidenza su un file di testo.
+
+    Parametri:
+    - filename: Nome del file su cui salvare le statistiche.
+    - stats: Oggetto Statistics contenente le statistiche da salvare.
+    """
+    with open(filename, "w") as file:
+        file.write("Simulation Statistics:\n")
+        file.write("======================\n")
+
+        # Stampa le statistiche con i loro intervalli di confidenza
+        file.write(f"mean_queue_hub_time: media = {stats.mean_queue_hub_time:.2f}, "
+                   f"Confidence Interval = ±{stats.mean_queue_hub_time_confidence_interval:.2f}\n")
+
+        file.write(f"mean_N_queue_hub: media = {stats.mean_N_queue_hub:.2f}, "
+                   f"Confidence Interval = ±{stats.mean_N_queue_hub_confidence_interval:.2f}\n")
+
+        file.write(f"mean_service_hub_time: media = {stats.mean_service_hub_time:.2f}, "
+                   f"Confidence Interval = ±{stats.mean_service_hub_time_confidence_interval:.2f}\n")
+
+        file.write(f"mean_response_hub_time: media = {stats.mean_response_hub_time:.2f}, "
+                   f"Confidence Interval = ±{stats.mean_response_hub_time_confidence_interval:.2f}\n")
+
+        file.write(f"hub_rho: media = {stats.hub_rho:.2f}, "
+                   f"Confidence Interval = ±{stats.hub_rho_confidence_interval:.2f}\n")
+
+        file.write("\n")  # Aggiungi una linea vuota alla fine
+
+
+def extract_statistics_from_csv(filename, stats):
+    with open(filename, newline='') as csvfile:
+        reader = csv.DictReader(csvfile)
+
+        for row in reader:
+            stats.queue_hub_time_list.append(float(row['mean_queue_hub_time']))
+            stats.N_queue_hub_list.append(float(row['mean_N_queue_hub']))
+            stats.service_hub_time_list.append(float(row['mean_service_hub_time']))
+            stats.response_hub_time_list.append(float(row['mean_response_hub_time']))
+            stats.hub_rho_list.append(float(row['hub_rho']))
+
+
+header = [
+    "Simulation",
+    "mean_queue_hub_time",
+    "mean_N_queue_hub",
+    "mean_service_hub_time",
+    "mean_response_hub_time",
+    "hub_rho"
+]
+
+
+def initialize_temp_file(filename):
+    with open(filename, "w", newline='') as file:
+        writer = csv.DictWriter(file, fieldnames=header)
+
+        # Scrivi l'intestazione
+        writer.writeheader()
+
+
+def write_statistics_to_file(filename, stats, i):
+    stats["Simulation"] = i + 1
+    with open(filename, "a", newline='') as file:
+        writer = csv.DictWriter(file, fieldnames=header)
+        writer.writerow(stats)

@@ -61,3 +61,7 @@ class QueueManager:
 
     def discard_job_from_yellow_queue(self):
         self.discard_job_from_queue("yellow", AUTORESOLUTION_YELLOW_PROB)
+
+    def reset_queues(self):
+        for queue in self.queues.values():
+            queue.clear()

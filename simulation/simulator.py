@@ -1,7 +1,10 @@
+import os
 from libs import rngs
 from simulation.queue_manager import QueueManager
 from simulation.sim_utils import get_next_arrival_time, get_service_time, assign_color, release_server, \
     preempt_current_job
+
+import csv
 
 from utils.constants import *
 from utils.printer import *
@@ -260,19 +263,35 @@ def run_simulation(stop_time):
         print_queue_status(queue_manager)
 
 
-# TODO: resetta il sistema tra una run e l'altra
-filename = "statistics.txt"
+# Nome del file CSV
+filename = "temp_file.csv"
+initialize_temp_file(filename)
 
-# Esegui la simulazione 3 volte e salva i risultati in un file di testo
-with open(filename, "w") as file:
-    for i in range(10):
-        run_simulation(1000)
-        prova = stats.calculate_statistics()  # Suppongo che `calculate_statistics` ritorni un dizionario con le statistiche
+# Esegui la simulazione 3 volte
+for i in range(4):
+    # Reset dell'ambiente
+    queue_manager.reset_queues()
+    squad_completion = INF
+    jobs_in_hub = 0
+    jobs_in_red = 0
+    jobs_in_yellow = 0
+    jobs_in_green = 0
+    stats.reset_statistics()
 
-        file.write(f"Risultati della simulazione {i + 1}:\n")
-        for key, value in prova.items():
-            file.write(f"{key}: {value}\n")
-        file.write("\n")  # Aggiungi una linea vuota tra le simulazioni
+    # Esegui la simulazione
+    run_simulation(1000)
+    write_statistics_to_file(filename, stats.calculate_run_statistics(), i)
+
+extract_statistics_from_csv(filename, stats)
+stats.calculate_all_confidence_intervals()
+save_statistics_to_file("SimulationReport.txt", stats)
+
+if os.path.exists(filename):
+    os.remove(filename)
+    print(f"File {filename} eliminato con successo.")
+else:
+    print(f"Il file {filename} non esiste.")
+
 
 print_separator()
-print("End of Simulation Report")
+print("End of Simulation")
