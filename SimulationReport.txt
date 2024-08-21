@@ -1,0 +1,8 @@
+Simulation Statistics:
+======================
+mean_queue_hub_time: media = 0.0, Confidence Interval = ±0.0
+mean_N_queue_hub: media = 0.008730158730158729, Confidence Interval = ±0.0027442645681893256
+mean_service_hub_time: media = 1.3866155129146722, Confidence Interval = ±0.1992477140794751
+mean_response_hub_time: media = 1.3866155129146722, Confidence Interval = ±0.1992477140794751
+hub_rho: media = 0.00604947234572898, Confidence Interval = ±0.0020378301088371355
+

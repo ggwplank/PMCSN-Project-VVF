@@ -59,7 +59,7 @@ def save_statistics_to_file(filename, stats):
             f"Confidence Interval = ±{stats.mean_response_hub_time_confidence_interval}\n"
         )
         file.write(
-            f"hub_rho: media = {stats.hub_rho}, "
+            f"hub_rho: media = {stats.mean_hub_rho}, "
             f"Confidence Interval = ±{stats.hub_rho_confidence_interval}\n"
         )
 

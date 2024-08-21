@@ -5,18 +5,18 @@ INF = float('inf')
 # COSTANTI RELATIVE AI SERVER
 # ---------------------------------
 
-HUB_SERVERS = 5  # Numero di serventi nel centro operativo (Hub)
+HUB_SERVERS = 2  # Numero di serventi nel centro operativo (Hub)
 OPERATIVE_SERVERS = 2  # Numero di serventi nel centro operativo (altro tipo)
 
 # ---------------------------------
 # TEMPI MEDI (ARRIVI E SERVIZI)
 # ---------------------------------
 
-MEAN_ARRIVAL_TIME = 2  # Tempo medio di arrivo dei job
-MEAN_HUB_SERVICE_TIME = 5  # Tempo medio di servizio nell'Hub
-MEAN_RED_SERVICE_TIME = 0.005  # Tempo medio di servizio per i job con codice rosso
-MEAN_YELLOW_SERVICE_TIME = 0.05  # Tempo medio di servizio per i job con codice giallo
-MEAN_GREEN_SERVICE_TIME = 0.5  # Tempo medio di servizio per i job con codice verde
+MEAN_ARRIVAL_TIME = 116.23  # Tempo medio di arrivo dei job al minuto
+MEAN_HUB_SERVICE_TIME = 1.5  # Tempo medio di servizio nell'Hub al minuto
+MEAN_RED_SERVICE_TIME = 61.033333  # Tempo medio di servizio per i job con codice rosso
+MEAN_YELLOW_SERVICE_TIME = 90.4777  # Tempo medio di servizio per i job con codice giallo
+MEAN_GREEN_SERVICE_TIME = 175  # Tempo medio di servizio per i job con codice verde
 
 # ---------------------------------
 # PROBABILITÀ DI ASSEGNAZIONE E AUTORISOLUZIONE
@@ -24,14 +24,20 @@ MEAN_GREEN_SERVICE_TIME = 0.5  # Tempo medio di servizio per i job con codice ve
 
 # Probabilità di assegnazione dei codici colore
 CODE_ASSIGNMENT_PROBS = {
-    "red": 10,
-    "yellow": 30,
+    "red": 51.48,
+    "yellow": 81.19,  # 51.48 + 29.71
     "green": 100
 }
 
 # Probabilità di autorisoluzione dei job in coda
-AUTORESOLUTION_GREEN_PROB = 15  # Codice verde
-AUTORESOLUTION_YELLOW_PROB = 3  # Codice giallo
+AUTORESOLUTION_RED_PROB = 4.56    # Codice rosso # TODO implementa la red autoresolution
+AUTORESOLUTION_YELLOW_PROB = 2.63  # Codice giallo
+AUTORESOLUTION_GREEN_PROB = 1.67   # Codice verde
+
+# TODO implementa il fake allarm
+FAKE_ALLARM_RED_PROB = 0.27
+FAKE_ALLARM_YELLOW_PROB = 0.15
+FAKE_ALLARM_GREEN_PROB = 0.09
 
 # ---------------------------------
 # COSTANTI GENERALI DEL SISTEMA

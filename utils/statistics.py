@@ -19,7 +19,7 @@ class Statistics:
         self.mean_queue_hub_time = 0.0
         self.mean_service_hub_time = 0.0
         self.mean_response_hub_time = 0.0
-        self.hub_rho = 0.0 #TODO mean rho?
+        self.mean_hub_rho = 0.0
 
         # Intervalli di confidenza
         self.mean_queue_hub_time_confidence_interval = 0.0
@@ -34,10 +34,10 @@ class Statistics:
     # ======
     # Metodi per aggiungere dati alle liste
     # ======
-    def increment_total_N_queue_hub(self):  #TODO nome fuorviante
+    def increment_total_N_queue_hub(self):
         self.N_queue_hub_list.append(1)
 
-    def append_queue_hub_time_list(self, queue_hub_time):   #TODO append --> record ??
+    def append_queue_hub_time_list(self, queue_hub_time):
         self.queue_hub_time_list.append(queue_hub_time)
 
     def append_service_hub_time_list(self, service_hub_time):
@@ -50,24 +50,39 @@ class Statistics:
     # Metodi per calcolare le metriche medie
     # ======
     def calculate_mean_queue_hub_time(self):
-        total_queue_hub_time = sum(self.queue_hub_time_list)
-        self.mean_queue_hub_time = total_queue_hub_time / len(self.queue_hub_time_list)
+        if len(self.queue_hub_time_list) > 0:
+            total_queue_hub_time = sum(self.queue_hub_time_list)
+            self.mean_queue_hub_time = total_queue_hub_time / len(self.queue_hub_time_list)
+        else:
+            self.mean_queue_hub_time = 0.0
 
     def calculate_mean_N_queue_hub(self):
-        total_N_queue_hub = sum(self.N_queue_hub_list)
-        self.mean_N_queue_hub = total_N_queue_hub / self.stop_time
+        if self.stop_time > 0:
+            total_N_queue_hub = sum(self.N_queue_hub_list)
+            self.mean_N_queue_hub = total_N_queue_hub / self.stop_time
+        else:
+            self.mean_N_queue_hub = 0.0
 
     def calculate_mean_service_hub_time(self):
-        total_service_hub_time = sum(self.service_hub_time_list)
-        self.mean_service_hub_time = total_service_hub_time / len(self.service_hub_time_list)
+        if len(self.service_hub_time_list) > 0:
+            total_service_hub_time = sum(self.service_hub_time_list)
+            self.mean_service_hub_time = total_service_hub_time / len(self.service_hub_time_list)
+        else:
+            self.mean_service_hub_time = 0.0
 
     def calculate_mean_response_hub_time(self):
-        total_response_hub_time = sum(self.response_hub_time_list)
-        self.mean_response_hub_time = total_response_hub_time / len(self.response_hub_time_list)
+        if len(self.response_hub_time_list) > 0:
+            total_response_hub_time = sum(self.response_hub_time_list)
+            self.mean_response_hub_time = total_response_hub_time / len(self.response_hub_time_list)
+        else:
+            self.mean_response_hub_time = 0.0
 
     def calculate_hub_rho(self):
-        total_service_hub_time = sum(self.service_hub_time_list)
-        self.hub_rho = (total_service_hub_time / (HUB_SERVERS * self.stop_time))
+        if self.stop_time > 0 and HUB_SERVERS > 0:
+            total_service_hub_time = sum(self.service_hub_time_list)
+            self.mean_hub_rho = total_service_hub_time / (HUB_SERVERS * self.stop_time)
+        else:
+            self.mean_hub_rho = 0.0
 
     # Calcolo delle statistiche di una singola run
     def calculate_run_statistics(self):
@@ -82,7 +97,7 @@ class Statistics:
             'mean_N_queue_hub': self.mean_N_queue_hub,
             'mean_service_hub_time': self.mean_service_hub_time,
             'mean_response_hub_time': self.mean_response_hub_time,
-            'hub_rho': self.hub_rho
+            'hub_rho': self.mean_hub_rho
         }
 
     def calculate_all_confidence_intervals(self):
@@ -94,16 +109,22 @@ class Statistics:
             self.service_hub_time_list)
         self.mean_response_hub_time, self.mean_response_hub_time_confidence_interval = calculate_confidence_interval(
             self.response_hub_time_list)
-        self.hub_rho, self.hub_rho_confidence_interval = calculate_confidence_interval(self.hub_rho_list)
+        self.mean_hub_rho, self.hub_rho_confidence_interval = calculate_confidence_interval(self.hub_rho_list)
 
     # Reset delle statistiche per una nuova run
     def reset_statistics(self):
+        self.N_queue_hub_list = []
+        self.queue_hub_time_list = []
+        self.service_hub_time_list = []
+        self.response_hub_time_list = []
+        self.hub_rho_list = []
+
         self.mean_queue_hub_time = 0.0
         self.mean_N_queue_hub = 0
         self.mean_service_hub_time = 0.0
         self.mean_response_hub_time = 0.0
-        self.hub_rho = 0.0
-        #TODO non resettiamo anche le liste?
+        self.mean_hub_rho = 0.0
+
         self.stop_time = None
 
 

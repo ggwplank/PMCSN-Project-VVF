@@ -23,13 +23,13 @@ service_rates = {
 # Simulazione del tempo di arrivo
 def get_next_arrival_time(mean_arrival_time):
     rngs.selectStream(0)
-    return rvms.idfExponential(1 / mean_arrival_time, rngs.random())
+    return rvms.idfExponential(mean_arrival_time, rngs.random())
 
 
 # Simulazione del tempo di servizio
 def get_service_time(stream):
     rngs.selectStream(streams[stream])
-    return rvms.idfExponential(1 / service_rates[stream], rngs.random())
+    return rvms.idfExponential(service_rates[stream], rngs.random())
 
 
 # Assegnazione del colore

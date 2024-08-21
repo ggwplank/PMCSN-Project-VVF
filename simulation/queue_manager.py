@@ -59,5 +59,5 @@ class QueueManager:
         self.discard_job_from_queue("yellow", AUTORESOLUTION_YELLOW_PROB)
 
     def reset_queues(self):
-        for queue in self.queues.values():
+        for key, queue in self.queues.items():
             queue.clear()

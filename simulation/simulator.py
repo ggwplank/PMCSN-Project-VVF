@@ -253,7 +253,7 @@ def run_simulation(stop_time):
 initialize_temp_file(TEMP_FILENAME)
 
 # Esegui la simulazione 4 volte
-for i in range(4):
+for i in range(3):
     # Reset dell'ambiente
     queue_manager.reset_queues()
     squad_completion = INF
@@ -262,14 +262,19 @@ for i in range(4):
     jobs_in_yellow = 0
     jobs_in_green = 0
     stats.reset_statistics()
+    for server in servers_hub:
+        release_server(server)
+    release_server(squadra)
+    release_server(modulo)
 
     # Esegui la simulazione
-    run_simulation(1000)
+    run_simulation(1440*7)
 
     # salva le statistiche della simulazione corrente nel file csv
     write_statistics_to_file(TEMP_FILENAME, stats.calculate_run_statistics(), i)
 
 # estrae le statistiche dal file csv e calcola gli intervalli di confidenza
+stats.reset_statistics()
 extract_statistics_from_csv(TEMP_FILENAME, stats)
 stats.calculate_all_confidence_intervals()
 

@@ -18,7 +18,7 @@ def print_queue_statistics(color, stats):
     print(f"Mean N queue hub : {stats.mean_N_queue_hub}")
     print(f"Mean service hub time: {stats.mean_service_hub_time}")
     print(f"Mean response hub time : {stats.mean_response_hub_time}")
-    print(f"rho hub: {stats.hub_rho}")
+    print(f"rho hub: {stats.mean_hub_rho}")
     print()
 
 
