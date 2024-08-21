@@ -3,11 +3,18 @@ import os
 
 HEADER = [
     "Simulation",
+    # Hub statistics
     "mean_queue_hub_time",
     "mean_N_queue_hub",
     "mean_service_hub_time",
     "mean_response_hub_time",
-    "hub_rho"
+    "hub_rho",
+    # Red queue statistics
+    "mean_queue_red_time",
+    "mean_N_queue_red",
+    "mean_service_red_time",
+    "mean_response_red_time",
+    "red_rho"
 ]
 
 
@@ -29,11 +36,19 @@ def extract_statistics_from_csv(filename, stats):
         reader = csv.DictReader(csvfile)
 
         for row in reader:
+            # Hub statistics
             stats.queue_hub_time_list.append(float(row['mean_queue_hub_time']))
             stats.N_queue_hub_list.append(float(row['mean_N_queue_hub']))
             stats.service_hub_time_list.append(float(row['mean_service_hub_time']))
             stats.response_hub_time_list.append(float(row['mean_response_hub_time']))
             stats.hub_rho_list.append(float(row['hub_rho']))
+
+            # Red queue statistics
+            stats.queue_red_time_list.append(float(row['mean_queue_red_time']))
+            stats.N_queue_red_list.append(float(row['mean_N_queue_red']))
+            stats.service_red_time_list.append(float(row['mean_service_red_time']))
+            stats.response_red_time_list.append(float(row['mean_response_red_time']))
+            stats.red_rho_list.append(float(row['red_rho']))
 
 
 def save_statistics_to_file(filename, stats):
@@ -61,6 +76,30 @@ def save_statistics_to_file(filename, stats):
         file.write(
             f"hub_rho: media = {stats.mean_hub_rho}, "
             f"Confidence Interval = ±{stats.hub_rho_confidence_interval}\n"
+        )
+
+        file.write("\n")
+
+        # Red queue statistics with confidence intervals
+        file.write(
+            f"mean_queue_red_time: media = {stats.mean_queue_red_time}, "
+            f"Confidence Interval = ±{stats.mean_queue_red_time_confidence_interval}\n"
+        )
+        file.write(
+            f"mean_N_queue_red: media = {stats.mean_N_queue_red}, "
+            f"Confidence Interval = ±{stats.mean_N_queue_red_confidence_interval}\n"
+        )
+        file.write(
+            f"mean_service_red_time: media = {stats.mean_service_red_time}, "
+            f"Confidence Interval = ±{stats.mean_service_red_time_confidence_interval}\n"
+        )
+        file.write(
+            f"mean_response_red_time: media = {stats.mean_response_red_time}, "
+            f"Confidence Interval = ±{stats.mean_response_red_time_confidence_interval}\n"
+        )
+        file.write(
+            f"red_rho: media = {stats.mean_red_rho}, "
+            f"Confidence Interval = ±{stats.red_rho_confidence_interval}\n"
         )
 
         file.write("\n")

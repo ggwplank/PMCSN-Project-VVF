@@ -108,6 +108,9 @@ def process_job_arrival_at_colors(t, color):
     global jobs_in_green, jobs_in_yellow, jobs_in_red
     if color == 'red':
         jobs_in_red += 1
+
+        # stats
+        stats.increment_total_N_queue_red()
     elif color == 'yellow':
         jobs_in_yellow += 1
     elif color == 'green':
@@ -158,6 +161,12 @@ def process_job_completion_at_colors(t, server, color):
     global jobs_in_red, jobs_in_yellow, jobs_in_green
     if color == 'red':
         jobs_in_red -= 1
+
+        #stats
+        queue_time = t.current_time - server.start_service_time
+        stats.append_queue_red_time_list(queue_time)
+        stats.append_service_red_time_list(t.current_time - server.start_service_time)
+        stats.append_response_red_time(queue_time + (t.current_time - server.start_service_time))
     elif color == 'yellow':
         jobs_in_yellow -= 1
     elif color == 'green':

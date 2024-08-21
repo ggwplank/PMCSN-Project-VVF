@@ -12,11 +12,11 @@ OPERATIVE_SERVERS = 2  # Numero di serventi nel centro operativo (altro tipo)
 # TEMPI MEDI (ARRIVI E SERVIZI)
 # ---------------------------------
 
-MEAN_ARRIVAL_TIME = 116.23  # Tempo medio di arrivo dei job al minuto
-MEAN_HUB_SERVICE_TIME = 1.5  # Tempo medio di servizio nell'Hub al minuto
-MEAN_RED_SERVICE_TIME = 61.033333  # Tempo medio di servizio per i job con codice rosso
-MEAN_YELLOW_SERVICE_TIME = 90.4777  # Tempo medio di servizio per i job con codice giallo
-MEAN_GREEN_SERVICE_TIME = 175  # Tempo medio di servizio per i job con codice verde
+MEAN_ARRIVAL_TIME = 116.23  # Tempo medio di arrivo dei job [min/job]
+MEAN_HUB_SERVICE_TIME = 1.5  # Tempo medio di servizio E[s] in un servente dell'hub [min/job]
+MEAN_RED_SERVICE_TIME = 61.033333  # Tempo medio di servizio E[s] per i job con codice rosso [min/job]
+MEAN_YELLOW_SERVICE_TIME = 90.4777  # Tempo medio di servizio E[s] per i job con codice giallo [min/job]
+MEAN_GREEN_SERVICE_TIME = 175  # Tempo medio di servizio per E[s] i job con codice verde [min/job]
 
 # ---------------------------------
 # PROBABILITÀ DI ASSEGNAZIONE E AUTORISOLUZIONE
