@@ -30,11 +30,10 @@ CODE_ASSIGNMENT_PROBS = {
 }
 
 # Probabilità di autorisoluzione dei job in coda
-AUTORESOLUTION_RED_PROB = 4.56    # Codice rosso # TODO implementa la red autoresolution
+AUTORESOLUTION_RED_PROB = 4.56    # Codice rosso
 AUTORESOLUTION_YELLOW_PROB = 2.63  # Codice giallo
 AUTORESOLUTION_GREEN_PROB = 1.67   # Codice verde
 
-# TODO implementa il fake allarm
 FAKE_ALLARM_RED_PROB = 0.27
 FAKE_ALLARM_YELLOW_PROB = 0.15
 FAKE_ALLARM_GREEN_PROB = 0.09

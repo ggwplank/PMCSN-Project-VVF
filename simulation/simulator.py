@@ -3,7 +3,8 @@ import os
 from libs import rngs
 
 from simulation.queue_manager import QueueManager
-from simulation.sim_utils import get_next_arrival_time, get_service_time, assign_color, preempt_current_job
+from simulation.sim_utils import get_next_arrival_time, get_service_time, assign_color, preempt_current_job, \
+    fake_alarm_check
 from simulation.event import Event
 from simulation.server import Server, release_server
 
@@ -131,10 +132,16 @@ def assign_server(t, color, start_service_time, current_time):
     if not squadra.occupied:
         squadra.occupied = True
         squadra.start_service_time = start_service_time
-        squadra.end_service_time = current_time + get_service_time(color)
+        service_time = get_service_time(color)
+        # Controlliamo che non sia un fake alarm
+        squadra.end_service_time = current_time + fake_alarm_check(color, service_time)
         squadra.job_color = color
+
         print(
             f"Squadra assegnata al job di colore {color} con start {squadra.start_service_time}, con tempo di completamento {squadra.end_service_time}")
+
+
+
     else:
         # gestione della prelazione
         if color == 'red' and squadra.job_color in ['yellow', 'green']:
@@ -240,8 +247,9 @@ def run_simulation(stop_time):
                               t.green_completion_squadra, t.green_completion_modulo)
         t.current_time = next_event_time
 
-        queue_manager.discard_job_from_green_queue()
+        queue_manager.discard_job_from_red_queue()
         queue_manager.discard_job_from_yellow_queue()
+        queue_manager.discard_job_from_green_queue()
 
         if t.current_time == t.next_arrival:
             process_job_arrival_at_hub(t, servers_hub)
@@ -262,7 +270,7 @@ def run_simulation(stop_time):
 initialize_temp_file(TEMP_FILENAME)
 
 # Esegui la simulazione 4 volte
-for i in range(3):
+for i in range(5):
     # Reset dell'ambiente
     queue_manager.reset_queues()
     squad_completion = INF

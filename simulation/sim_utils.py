@@ -1,9 +1,11 @@
+import random
+
 from libs import rvms, rngs
 
 from simulation.server import release_server
 
 from utils.constants import MEAN_HUB_SERVICE_TIME, MEAN_YELLOW_SERVICE_TIME, MEAN_RED_SERVICE_TIME, \
-    MEAN_GREEN_SERVICE_TIME
+    MEAN_GREEN_SERVICE_TIME, FAKE_ALLARM_RED_PROB, FAKE_ALLARM_YELLOW_PROB, FAKE_ALLARM_GREEN_PROB
 
 streams = {
     'hub': 1,
@@ -30,6 +32,21 @@ def get_next_arrival_time(mean_arrival_time):
 def get_service_time(stream):
     rngs.selectStream(streams[stream])
     return rvms.idfExponential(service_rates[stream], rngs.random())
+
+
+# Simulazione del fake alarm, tempo di servizio = 0, se è fake imposta a 0 il tempo di servizio, altrimenti non viene cambiato
+def fake_alarm_check(queue_color, service_time, probability=None):
+    if queue_color == 'red':
+        probability = FAKE_ALLARM_RED_PROB
+    elif queue_color == 'yellow':
+        probability = FAKE_ALLARM_YELLOW_PROB
+    elif queue_color == 'green':
+        probability = FAKE_ALLARM_GREEN_PROB
+
+    if random.uniform(0, 100) < probability:
+        service_time = 0
+        print(f"{queue_color} job is a FAKE ALARM!")
+    return service_time
 
 
 # Assegnazione del colore

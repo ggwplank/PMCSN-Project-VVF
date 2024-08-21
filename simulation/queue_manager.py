@@ -1,7 +1,7 @@
 import random
 from collections import deque
 
-from utils.constants import AUTORESOLUTION_GREEN_PROB, AUTORESOLUTION_YELLOW_PROB
+from utils.constants import AUTORESOLUTION_GREEN_PROB, AUTORESOLUTION_YELLOW_PROB, AUTORESOLUTION_RED_PROB
 
 
 class QueueManager:
@@ -52,11 +52,14 @@ class QueueManager:
         # aggiornamento della coda specificata
         self.queues[queue_color] = deque
 
-    def discard_job_from_green_queue(self):
-        self.discard_job_from_queue("green", AUTORESOLUTION_GREEN_PROB)
+    def discard_job_from_red_queue(self):
+        self.discard_job_from_queue("red", AUTORESOLUTION_RED_PROB)
 
     def discard_job_from_yellow_queue(self):
         self.discard_job_from_queue("yellow", AUTORESOLUTION_YELLOW_PROB)
+
+    def discard_job_from_green_queue(self):
+        self.discard_job_from_queue("green", AUTORESOLUTION_GREEN_PROB)
 
     def reset_queues(self):
         for key, queue in self.queues.items():
