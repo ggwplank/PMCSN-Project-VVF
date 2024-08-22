@@ -267,7 +267,6 @@ def run_simulation(stop_time):
 
 initialize_temp_file(TEMP_FILENAME)
 
-# Esegui la simulazione 4 volte
 for i in range(1024):
     # Reset dell'ambiente
     queue_manager.reset_queues()
@@ -297,7 +296,7 @@ stats.calculate_all_confidence_intervals()
 save_statistics_to_file(REPORT_FILENAME, stats)
 
 # rimuove il file temporaneo (se esiste)
-delete_file(TEMP_FILENAME)
+#delete_file(TEMP_FILENAME)
 
 print_separator()
 print("End of Simulation")

@@ -1,7 +1,7 @@
 import csv
 import os
 
-from utils.constants import SIMULATION_OUTPUTS_DIR
+from utils.constants import SIMULATION_OUTPUTS_DIR, OUTPUTS_DIR
 
 HEADER = [
     "Simulation",
@@ -36,8 +36,8 @@ HEADER = [
 ]
 
 # crea la directory "outputs" se non esiste
-if not os.path.exists(SIMULATION_OUTPUTS_DIR):
-    os.makedirs(SIMULATION_OUTPUTS_DIR)
+if not os.path.exists(OUTPUTS_DIR):
+    os.makedirs(OUTPUTS_DIR)
 
 def initialize_temp_file(filename):
     with open(filename, "w", newline='') as file:
