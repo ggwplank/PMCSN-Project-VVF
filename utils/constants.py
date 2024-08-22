@@ -1,4 +1,6 @@
 # Importazioni standard
+import os
+
 INF = float('inf')
 
 # ---------------------------------
@@ -62,5 +64,6 @@ REPLICATIONS = 96  # Numero di replicazioni (deve essere <= K)
 # FILES E PATHS
 # ---------------------------------
 
-TEMP_FILENAME = "temp_file.csv"  # Nome del file temporaneo
-REPORT_FILENAME = "SimulationReport.txt"  # Nome del file di report finale
+OUTPUT_DIR = "outputs"
+TEMP_FILENAME = os.path.join(OUTPUT_DIR, "temp_file.csv")
+REPORT_FILENAME = os.path.join(OUTPUT_DIR, "SimulationReport.txt")

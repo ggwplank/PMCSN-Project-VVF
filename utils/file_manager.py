@@ -1,6 +1,8 @@
 import csv
 import os
 
+from utils.constants import OUTPUT_DIR
+
 HEADER = [
     "Simulation",
     # Hub statistics
@@ -33,6 +35,9 @@ HEADER = [
     "green_rho"
 ]
 
+# crea la directory "outputs" se non esiste
+if not os.path.exists(OUTPUT_DIR):
+    os.makedirs(OUTPUT_DIR)
 
 def initialize_temp_file(filename):
     with open(filename, "w", newline='') as file:
