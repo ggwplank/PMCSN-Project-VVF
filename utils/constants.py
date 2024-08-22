@@ -64,6 +64,14 @@ REPLICATIONS = 96  # Numero di replicazioni (deve essere <= K)
 # FILES E PATHS
 # ---------------------------------
 
-OUTPUT_DIR = "outputs"
-TEMP_FILENAME = os.path.join(OUTPUT_DIR, "temp_file.csv")
-REPORT_FILENAME = os.path.join(OUTPUT_DIR, "SimulationReport.txt")
+SIMULATION_OUTPUTS_DIR = "outputs"
+TEMP_FILENAME = os.path.join(SIMULATION_OUTPUTS_DIR, "temp_file.csv")
+REPORT_FILENAME = os.path.join(SIMULATION_OUTPUTS_DIR, "SimulationReport.txt")
+
+GRAPHS_OUTPUTS_DIR = os.path.join("graphs", "outputs")
+"""
+ aggiungere la funzione sotto anche nei grafici
+# crea la directory "outputs" se non esiste
+if not os.path.exists(SIMULATION_OUTPUT_DIR):
+    os.makedirs(SIMULATION_OUTPUT_DIR)
+"""
