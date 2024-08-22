@@ -268,7 +268,7 @@ def run_simulation(stop_time):
 initialize_temp_file(TEMP_FILENAME)
 
 # Esegui la simulazione 4 volte
-for i in range(64):
+for i in range(1024):
     # Reset dell'ambiente
     queue_manager.reset_queues()
     squad_completion = INF

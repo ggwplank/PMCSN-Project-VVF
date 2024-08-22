@@ -2,7 +2,7 @@ import math
 import scipy.stats as stats
 
 from libs import rvms
-from utils.constants import MEAN_HUB_SERVICE_TIME, HUB_SERVERS, LOC, ALPHA
+from utils.constants import HUB_SERVERS, ALPHA
 
 
 class Statistics:
@@ -14,68 +14,84 @@ class Statistics:
                 'queue_time_list': [],
                 'service_time_list': [],
                 'response_time_list': [],
+                'N_centre_list': [],
+                'rho_list': [],
 
                 'mean_N_queue': 0,
                 'mean_queue_hub_time': 0.0,
                 'mean_service_time': 0.0,
                 'mean_response_time': 0.0,
+                'mean_N_centre': 0.0,
                 'mean_rho': 0.0,
 
                 'mean_queue_time_confidence_interval': 0.0,
                 'mean_N_queue_confidence_interval': 0.0,
                 'mean_service_time_confidence_interval': 0.0,
                 'mean_response_time_confidence_interval': 0.0,
+                'mean_N_centre_confidence_interval': 0.0,
                 'rho_confidence_interval': 0.0
             },
             'red': {
                 'queue_time_list': [],
                 'service_time_list': [],
                 'response_time_list': [],
+                'N_centre_list': [],
+                'rho_list': [],
 
                 'mean_N_queue': 0,
                 'mean_queue_hub_time': 0.0,
                 'mean_service_time': 0.0,
                 'mean_response_time': 0.0,
+                'mean_N_centre': 0.0,
                 'mean_rho': 0.0,
 
                 'mean_queue_time_confidence_interval': 0.0,
                 'mean_N_queue_confidence_interval': 0.0,
                 'mean_service_time_confidence_interval': 0.0,
                 'mean_response_time_confidence_interval': 0.0,
+                'mean_N_centre_confidence_interval': 0.0,
                 'rho_confidence_interval': 0.0
             },
             'yellow': {
                 'queue_time_list': [],
                 'service_time_list': [],
                 'response_time_list': [],
+                'N_centre_list': [],
+                'rho_list': [],
 
                 'mean_N_queue': 0,
                 'mean_queue_hub_time': 0.0,
                 'mean_service_time': 0.0,
                 'mean_response_time': 0.0,
+                'mean_N_centre': 0.0,
                 'mean_rho': 0.0,
 
                 'mean_queue_time_confidence_interval': 0.0,
                 'mean_N_queue_confidence_interval': 0.0,
                 'mean_service_time_confidence_interval': 0.0,
                 'mean_response_time_confidence_interval': 0.0,
+                'mean_N_centre_confidence_interval': 0.0,
                 'rho_confidence_interval': 0.0
             },
             'green': {
                 'queue_time_list': [],
                 'service_time_list': [],
                 'response_time_list': [],
+                'N_centre_list': [],
+                'rho_list': [],
 
                 'mean_N_queue': 0,
                 'mean_queue_hub_time': 0.0,
                 'mean_service_time': 0.0,
                 'mean_response_time': 0.0,
+                'mean_N_centre': 0.0,
                 'mean_rho': 0.0,
 
                 'mean_queue_time_confidence_interval': 0.0,
                 'mean_N_queue_confidence_interval': 0.0,
                 'mean_service_time_confidence_interval': 0.0,
                 'mean_response_time_confidence_interval': 0.0,
+                'mean_N_centre_confidence_interval': 0.0,
                 'rho_confidence_interval': 0.0
             }
         }
@@ -132,6 +148,14 @@ class Statistics:
         else:
             self.data[color]['mean_response_time'] = 0.0
 
+    def calculate_mean_N_centre(self, color):
+        queue_times = self.data[color]['queue_time_list']
+        service_times = self.data[color]['service_time_list']
+        if len(queue_times) > 0 and len(service_times) > 0:
+            total_queue_time = sum(queue_times)
+            total_service_time = sum(service_times)
+            self.data[color]['mean_N_centre'] = (total_queue_time + total_service_time) / self.stop_time
+
     def calculate_rho(self, color):
         if self.stop_time > 0:
             total_service_time = sum(self.data[color]['service_time_list'])
@@ -151,6 +175,7 @@ class Statistics:
             self.calculate_mean_N_queue(color)
             self.calculate_mean_service_time(color)
             self.calculate_mean_response_time(color)
+            self.calculate_mean_N_centre(color)
             self.calculate_rho(color)
 
         return {color: {
@@ -158,6 +183,7 @@ class Statistics:
             'mean_N_queue': self.data[color]['mean_N_queue'],
             'mean_service_time': self.data[color]['mean_service_time'],
             'mean_response_time': self.data[color]['mean_response_time'],
+            'mean_N_centre': self.data[color]['mean_N_centre'],
             'mean_rho': self.data[color]['mean_rho']
         } for color in self.data.keys()}
 
@@ -178,6 +204,9 @@ class Statistics:
             self.data[color]['mean_response_time'], self.data[color][
                 'mean_response_time_confidence_interval'] = calculate_confidence_interval(
                 self.data[color]['response_time_list'])
+            self.data[color]['mean_N_centre'], self.data[color][
+                'mean_N_centre_confidence_interval'] = calculate_confidence_interval(
+                self.data[color]['N_centre_list'])
             self.data[color]['mean_rho'], self.data[color]['rho_confidence_interval'] = calculate_confidence_interval(
                 self.data[color]['rho_list'])
 
@@ -191,18 +220,19 @@ class Statistics:
             self.data[color]['queue_time_list'] = []
             self.data[color]['service_time_list'] = []
             self.data[color]['response_time_list'] = []
+            self.data[color]['N_centre_list'] = []
             self.data[color]['rho_list'] = []
 
             self.data[color]['mean_queue_time'] = 0.0
             self.data[color]['mean_N_queue'] = 0
             self.data[color]['mean_service_time'] = 0.0
             self.data[color]['mean_response_time'] = 0.0
+            self.data[color]['mean_N_centre'] = 0.0
             self.data[color]['mean_rho'] = 0.0
 
         self.stop_time = None
 
 
-#TODO: rifare intervalli di confidenza
 def calculate_confidence_interval(data):
     n = len(data)
     if n == 0:
@@ -214,10 +244,10 @@ def calculate_confidence_interval(data):
     degrees_of_freedom = n - 1
 
     # Ottieni il valore t* per il livello di confidenza desiderato
-    t_star = rvms.idfStudent(n - 1, 1 - ALPHA/2)
+    t_star = rvms.idfStudent(n - 1, 1 - ALPHA / 2)
 
     # Calcolo dell'intervallo di confidenza
-    margin_of_error = t_star * standard_deviation / math.sqrt(n-1)
+    margin_of_error = t_star * standard_deviation / math.sqrt(n - 1)
 
     return mean, margin_of_error
 
