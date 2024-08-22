@@ -34,7 +34,8 @@ def get_service_time(stream):
     return rvms.idfExponential(service_rates[stream], rngs.random())
 
 
-# Simulazione del fake alarm, tempo di servizio = 0, se è fake imposta a 0 il tempo di servizio, altrimenti non viene cambiato
+# Simulazione del fake alarm, tempo di servizio = 0, se è fake imposta a 0 il tempo di servizio, altrimenti non viene
+# cambiato
 def fake_alarm_check(queue_color, service_time, probability=None):
     if queue_color == 'red':
         probability = FAKE_ALLARM_RED_PROB

@@ -1,7 +1,8 @@
 import math
 import scipy.stats as stats
 
-from utils.constants import MEAN_HUB_SERVICE_TIME, HUB_SERVERS, LOC
+from libs import rvms
+from utils.constants import MEAN_HUB_SERVICE_TIME, HUB_SERVERS, LOC, ALPHA
 
 
 class Statistics:
@@ -10,7 +11,6 @@ class Statistics:
         # Inizializzazione delle liste per ogni colore
         self.data = {
             'hub': {
-                'N_queue_list': [],
                 'queue_time_list': [],
                 'service_time_list': [],
                 'response_time_list': [],
@@ -28,7 +28,6 @@ class Statistics:
                 'rho_confidence_interval': 0.0
             },
             'red': {
-                'N_queue_list': [],
                 'queue_time_list': [],
                 'service_time_list': [],
                 'response_time_list': [],
@@ -46,7 +45,6 @@ class Statistics:
                 'rho_confidence_interval': 0.0
             },
             'yellow': {
-                'N_queue_list': [],
                 'queue_time_list': [],
                 'service_time_list': [],
                 'response_time_list': [],
@@ -64,7 +62,6 @@ class Statistics:
                 'rho_confidence_interval': 0.0
             },
             'green': {
-                'N_queue_list': [],
                 'queue_time_list': [],
                 'service_time_list': [],
                 'response_time_list': [],
@@ -89,8 +86,6 @@ class Statistics:
     # ======
     # Metodi per aggiungere dati alle liste
     # ======
-    def increment_total_N_queue(self, color):
-        self.data[color]['N_queue_list'].append(1)
 
     def append_queue_time_list(self, color, queue_time):
         self.data[color]['queue_time_list'].append(queue_time)
@@ -114,9 +109,10 @@ class Statistics:
             self.data[color]['mean_queue_time'] = 0.0
 
     def calculate_mean_N_queue(self, color):
-        if self.stop_time > 0:
-            total_N_queue = sum(self.data[color]['N_queue_list'])
-            self.data[color]['mean_N_queue'] = total_N_queue / self.stop_time
+        queue_times = self.data[color]['queue_time_list']
+        if len(queue_times) > 0:
+            total_queue_time = sum(queue_times)
+            self.data[color]['mean_N_queue'] = total_queue_time / self.stop_time
         else:
             self.data[color]['mean_N_queue'] = 0.0
 
@@ -218,10 +214,10 @@ def calculate_confidence_interval(data):
     degrees_of_freedom = n - 1
 
     # Ottieni il valore t* per il livello di confidenza desiderato
-    t_star = stats.t.ppf((1 + LOC) / 2, degrees_of_freedom)
+    t_star = rvms.idfStudent(n - 1, 1 - ALPHA/2)
 
     # Calcolo dell'intervallo di confidenza
-    margin_of_error = t_star * (standard_deviation / math.sqrt(n))
+    margin_of_error = t_star * standard_deviation / math.sqrt(n-1)
 
     return mean, margin_of_error
 
@@ -232,6 +228,6 @@ def calculate_mean_and_standard_deviation(data):
         return 0.0, 0.0
 
     mean = sum(data) / n
-    variance = sum((x - mean) ** 2 for x in data) / (n - 1)  # Varianza campionaria
+    variance = sum((x - mean) ** 2 for x in data) / n  # Varianza campionaria
     standard_deviation = math.sqrt(variance)
     return mean, standard_deviation

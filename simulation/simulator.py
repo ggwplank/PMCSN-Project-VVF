@@ -61,7 +61,6 @@ def process_job_arrival_at_hub(t, servers_hub):
         t.hub_completion = free_server.end_service_time
 
         # stats
-        stats.increment_total_N_queue('hub')
         stats.append_queue_time_list('hub', 0)
         stats.append_service_time_list('hub', service_time)
         stats.append_response_time_list('hub', service_time)
@@ -96,7 +95,6 @@ def process_job_completion_at_hub(t, next_event_function):
             completed_server.end_service_time = t.current_time + service_time
 
             # stats
-            stats.increment_total_N_queue('hub')
             stats.append_queue_time_list('hub', t.current_time - next_job_time)
             stats.append_service_time_list('hub', service_time)
             stats.append_response_time_list('hub', t.current_time - next_job_time + service_time)
@@ -115,8 +113,6 @@ def process_job_arrival_at_colors(t, color):
         jobs_in_yellow += 1
     elif color == 'green':
         jobs_in_green += 1
-
-    stats.increment_total_N_queue(color)
 
     # il server è libero, processa subito il job
     if not squadra.occupied or (color == 'green' and not modulo.occupied):
@@ -140,7 +136,6 @@ def assign_server(t, color, added_in_queue_time, current_time):
 
         # stats
         queue_time = current_time - added_in_queue_time
-        stats.increment_total_N_queue(color)
         stats.append_queue_time_list(color, queue_time)
         stats.append_service_time_list(color, service_time)
         stats.append_response_time_list(color, service_time + queue_time)
@@ -273,7 +268,7 @@ def run_simulation(stop_time):
 initialize_temp_file(TEMP_FILENAME)
 
 # Esegui la simulazione 4 volte
-for i in range(5):
+for i in range(64):
     # Reset dell'ambiente
     queue_manager.reset_queues()
     squad_completion = INF
@@ -288,7 +283,7 @@ for i in range(5):
     release_server(modulo)
 
     # Esegui la simulazione
-    run_simulation(1440 * 7)
+    run_simulation(1440*7)
 
     # salva le statistiche della simulazione corrente nel file csv
     write_statistics_to_file(TEMP_FILENAME, stats.calculate_run_statistics(), i)
@@ -302,7 +297,7 @@ stats.calculate_all_confidence_intervals()
 save_statistics_to_file(REPORT_FILENAME, stats)
 
 # rimuove il file temporaneo (se esiste)
-#delete_file(TEMP_FILENAME)
+delete_file(TEMP_FILENAME)
 
 print_separator()
 print("End of Simulation")
