@@ -14,7 +14,19 @@ HEADER = [
     "mean_N_queue_red",
     "mean_service_red_time",
     "mean_response_red_time",
-    "red_rho"
+    "red_rho",
+    # Yellow queue statistics
+    "mean_queue_yellow_time",
+    "mean_N_queue_yellow",
+    "mean_service_yellow_time",
+    "mean_response_yellow_time",
+    "yellow_rho",
+    # Green queue statistics
+    "mean_queue_green_time",
+    "mean_N_queue_green",
+    "mean_service_green_time",
+    "mean_response_green_time",
+    "green_rho"
 ]
 
 
@@ -25,10 +37,38 @@ def initialize_temp_file(filename):
 
 
 def write_statistics_to_file(filename, stats, simulation_index):
-    stats["Simulation"] = simulation_index + 1
+    # Prepara il dizionario per il file CSV
+    row = {
+        "Simulation": simulation_index + 1,
+        # Hub statistics
+        "mean_queue_hub_time": stats['hub']['mean_queue_time'],
+        "mean_N_queue_hub": stats['hub']['mean_N_queue'],
+        "mean_service_hub_time": stats['hub']['mean_service_time'],
+        "mean_response_hub_time": stats['hub']['mean_response_time'],
+        "hub_rho": stats['hub']['mean_rho'],
+        # Red queue statistics
+        "mean_queue_red_time": stats['red']['mean_queue_time'],
+        "mean_N_queue_red": stats['red']['mean_N_queue'],
+        "mean_service_red_time": stats['red']['mean_service_time'],
+        "mean_response_red_time": stats['red']['mean_response_time'],
+        "red_rho": stats['red']['mean_rho'],
+        # Yellow queue statistics
+        "mean_queue_yellow_time": stats['yellow']['mean_queue_time'],
+        "mean_N_queue_yellow": stats['yellow']['mean_N_queue'],
+        "mean_service_yellow_time": stats['yellow']['mean_service_time'],
+        "mean_response_yellow_time": stats['yellow']['mean_response_time'],
+        "yellow_rho": stats['yellow']['mean_rho'],
+        # Green queue statistics
+        "mean_queue_green_time": stats['green']['mean_queue_time'],
+        "mean_N_queue_green": stats['green']['mean_N_queue'],
+        "mean_service_green_time": stats['green']['mean_service_time'],
+        "mean_response_green_time": stats['green']['mean_response_time'],
+        "green_rho": stats['green']['mean_rho']
+    }
+
     with open(filename, "a", newline='') as file:
         writer = csv.DictWriter(file, fieldnames=HEADER)
-        writer.writerow(stats)
+        writer.writerow(row)
 
 
 def extract_statistics_from_csv(filename, stats):
@@ -36,19 +76,12 @@ def extract_statistics_from_csv(filename, stats):
         reader = csv.DictReader(csvfile)
 
         for row in reader:
-            # Hub statistics
-            stats.queue_hub_time_list.append(float(row['mean_queue_hub_time']))
-            stats.N_queue_hub_list.append(float(row['mean_N_queue_hub']))
-            stats.service_hub_time_list.append(float(row['mean_service_hub_time']))
-            stats.response_hub_time_list.append(float(row['mean_response_hub_time']))
-            stats.hub_rho_list.append(float(row['hub_rho']))
-
-            # Red queue statistics
-            stats.queue_red_time_list.append(float(row['mean_queue_red_time']))
-            stats.N_queue_red_list.append(float(row['mean_N_queue_red']))
-            stats.service_red_time_list.append(float(row['mean_service_red_time']))
-            stats.response_red_time_list.append(float(row['mean_response_red_time']))
-            stats.red_rho_list.append(float(row['red_rho']))
+            for color in ['hub', 'red', 'yellow', 'green']:
+                stats.data[color]['queue_time_list'].append(float(row[f'mean_queue_{color}_time']))
+                stats.data[color]['N_queue_list'].append(float(row[f'mean_N_queue_{color}']))
+                stats.data[color]['service_time_list'].append(float(row[f'mean_service_{color}_time']))
+                stats.data[color]['response_time_list'].append(float(row[f'mean_response_{color}_time']))
+                stats.data[color]['rho_list'].append(float(row[f'{color}_rho']))
 
 
 def save_statistics_to_file(filename, stats):
@@ -56,53 +89,30 @@ def save_statistics_to_file(filename, stats):
         file.write("Simulation Statistics:\n")
         file.write("======================\n")
 
-        # stampa statistiche con intervalli di confidenza
-        file.write(
-            f"mean_queue_hub_time: media = {stats.mean_queue_hub_time}, "
-            f"Confidence Interval = ±{stats.mean_queue_hub_time_confidence_interval}\n"
-        )
-        file.write(
-            f"mean_N_queue_hub: media = {stats.mean_N_queue_hub}, "
-            f"Confidence Interval = ±{stats.mean_N_queue_hub_confidence_interval}\n"
-        )
-        file.write(
-            f"mean_service_hub_time: media = {stats.mean_service_hub_time}, "
-            f"Confidence Interval = ±{stats.mean_service_hub_time_confidence_interval}\n"
-        )
-        file.write(
-            f"mean_response_hub_time: media = {stats.mean_response_hub_time}, "
-            f"Confidence Interval = ±{stats.mean_response_hub_time_confidence_interval}\n"
-        )
-        file.write(
-            f"hub_rho: media = {stats.mean_hub_rho}, "
-            f"Confidence Interval = ±{stats.hub_rho_confidence_interval}\n"
-        )
+        for color in ['hub', 'red', 'yellow', 'green']:
+            # Stampa delle statistiche per ogni colore con intervalli di confidenza
+            file.write(
+                f"mean_queue_{color}_time: media = {stats.data[color]['mean_queue_time']}, "
+                f"Confidence Interval = ±{stats.data[color]['mean_queue_time_confidence_interval']}\n"
+            )
+            file.write(
+                f"mean_N_queue_{color}: media = {stats.data[color]['mean_N_queue']}, "
+                f"Confidence Interval = ±{stats.data[color]['mean_N_queue_confidence_interval']}\n"
+            )
+            file.write(
+                f"mean_service_{color}_time: media = {stats.data[color]['mean_service_time']}, "
+                f"Confidence Interval = ±{stats.data[color]['mean_service_time_confidence_interval']}\n"
+            )
+            file.write(
+                f"mean_response_{color}_time: media = {stats.data[color]['mean_response_time']}, "
+                f"Confidence Interval = ±{stats.data[color]['mean_response_time_confidence_interval']}\n"
+            )
+            file.write(
+                f"{color}_rho: media = {stats.data[color]['mean_rho']}, "
+                f"Confidence Interval = ±{stats.data[color]['rho_confidence_interval']}\n"
+            )
 
-        file.write("\n")
-
-        # Red queue statistics with confidence intervals
-        file.write(
-            f"mean_queue_red_time: media = {stats.mean_queue_red_time}, "
-            f"Confidence Interval = ±{stats.mean_queue_red_time_confidence_interval}\n"
-        )
-        file.write(
-            f"mean_N_queue_red: media = {stats.mean_N_queue_red}, "
-            f"Confidence Interval = ±{stats.mean_N_queue_red_confidence_interval}\n"
-        )
-        file.write(
-            f"mean_service_red_time: media = {stats.mean_service_red_time}, "
-            f"Confidence Interval = ±{stats.mean_service_red_time_confidence_interval}\n"
-        )
-        file.write(
-            f"mean_response_red_time: media = {stats.mean_response_red_time}, "
-            f"Confidence Interval = ±{stats.mean_response_red_time_confidence_interval}\n"
-        )
-        file.write(
-            f"red_rho: media = {stats.mean_red_rho}, "
-            f"Confidence Interval = ±{stats.red_rho_confidence_interval}\n"
-        )
-
-        file.write("\n")
+            file.write("\n")
 
 
 def delete_file(filename):

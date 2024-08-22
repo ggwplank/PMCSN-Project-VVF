@@ -21,6 +21,8 @@ rngs.plantSeeds(SEED)
 # stream 3 -> tempi di servizio yellow
 # stream 4 -> tempi di servizio green
 # stream 5 -> assegnazione colore
+# stream 6 -> probabilità di autorisoluzione
+# stream 7 -> probabilità di fake alarm
 
 # Inizializzazione degli Oggetti di Simulazione
 queue_manager = QueueManager()  # Gestione delle code
@@ -59,10 +61,10 @@ def process_job_arrival_at_hub(t, servers_hub):
         t.hub_completion = free_server.end_service_time
 
         # stats
-        stats.increment_total_N_queue_hub()
-        stats.append_queue_hub_time_list(0)
-        stats.append_service_hub_time_list(service_time)
-        stats.append_response_hub_time(service_time)
+        stats.increment_total_N_queue('hub')
+        stats.append_queue_time_list('hub', 0)
+        stats.append_service_time_list('hub', service_time)
+        stats.append_response_time_list('hub', service_time)
     else:
         queue_manager.add_to_queue('hub', t.current_time)
 
@@ -94,10 +96,10 @@ def process_job_completion_at_hub(t, next_event_function):
             completed_server.end_service_time = t.current_time + service_time
 
             # stats
-            stats.increment_total_N_queue_hub()
-            stats.append_queue_hub_time_list(t.current_time - next_job_time)
-            stats.append_service_hub_time_list(service_time)
-            stats.append_response_hub_time(t.current_time - next_job_time + service_time)
+            stats.increment_total_N_queue('hub')
+            stats.append_queue_time_list('hub', t.current_time - next_job_time)
+            stats.append_service_time_list('hub', service_time)
+            stats.append_response_time_list('hub', t.current_time - next_job_time + service_time)
 
         update_completion_time(t)
         next_event_function(t, color)  # assegnazione job a un colore
@@ -109,13 +111,12 @@ def process_job_arrival_at_colors(t, color):
     global jobs_in_green, jobs_in_yellow, jobs_in_red
     if color == 'red':
         jobs_in_red += 1
-
-        # stats
-        stats.increment_total_N_queue_red()
     elif color == 'yellow':
         jobs_in_yellow += 1
     elif color == 'green':
         jobs_in_green += 1
+
+    stats.increment_total_N_queue(color)
 
     # il server è libero, processa subito il job
     if not squadra.occupied or (color == 'green' and not modulo.occupied):
@@ -127,38 +128,45 @@ def process_job_arrival_at_colors(t, color):
     update_completion_time(t)
 
 
-def assign_server(t, color, start_service_time, current_time):
+def assign_server(t, color, added_in_queue_time, current_time):
     # funzione per assegnare un server a un job, con gestione della prelazione
     if not squadra.occupied:
         squadra.occupied = True
-        squadra.start_service_time = start_service_time
+        squadra.start_service_time = added_in_queue_time
         service_time = get_service_time(color)
         # Controlliamo che non sia un fake alarm
         squadra.end_service_time = current_time + fake_alarm_check(color, service_time)
         squadra.job_color = color
 
+        # stats
+        queue_time = current_time - added_in_queue_time
+        stats.increment_total_N_queue(color)
+        stats.append_queue_time_list(color, queue_time)
+        stats.append_service_time_list(color, service_time)
+        stats.append_response_time_list(color, service_time + queue_time)
+
         print(
             f"Squadra assegnata al job di colore {color} con start {squadra.start_service_time}, con tempo di completamento {squadra.end_service_time}")
-
-
 
     else:
         # gestione della prelazione
         if color == 'red' and squadra.job_color in ['yellow', 'green']:
             preempt_current_job(squadra, t)
-            assign_server(t, color, start_service_time, current_time)
+            assign_server(t, color, added_in_queue_time, current_time)
         elif color == 'yellow' and squadra.job_color == 'green':
             preempt_current_job(squadra, t)
-            assign_server(t, color, start_service_time, current_time)
+            assign_server(t, color, added_in_queue_time, current_time)
         elif color == 'green' and not modulo.occupied:
             modulo.occupied = True
-            modulo.start_service_time = start_service_time
-            modulo.end_service_time = current_time + get_service_time(color)
+            modulo.start_service_time = added_in_queue_time
+            service_time = get_service_time(color)
+            # Controlliamo che non sia un fake alarm
+            modulo.end_service_time = current_time + fake_alarm_check(color, service_time)
             modulo.job_color = color
             print(
                 f"Modulo assegnato al job di colore {color} con start {modulo.start_service_time}, con tempo di completamento {modulo.end_service_time}")
         else:
-            queue_manager.add_to_queue(color, start_service_time)
+            queue_manager.add_to_queue(color, added_in_queue_time)
             print(f"Job di colore {color} aggiunto alla coda poiché sia squadra che modulo sono occupati")
 
     update_completion_time(t)
@@ -169,11 +177,6 @@ def process_job_completion_at_colors(t, server, color):
     if color == 'red':
         jobs_in_red -= 1
 
-        #stats
-        queue_time = t.current_time - server.start_service_time
-        stats.append_queue_red_time_list(queue_time)
-        stats.append_service_red_time_list(t.current_time - server.start_service_time)
-        stats.append_response_red_time(queue_time + (t.current_time - server.start_service_time))
     elif color == 'yellow':
         jobs_in_yellow -= 1
     elif color == 'green':
@@ -285,7 +288,7 @@ for i in range(5):
     release_server(modulo)
 
     # Esegui la simulazione
-    run_simulation(1440*7)
+    run_simulation(1440 * 7)
 
     # salva le statistiche della simulazione corrente nel file csv
     write_statistics_to_file(TEMP_FILENAME, stats.calculate_run_statistics(), i)
@@ -299,7 +302,7 @@ stats.calculate_all_confidence_intervals()
 save_statistics_to_file(REPORT_FILENAME, stats)
 
 # rimuove il file temporaneo (se esiste)
-delete_file(TEMP_FILENAME)
+#delete_file(TEMP_FILENAME)
 
 print_separator()
 print("End of Simulation")

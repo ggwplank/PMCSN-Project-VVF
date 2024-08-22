@@ -1,6 +1,7 @@
 import random
 from collections import deque
 
+from libs import rvms, rngs
 from utils.constants import AUTORESOLUTION_GREEN_PROB, AUTORESOLUTION_YELLOW_PROB, AUTORESOLUTION_RED_PROB
 
 
@@ -39,9 +40,10 @@ class QueueManager:
         deque = self.queues[queue_color]
         jobs_to_remove = []  # lista temporanea per i job da rimuovere
 
-        # TODO dobbiamo modellare anche questa probabilità con gli stream?
+        rngs.selectStream(6)
         for job in deque:
-            if random.uniform(0, 100) < probability:
+            p = rvms.idfUniform(0, 100, rngs.random())
+            if p < probability:
                 print(f"{job} from {queue_color} queue AUTORESOLVED!")
                 jobs_to_remove.append(job)
 

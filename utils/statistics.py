@@ -7,46 +7,81 @@ from utils.constants import MEAN_HUB_SERVICE_TIME, HUB_SERVERS, LOC
 class Statistics:
     def __init__(self):
         self.stop_time = None
+        # Inizializzazione delle liste per ogni colore
+        self.data = {
+            'hub': {
+                'N_queue_list': [],
+                'queue_time_list': [],
+                'service_time_list': [],
+                'response_time_list': [],
 
-        # hub
-        self.N_queue_hub_list = []
-        self.queue_hub_time_list = []
-        self.service_hub_time_list = []
-        self.response_hub_time_list = []
-        self.hub_rho_list = []
+                'mean_N_queue': 0,
+                'mean_queue_hub_time': 0.0,
+                'mean_service_time': 0.0,
+                'mean_response_time': 0.0,
+                'mean_rho': 0.0,
 
-        self.mean_N_queue_hub = 0
-        self.mean_queue_hub_time = 0.0
-        self.mean_service_hub_time = 0.0
-        self.mean_response_hub_time = 0.0
-        self.mean_hub_rho = 0.0
+                'mean_queue_time_confidence_interval': 0.0,
+                'mean_N_queue_confidence_interval': 0.0,
+                'mean_service_time_confidence_interval': 0.0,
+                'mean_response_time_confidence_interval': 0.0,
+                'rho_confidence_interval': 0.0
+            },
+            'red': {
+                'N_queue_list': [],
+                'queue_time_list': [],
+                'service_time_list': [],
+                'response_time_list': [],
 
-        # Intervalli di confidenza
-        self.mean_queue_hub_time_confidence_interval = 0.0
-        self.mean_N_queue_hub_confidence_interval = 0.0
-        self.mean_service_hub_time_confidence_interval = 0.0
-        self.mean_response_hub_time_confidence_interval = 0.0
-        self.hub_rho_confidence_interval = 0.0
+                'mean_N_queue': 0,
+                'mean_queue_hub_time': 0.0,
+                'mean_service_time': 0.0,
+                'mean_response_time': 0.0,
+                'mean_rho': 0.0,
 
-        # Red queue
-        self.N_queue_red_list = []  # Numero di job in coda rossa
-        self.queue_red_time_list = []  # Tempi di attesa in coda rossa
-        self.service_red_time_list = []  # Tempi di servizio in coda rossa
-        self.response_red_time_list = []  # Tempi di risposta in coda rossa
-        self.red_rho_list = []  # Utilizzazione dei server nella coda rossa
+                'mean_queue_time_confidence_interval': 0.0,
+                'mean_N_queue_confidence_interval': 0.0,
+                'mean_service_time_confidence_interval': 0.0,
+                'mean_response_time_confidence_interval': 0.0,
+                'rho_confidence_interval': 0.0
+            },
+            'yellow': {
+                'N_queue_list': [],
+                'queue_time_list': [],
+                'service_time_list': [],
+                'response_time_list': [],
 
-        self.mean_N_queue_red = 0
-        self.mean_queue_red_time = 0.0
-        self.mean_service_red_time = 0.0
-        self.mean_response_red_time = 0.0
-        self.mean_red_rho = 0.0
+                'mean_N_queue': 0,
+                'mean_queue_hub_time': 0.0,
+                'mean_service_time': 0.0,
+                'mean_response_time': 0.0,
+                'mean_rho': 0.0,
 
-        # Intervalli di confidenza per la coda rossa
-        self.mean_queue_red_time_confidence_interval = 0.0
-        self.mean_N_queue_red_confidence_interval = 0.0
-        self.mean_service_red_time_confidence_interval = 0.0
-        self.mean_response_red_time_confidence_interval = 0.0
-        self.red_rho_confidence_interval = 0.0
+                'mean_queue_time_confidence_interval': 0.0,
+                'mean_N_queue_confidence_interval': 0.0,
+                'mean_service_time_confidence_interval': 0.0,
+                'mean_response_time_confidence_interval': 0.0,
+                'rho_confidence_interval': 0.0
+            },
+            'green': {
+                'N_queue_list': [],
+                'queue_time_list': [],
+                'service_time_list': [],
+                'response_time_list': [],
+
+                'mean_N_queue': 0,
+                'mean_queue_hub_time': 0.0,
+                'mean_service_time': 0.0,
+                'mean_response_time': 0.0,
+                'mean_rho': 0.0,
+
+                'mean_queue_time_confidence_interval': 0.0,
+                'mean_N_queue_confidence_interval': 0.0,
+                'mean_service_time_confidence_interval': 0.0,
+                'mean_response_time_confidence_interval': 0.0,
+                'rho_confidence_interval': 0.0
+            }
+        }
 
     def set_stop_time(self, stop_time):
         self.stop_time = stop_time
@@ -54,184 +89,124 @@ class Statistics:
     # ======
     # Metodi per aggiungere dati alle liste
     # ======
-    def increment_total_N_queue_hub(self):
-        self.N_queue_hub_list.append(1)
+    def increment_total_N_queue(self, color):
+        self.data[color]['N_queue_list'].append(1)
 
-    def append_queue_hub_time_list(self, queue_hub_time):
-        self.queue_hub_time_list.append(queue_hub_time)
+    def append_queue_time_list(self, color, queue_time):
+        self.data[color]['queue_time_list'].append(queue_time)
 
-    def append_service_hub_time_list(self, service_hub_time):
-        self.service_hub_time_list.append(service_hub_time)
+    def append_service_time_list(self, color, service_time):
+        self.data[color]['service_time_list'].append(service_time)
 
-    def append_response_hub_time(self, response_time):
-        self.response_hub_time_list.append(response_time)
+    def append_response_time_list(self, color, response_time):
+        self.data[color]['response_time_list'].append(response_time)
 
     # ======
     # Metodi per calcolare le metriche medie
     # ======
-    def calculate_mean_queue_hub_time(self):
-        if len(self.queue_hub_time_list) > 0:
-            total_queue_hub_time = sum(self.queue_hub_time_list)
-            self.mean_queue_hub_time = total_queue_hub_time / len(self.queue_hub_time_list)
-        else:
-            self.mean_queue_hub_time = 0.0
 
-    def calculate_mean_N_queue_hub(self):
+    def calculate_mean_queue_time(self, color):
+        queue_times = self.data[color]['queue_time_list']
+        if len(queue_times) > 0:
+            total_queue_time = sum(queue_times)
+            self.data[color]['mean_queue_time'] = total_queue_time / len(queue_times)
+        else:
+            self.data[color]['mean_queue_time'] = 0.0
+
+    def calculate_mean_N_queue(self, color):
         if self.stop_time > 0:
-            total_N_queue_hub = sum(self.N_queue_hub_list)
-            self.mean_N_queue_hub = total_N_queue_hub / self.stop_time
+            total_N_queue = sum(self.data[color]['N_queue_list'])
+            self.data[color]['mean_N_queue'] = total_N_queue / self.stop_time
         else:
-            self.mean_N_queue_hub = 0.0
+            self.data[color]['mean_N_queue'] = 0.0
 
-    def calculate_mean_service_hub_time(self):
-        if len(self.service_hub_time_list) > 0:
-            total_service_hub_time = sum(self.service_hub_time_list)
-            self.mean_service_hub_time = total_service_hub_time / len(self.service_hub_time_list)
+    def calculate_mean_service_time(self, color):
+        service_times = self.data[color]['service_time_list']
+        if len(service_times) > 0:
+            total_service_time = sum(service_times)
+            self.data[color]['mean_service_time'] = total_service_time / len(service_times)
         else:
-            self.mean_service_hub_time = 0.0
+            self.data[color]['mean_service_time'] = 0.0
 
-    def calculate_mean_response_hub_time(self):
-        if len(self.response_hub_time_list) > 0:
-            total_response_hub_time = sum(self.response_hub_time_list)
-            self.mean_response_hub_time = total_response_hub_time / len(self.response_hub_time_list)
+    def calculate_mean_response_time(self, color):
+        response_times = self.data[color]['response_time_list']
+        if len(response_times) > 0:
+            total_response_time = sum(response_times)
+            self.data[color]['mean_response_time'] = total_response_time / len(response_times)
         else:
-            self.mean_response_hub_time = 0.0
+            self.data[color]['mean_response_time'] = 0.0
 
-    def calculate_hub_rho(self):
-        if self.stop_time > 0 and HUB_SERVERS > 0:
-            total_service_hub_time = sum(self.service_hub_time_list)
-            self.mean_hub_rho = total_service_hub_time / (HUB_SERVERS * self.stop_time)
-        else:
-            self.mean_hub_rho = 0.0
-
-    def increment_total_N_queue_red(self):
-        self.N_queue_red_list.append(1)
-
-    def append_queue_red_time_list(self, queue_red_time):
-        self.queue_red_time_list.append(queue_red_time)
-
-    def append_service_red_time_list(self, service_red_time):
-        self.service_red_time_list.append(service_red_time)
-
-    def append_response_red_time(self, response_time):
-        self.response_red_time_list.append(response_time)
-
-    def calculate_mean_queue_red_time(self):
-        if len(self.queue_red_time_list) > 0:
-            total_queue_red_time = sum(self.queue_red_time_list)
-            self.mean_queue_red_time = total_queue_red_time / len(self.queue_red_time_list)
-        else:
-            self.mean_queue_red_time = 0.0
-
-    def calculate_mean_N_queue_red(self):
+    def calculate_rho(self, color):
         if self.stop_time > 0:
-            total_N_queue_red = sum(self.N_queue_red_list)
-            self.mean_N_queue_red = total_N_queue_red / self.stop_time
+            total_service_time = sum(self.data[color]['service_time_list'])
+            if color == 'hub':
+                self.data[color]['mean_rho'] = total_service_time / (HUB_SERVERS * self.stop_time)
+            else:
+                self.data[color]['mean_rho'] = total_service_time / self.stop_time
         else:
-            self.mean_N_queue_red = 0.0
+            self.data[color]['mean_rho'] = 0.0
 
-    def calculate_mean_service_red_time(self):
-        if len(self.service_red_time_list) > 0:
-            total_service_red_time = sum(self.service_red_time_list)
-            self.mean_service_red_time = total_service_red_time / len(self.service_red_time_list)
-        else:
-            self.mean_service_red_time = 0.0
-
-    def calculate_mean_response_red_time(self):
-        if len(self.response_red_time_list) > 0:
-            total_response_red_time = sum(self.response_red_time_list)
-            self.mean_response_red_time = total_response_red_time / len(self.response_red_time_list)
-        else:
-            self.mean_response_red_time = 0.0
-
-    def calculate_red_rho(self):
-        if self.stop_time > 0:
-            total_service_red_time = sum(self.service_red_time_list)
-            self.mean_red_rho = total_service_red_time / self.stop_time
-        else:
-            self.mean_red_rho = 0.0
-
+    # ======
     # Calcolo delle statistiche di una singola run
+    # ======
     def calculate_run_statistics(self):
-        self.calculate_mean_queue_hub_time()
-        self.calculate_mean_N_queue_hub()
-        self.calculate_mean_service_hub_time()
-        self.calculate_mean_response_hub_time()
-        self.calculate_hub_rho()
+        for color in self.data.keys():
+            self.calculate_mean_queue_time(color)
+            self.calculate_mean_N_queue(color)
+            self.calculate_mean_service_time(color)
+            self.calculate_mean_response_time(color)
+            self.calculate_rho(color)
 
-        self.calculate_mean_queue_red_time()
-        self.calculate_mean_N_queue_red()
-        self.calculate_mean_service_red_time()
-        self.calculate_mean_response_red_time()
-        self.calculate_red_rho()
+        return {color: {
+            'mean_queue_time': self.data[color]['mean_queue_time'],
+            'mean_N_queue': self.data[color]['mean_N_queue'],
+            'mean_service_time': self.data[color]['mean_service_time'],
+            'mean_response_time': self.data[color]['mean_response_time'],
+            'mean_rho': self.data[color]['mean_rho']
+        } for color in self.data.keys()}
 
-        return {
-            'mean_queue_hub_time': self.mean_queue_hub_time,
-            'mean_N_queue_hub': self.mean_N_queue_hub,
-            'mean_service_hub_time': self.mean_service_hub_time,
-            'mean_response_hub_time': self.mean_response_hub_time,
-            'hub_rho': self.mean_hub_rho,
-
-            # Statistiche coda rossa
-            'mean_queue_red_time': self.mean_queue_red_time,
-            'mean_N_queue_red': self.mean_N_queue_red,
-            'mean_service_red_time': self.mean_service_red_time,
-            'mean_response_red_time': self.mean_response_red_time,
-            'red_rho': self.mean_red_rho
-        }
-
+    # ======
+    # Calcolo degli intervalli di confidenza per ogni colore
+    # ======
     def calculate_all_confidence_intervals(self):
-        self.mean_queue_hub_time, self.mean_queue_hub_time_confidence_interval = calculate_confidence_interval(
-            self.queue_hub_time_list)
-        self.mean_N_queue_hub, self.mean_N_queue_hub_confidence_interval = calculate_confidence_interval(
-            self.N_queue_hub_list)
-        self.mean_service_hub_time, self.mean_service_hub_time_confidence_interval = calculate_confidence_interval(
-            self.service_hub_time_list)
-        self.mean_response_hub_time, self.mean_response_hub_time_confidence_interval = calculate_confidence_interval(
-            self.response_hub_time_list)
-        self.mean_hub_rho, self.hub_rho_confidence_interval = calculate_confidence_interval(self.hub_rho_list)
+        for color in self.data.keys():
+            self.data[color]['mean_queue_time'], self.data[color][
+                'mean_queue_time_confidence_interval'] = calculate_confidence_interval(
+                self.data[color]['queue_time_list'])
+            self.data[color]['mean_N_queue'], self.data[color][
+                'mean_N_queue_confidence_interval'] = calculate_confidence_interval(
+                self.data[color]['N_queue_list'])
+            self.data[color]['mean_service_time'], self.data[color][
+                'mean_service_time_confidence_interval'] = calculate_confidence_interval(
+                self.data[color]['service_time_list'])
+            self.data[color]['mean_response_time'], self.data[color][
+                'mean_response_time_confidence_interval'] = calculate_confidence_interval(
+                self.data[color]['response_time_list'])
+            self.data[color]['mean_rho'], self.data[color]['rho_confidence_interval'] = calculate_confidence_interval(
+                self.data[color]['rho_list'])
 
-        # Intervalli di confidenza per la coda rossa
-        self.mean_queue_red_time, self.mean_queue_red_time_confidence_interval = calculate_confidence_interval(
-            self.queue_red_time_list)
-        self.mean_N_queue_red, self.mean_N_queue_red_confidence_interval = calculate_confidence_interval(
-            self.N_queue_red_list)
-        self.mean_service_red_time, self.mean_service_red_time_confidence_interval = calculate_confidence_interval(
-            self.service_red_time_list)
-        self.mean_response_red_time, self.mean_response_red_time_confidence_interval = calculate_confidence_interval(
-            self.response_red_time_list)
-        self.mean_red_rho, self.red_rho_confidence_interval = calculate_confidence_interval(self.red_rho_list)
+        # ======
+        # Reset delle statistiche per una nuova run
+        # ======
 
-    # Reset delle statistiche per una nuova run
     def reset_statistics(self):
-        self.N_queue_hub_list = []
-        self.queue_hub_time_list = []
-        self.service_hub_time_list = []
-        self.response_hub_time_list = []
-        self.hub_rho_list = []
+        for color in self.data.keys():
+            self.data[color]['N_queue_list'] = []
+            self.data[color]['queue_time_list'] = []
+            self.data[color]['service_time_list'] = []
+            self.data[color]['response_time_list'] = []
+            self.data[color]['rho_list'] = []
 
-        self.mean_queue_hub_time = 0.0
-        self.mean_N_queue_hub = 0
-        self.mean_service_hub_time = 0.0
-        self.mean_response_hub_time = 0.0
-        self.mean_hub_rho = 0.0
-
-        # Resetta le variabili delle statistiche della coda rossa
-        self.N_queue_red_list = []
-        self.queue_red_time_list = []
-        self.service_red_time_list = []
-        self.response_red_time_list = []
-        self.red_rho_list = []
-
-        self.mean_queue_red_time = 0.0
-        self.mean_N_queue_red = 0
-        self.mean_service_red_time = 0.0
-        self.mean_response_red_time = 0.0
-        self.mean_red_rho = 0.0
+            self.data[color]['mean_queue_time'] = 0.0
+            self.data[color]['mean_N_queue'] = 0
+            self.data[color]['mean_service_time'] = 0.0
+            self.data[color]['mean_response_time'] = 0.0
+            self.data[color]['mean_rho'] = 0.0
 
         self.stop_time = None
 
 
+#TODO: rifare intervalli di confidenza
 def calculate_confidence_interval(data):
     n = len(data)
     if n == 0:
