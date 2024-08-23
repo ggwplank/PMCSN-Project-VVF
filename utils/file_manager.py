@@ -1,8 +1,6 @@
 import csv
 import os
 
-from utils.constants import SIMULATION_OUTPUTS_DIR, OUTPUTS_DIR
-
 HEADER = [
     "Simulation",
     # Hub statistics
@@ -32,12 +30,9 @@ HEADER = [
     "mean_service_green_time",
     "mean_response_green_time",
     "mean_N_centre_green",
-    "green_rho"
+    "green_rho",
+    "job_completed_percentage"
 ]
-
-# crea la directory "outputs" se non esiste
-if not os.path.exists(OUTPUTS_DIR):
-    os.makedirs(OUTPUTS_DIR)
 
 
 def initialize_temp_file(filename):
@@ -46,38 +41,40 @@ def initialize_temp_file(filename):
         writer.writeheader()
 
 
-def write_statistics_to_file(filename, stats, simulation_index):
+def write_statistics_to_file(filename, job_completed_percentage_stats, centre_stats, simulation_index):
     # Prepara il dizionario per il file CSV
     row = {
         "Simulation": simulation_index + 1,
         # Hub statistics
-        "mean_queue_hub_time": stats['hub']['mean_queue_time'],
-        "mean_N_queue_hub": stats['hub']['mean_N_queue'],
-        "mean_service_hub_time": stats['hub']['mean_service_time'],
-        "mean_response_hub_time": stats['hub']['mean_response_time'],
-        'mean_N_centre_hub': stats['hub']['mean_N_centre'],
-        "hub_rho": stats['hub']['mean_rho'],
+        "mean_queue_hub_time": centre_stats['hub']['mean_queue_time'],
+        "mean_N_queue_hub": centre_stats['hub']['mean_N_queue'],
+        "mean_service_hub_time": centre_stats['hub']['mean_service_time'],
+        "mean_response_hub_time": centre_stats['hub']['mean_response_time'],
+        'mean_N_centre_hub': centre_stats['hub']['mean_N_centre'],
+        "hub_rho": centre_stats['hub']['mean_rho'],
         # Red queue statistics
-        "mean_queue_red_time": stats['red']['mean_queue_time'],
-        "mean_N_queue_red": stats['red']['mean_N_queue'],
-        "mean_service_red_time": stats['red']['mean_service_time'],
-        "mean_response_red_time": stats['red']['mean_response_time'],
-        'mean_N_centre_red': stats['red']['mean_N_centre'],
-        "red_rho": stats['red']['mean_rho'],
+        "mean_queue_red_time": centre_stats['red']['mean_queue_time'],
+        "mean_N_queue_red": centre_stats['red']['mean_N_queue'],
+        "mean_service_red_time": centre_stats['red']['mean_service_time'],
+        "mean_response_red_time": centre_stats['red']['mean_response_time'],
+        'mean_N_centre_red': centre_stats['red']['mean_N_centre'],
+        "red_rho": centre_stats['red']['mean_rho'],
         # Yellow queue statistics
-        "mean_queue_yellow_time": stats['yellow']['mean_queue_time'],
-        "mean_N_queue_yellow": stats['yellow']['mean_N_queue'],
-        "mean_service_yellow_time": stats['yellow']['mean_service_time'],
-        "mean_response_yellow_time": stats['yellow']['mean_response_time'],
-        'mean_N_centre_yellow': stats['yellow']['mean_N_centre'],
-        "yellow_rho": stats['yellow']['mean_rho'],
+        "mean_queue_yellow_time": centre_stats['yellow']['mean_queue_time'],
+        "mean_N_queue_yellow": centre_stats['yellow']['mean_N_queue'],
+        "mean_service_yellow_time": centre_stats['yellow']['mean_service_time'],
+        "mean_response_yellow_time": centre_stats['yellow']['mean_response_time'],
+        'mean_N_centre_yellow': centre_stats['yellow']['mean_N_centre'],
+        "yellow_rho": centre_stats['yellow']['mean_rho'],
         # Green queue statistics
-        "mean_queue_green_time": stats['green']['mean_queue_time'],
-        "mean_N_queue_green": stats['green']['mean_N_queue'],
-        "mean_service_green_time": stats['green']['mean_service_time'],
-        "mean_response_green_time": stats['green']['mean_response_time'],
-        'mean_N_centre_green': stats['green']['mean_N_centre'],
-        "green_rho": stats['green']['mean_rho']
+        "mean_queue_green_time": centre_stats['green']['mean_queue_time'],
+        "mean_N_queue_green": centre_stats['green']['mean_N_queue'],
+        "mean_service_green_time": centre_stats['green']['mean_service_time'],
+        "mean_response_green_time": centre_stats['green']['mean_response_time'],
+        'mean_N_centre_green': centre_stats['green']['mean_N_centre'],
+        "green_rho": centre_stats['green']['mean_rho'],
+        # Job completed percentage
+        "job_completed_percentage": job_completed_percentage_stats['job_completed_percentage']
     }
 
     with open(filename, "a", newline='') as file:
@@ -97,12 +94,18 @@ def extract_statistics_from_csv(filename, stats):
                 stats.data[color]['response_time_list'].append(float(row[f'mean_response_{color}_time']))
                 stats.data[color]['N_centre_list'].append(float(row[f'mean_N_centre_{color}']))
                 stats.data[color]['rho_list'].append(float(row[f'{color}_rho']))
+            stats.data['job_data']['job_completed_percentage_list'].append(float(row[f'job_completed_percentage']))
 
 
 def save_statistics_to_file(filename, stats):
     with open(filename, "w") as file:
         file.write("Simulation Statistics:\n")
         file.write("======================\n")
+
+        file.write(
+            f"JOB COMPLETED: media = {stats.data['job_data']['mean_job_completed_percentage']}, "
+            f"Confidence Interval = ±{stats.data['job_data']['job_completed_percentage_confidence_interval']}\n\n"
+        )
 
         for color in ['hub', 'red', 'yellow', 'green']:
             # Stampa delle statistiche per ogni colore con intervalli di confidenza
@@ -132,11 +135,3 @@ def save_statistics_to_file(filename, stats):
             )
 
             file.write("\n")
-
-
-def delete_file(filename):
-    if os.path.exists(filename):
-        os.remove(filename)
-        print(f"File {filename} eliminato con successo.")
-    else:
-        print(f"Il file {filename} non esiste.")

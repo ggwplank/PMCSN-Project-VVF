@@ -1,31 +1,35 @@
 from simulation.server import release_server
 from simulation.simulator import queue_manager, stats, servers_hub, squadra, modulo, finite_simulation, \
     infinite_simulation
-from utils.constants import TEMP_FILENAME, INF, REPORT_FILENAME, N_RUN, TYPE, INTERVAL, B
+from utils.constants import INF, N_RUN, TYPE, INTERVAL, B, INFINITE_SIM_STATISTICS_FILENAME, \
+    INFINITE_SIM_REPORT_FILENAME, FINITE_SIM_REPORT_FILENAME, FINITE_SIM_STATISTICS_FILENAME
 from utils.file_manager import initialize_temp_file, write_statistics_to_file, extract_statistics_from_csv, \
-    save_statistics_to_file, delete_file
+    save_statistics_to_file
 from utils.printer import print_separator
 
 
 def evaluate_model():
     # estrae le statistiche dal file csv e calcola gli intervalli di confidenza
     stats.reset_statistics()
-    extract_statistics_from_csv(TEMP_FILENAME, stats)
+    extract_statistics_from_csv(stats_filename, stats)
     stats.calculate_all_confidence_intervals()
 
-    #TODO: cambia i nomi per creare file per tipo di simulazione
-
     # salva il report finale in un file di testo
-    save_statistics_to_file(REPORT_FILENAME, stats)
-
-    # rimuove il file temporaneo (se esiste)
-    delete_file(TEMP_FILENAME)
+    save_statistics_to_file(report_filename, stats)
 
     print_separator()
     print("End of Simulation")
 
 
-initialize_temp_file(TEMP_FILENAME)
+if TYPE == 0:
+    stats_filename, report_filename = INFINITE_SIM_STATISTICS_FILENAME, INFINITE_SIM_REPORT_FILENAME
+elif TYPE == 1:
+    stats_filename, report_filename = FINITE_SIM_STATISTICS_FILENAME, FINITE_SIM_REPORT_FILENAME
+else:
+    print("TYPE not valid!!!")
+    exit(1)
+
+initialize_temp_file(stats_filename)
 
 for i in range(N_RUN):
     # Reset dell'ambiente
@@ -46,6 +50,8 @@ for i in range(N_RUN):
         print("TYPE not valid!!!")
         break
 
-    write_statistics_to_file(TEMP_FILENAME, stats.calculate_run_statistics(), i)
+    job_completed_percentage_stats, centre_stats = stats.calculate_run_statistics()
+    write_statistics_to_file(stats_filename, job_completed_percentage_stats, centre_stats, i)
 
 evaluate_model()
+

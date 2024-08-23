@@ -32,9 +32,9 @@ CODE_ASSIGNMENT_PROBS = {
 }
 
 # Probabilità di autorisoluzione dei job in coda
-AUTORESOLUTION_RED_PROB = 4.56    # Codice rosso
+AUTORESOLUTION_RED_PROB = 4.56  # Codice rosso
 AUTORESOLUTION_YELLOW_PROB = 2.63  # Codice giallo
-AUTORESOLUTION_GREEN_PROB = 1.67   # Codice verde
+AUTORESOLUTION_GREEN_PROB = 1.67  # Codice verde
 
 FAKE_ALLARM_RED_PROB = 0.27
 FAKE_ALLARM_YELLOW_PROB = 0.15
@@ -56,28 +56,28 @@ SEED = 324516786  # Seed per la generazione casuale
 LOC = 0.95  # Livello di confidenza (Level of Confidence) per intervalli
 ALPHA = 0.05  # Livello di significatività (1 - LOC)
 
-
-N_RUN = 1024    # Numero di run da eseguire
-INTERVAL = 1440*7   # Intervallo di analisi per ogni run espresso in minuti
+N_RUN = 1024  # Numero di run da eseguire
+INTERVAL = 1440 * 7  # Intervallo di analisi per ogni run espresso in minuti
 
 B = 512  # Dimensione del batch in termini di job
 K = 96  # Numero di batch utilizzati
 
 REPLICATIONS = 96  # Numero di replicazioni (deve essere <= K)
 
-TYPE = 0    # 1: finita 0: infinita
+TYPE = 0  # 1: finita 0: infinita
 
 # ---------------------------------
 # FILES E PATHS
 # ---------------------------------
 
-OUTPUTS_DIR = "outputs"
 
-SIMULATION_OUTPUTS_DIR = os.path.join("simulation", "outputs")
-TEMP_FILENAME = os.path.join(OUTPUTS_DIR, "temp_file.csv")
-REPORT_FILENAME = os.path.join(OUTPUTS_DIR, "SimulationReport.txt")
+REPORTS_OUTPUTS_DIR = os.path.join("outputs", "reports")
+FINITE_SIM_STATISTICS_FILENAME = os.path.join(REPORTS_OUTPUTS_DIR, "finite-statistics.csv")
+INFINITE_SIM_STATISTICS_FILENAME = os.path.join(REPORTS_OUTPUTS_DIR, "infinite-statistics.csv")
+FINITE_SIM_REPORT_FILENAME = os.path.join(REPORTS_OUTPUTS_DIR, "finite-sim-report.txt")
+INFINITE_SIM_REPORT_FILENAME = os.path.join(REPORTS_OUTPUTS_DIR, "infinite-sim-report.txt")
 
-GRAPHS_OUTPUTS_DIR = "graphs/outputs"
+GRAPHS_OUTPUTS_DIR = os.path.join("../outputs", "graphs")
 
 """
  aggiungere la funzione sotto anche nei grafici

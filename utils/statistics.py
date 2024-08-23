@@ -7,9 +7,19 @@ from utils.constants import HUB_SERVERS, ALPHA
 
 class Statistics:
     def __init__(self):
-        self.stop_time = None
+        self.stop_time = 0
+        self.job_completed = 0
+        self.job_arrived = 0
+
         # Inizializzazione delle liste per ogni colore
         self.data = {
+            'job_data': {
+                'job_completed_percentage': 0.0,
+                'job_completed_percentage_list': [],
+                'mean_job_completed_percentage': 0.0,
+                'job_completed_percentage_confidence_interval': 0.0
+            },
+
             'hub': {
                 'queue_time_list': [],
                 'service_time_list': [],
@@ -166,32 +176,39 @@ class Statistics:
         else:
             self.data[color]['mean_rho'] = 0.0
 
+    def calculate_job_completed_percentage(self):
+        if self.job_arrived > 0:
+            self.data['job_data']['job_completed_percentage'] = self.job_completed / self.job_arrived
+        else:
+            self.data['job_data']['job_completed_percentage'] = 0.0
+
     # ======
     # Calcolo delle statistiche di una singola run
     # ======
     def calculate_run_statistics(self):
-        for color in self.data.keys():
+        for color in ['hub', 'red', 'yellow', 'green']:
             self.calculate_mean_queue_time(color)
             self.calculate_mean_N_queue(color)
             self.calculate_mean_service_time(color)
             self.calculate_mean_response_time(color)
             self.calculate_mean_N_centre(color)
             self.calculate_rho(color)
+        self.calculate_job_completed_percentage()
 
-        return {color: {
+        return {'job_completed_percentage': self.data['job_data']['job_completed_percentage']}, {color: {
             'mean_queue_time': self.data[color]['mean_queue_time'],
             'mean_N_queue': self.data[color]['mean_N_queue'],
             'mean_service_time': self.data[color]['mean_service_time'],
             'mean_response_time': self.data[color]['mean_response_time'],
             'mean_N_centre': self.data[color]['mean_N_centre'],
             'mean_rho': self.data[color]['mean_rho']
-        } for color in self.data.keys()}
+        } for color in ['hub', 'red', 'yellow', 'green']}
 
     # ======
     # Calcolo degli intervalli di confidenza per ogni colore
     # ======
     def calculate_all_confidence_intervals(self):
-        for color in self.data.keys():
+        for color in ['hub', 'red', 'yellow', 'green']:
             self.data[color]['mean_queue_time'], self.data[color][
                 'mean_queue_time_confidence_interval'] = calculate_confidence_interval(
                 self.data[color]['queue_time_list'])
@@ -210,12 +227,14 @@ class Statistics:
             self.data[color]['mean_rho'], self.data[color]['rho_confidence_interval'] = calculate_confidence_interval(
                 self.data[color]['rho_list'])
 
-        # ======
-        # Reset delle statistiche per una nuova run
-        # ======
+        self.data['job_data']['mean_job_completed_percentage'], self.data['job_data']['job_completed_percentage_confidence_interval'] = calculate_confidence_interval(
+            self.data['job_data']['job_completed_percentage_list'])
 
+    # ======
+    # Reset delle statistiche per una nuova run
+    # ======
     def reset_statistics(self):
-        for color in self.data.keys():
+        for color in ['hub', 'red', 'yellow', 'green']:
             self.data[color]['N_queue_list'] = []
             self.data[color]['queue_time_list'] = []
             self.data[color]['service_time_list'] = []
@@ -230,7 +249,11 @@ class Statistics:
             self.data[color]['mean_N_centre'] = 0.0
             self.data[color]['mean_rho'] = 0.0
 
-        self.stop_time = None
+        self.data['job_data']['job_completed_percentage'] = 0.0
+        self.data['job_data']['job_completed_percentage_list'] = []
+        self.stop_time = 0
+        self.job_completed = 0
+        self.job_arrived = 0
 
 
 def calculate_confidence_interval(data):

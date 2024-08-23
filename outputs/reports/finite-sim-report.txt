@@ -1,5 +1,7 @@
 Simulation Statistics:
 ======================
+JOB COMPLETED: media = 0.8234588026467098, Confidence Interval = ±0.0022450866860816514
+
 mean_queue_hub_time: media = 3.839255496099199e-05, Confidence Interval = ±3.293851857625135e-05
 mean_N_queue_hub: media = 3.708950739653205e-07, Confidence Interval = ±3.23488149130144e-07
 mean_service_hub_time: media = 1.5016695396170112, Confidence Interval = ±0.009626144408128052

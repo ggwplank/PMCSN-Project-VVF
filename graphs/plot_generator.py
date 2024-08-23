@@ -2,13 +2,13 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import os
 
-from utils.constants import OUTPUTS_DIR
+from utils.constants import FINITE_SIM_STATISTICS_FILENAME, GRAPHS_OUTPUTS_DIR
 
 
 # Funzione generica per disegnare grafici
 def plot_custom_graph(y_column, x_column='Simulation', x_label='Simulation Run', y_label=None, sample_rate=16):
     # Percorso del file CSV fisso
-    csv_file_path = '../simulation/outputs/temp_file.csv'
+    csv_file_path = "../" + FINITE_SIM_STATISTICS_FILENAME
 
     # Carica i dati dal file CSV
     data = pd.read_csv(csv_file_path)
@@ -39,14 +39,14 @@ def plot_custom_graph(y_column, x_column='Simulation', x_label='Simulation Run',
     plt.xticks(rotation=45)
     plt.tight_layout()
     # Verifica se la cartella OUTPUTS_DIR esiste, altrimenti la crea
-    if not os.path.exists(OUTPUTS_DIR):
-        os.makedirs(OUTPUTS_DIR)
-        print(f"Creata la cartella: {OUTPUTS_DIR}")
+    if not os.path.exists(GRAPHS_OUTPUTS_DIR):
+        os.makedirs(GRAPHS_OUTPUTS_DIR)
+        print(f"Creata la cartella: {GRAPHS_OUTPUTS_DIR}")
 
 
     # Salva il grafico come file PNG
     output_filename = f'{y_column}.png'
-    output_file_path = os.path.join(OUTPUTS_DIR, output_filename)
+    output_file_path = os.path.join(GRAPHS_OUTPUTS_DIR, output_filename)
     plt.savefig(output_file_path, dpi=300)
     plt.show()
 
