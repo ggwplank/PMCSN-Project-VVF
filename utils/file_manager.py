@@ -36,8 +36,8 @@ HEADER = [
 ]
 
 # crea la directory "outputs" se non esiste
-if not os.path.exists(SIMULATION_OUTPUTS_DIR):
-    os.makedirs(SIMULATION_OUTPUTS_DIR)
+if not os.path.exists(OUTPUTS_DIR):
+    os.makedirs(OUTPUTS_DIR)
 
 
 def initialize_temp_file(filename):

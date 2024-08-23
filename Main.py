@@ -31,10 +31,6 @@ for i in range(N_RUN):
     # Reset dell'ambiente
     queue_manager.reset_queues()
     squad_completion = INF
-    jobs_in_hub = 0
-    jobs_in_red = 0
-    jobs_in_yellow = 0
-    jobs_in_green = 0
     stats.reset_statistics()
     for server in servers_hub:
         release_server(server)

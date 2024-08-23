@@ -36,7 +36,6 @@ squadra.type, modulo.type = SQUADRA, MODULO
 
 # Inizializzazione delle variabili di stato
 squad_completion = INF
-jobs_in_hub = 0
 jobs_in_red = 0
 jobs_in_yellow = 0
 jobs_in_green = 0
@@ -44,9 +43,7 @@ jobs_in_green = 0
 
 # Processa l'arrivo di un job all'hub
 def process_job_arrival_at_hub(t, servers_hub):
-    global jobs_in_hub
     print(f"Job arrived at hub at time {t.current_time}")
-    jobs_in_hub += 1
 
     t.next_arrival = get_next_arrival_time(MEAN_ARRIVAL_TIME) + t.current_time
 
@@ -72,12 +69,9 @@ def process_job_arrival_at_hub(t, servers_hub):
 
 # Processa il completamento di un job nell'hub
 def process_job_completion_at_hub(t, next_event_function):
-    global jobs_in_hub
-
     # server che ha completato il job
     completed_server = next((server for server in servers_hub if server.end_service_time == t.current_time), None)
     if completed_server:
-        jobs_in_hub -= 1
         release_server(completed_server)
 
         color = assign_color(CODE_ASSIGNMENT_PROBS)
@@ -106,14 +100,6 @@ def process_job_completion_at_hub(t, next_event_function):
 
 
 def process_job_arrival_at_colors(t, color):
-    global jobs_in_green, jobs_in_yellow, jobs_in_red
-    if color == 'red':
-        jobs_in_red += 1
-    elif color == 'yellow':
-        jobs_in_yellow += 1
-    elif color == 'green':
-        jobs_in_green += 1
-
     # il server è libero, processa subito il job
     if not squadra.occupied or (color == 'green' and not modulo.occupied):
         start_service_time = t.current_time
@@ -167,16 +153,7 @@ def assign_server(t, color, added_in_queue_time, current_time):
     update_completion_time(t)
 
 
-def process_job_completion_at_colors(t, server, color):
-    global jobs_in_red, jobs_in_yellow, jobs_in_green
-    if color == 'red':
-        jobs_in_red -= 1
-
-    elif color == 'yellow':
-        jobs_in_yellow -= 1
-    elif color == 'green':
-        jobs_in_green -= 1
-
+def process_job_completion_at_colors(t, server):
     release_server(server)
 
     if server == squadra:
@@ -217,7 +194,7 @@ def update_completion_time(t):
     t.green_completion_modulo = modulo.end_service_time if modulo.occupied else INF
 
 
-job_executed = 0    # job eseguiti durante la simulazione infinita
+job_executed = 0  # job eseguiti durante la simulazione infinita
 
 
 def infinite_simulation(batch_size):
@@ -275,12 +252,12 @@ def execute(t):
     elif t.current_time == t.hub_completion:
         process_job_completion_at_hub(t, process_job_arrival_at_colors)
     elif t.current_time == t.red_completion and squadra.job_color == 'red':
-        process_job_completion_at_colors(t, squadra, 'red')
+        process_job_completion_at_colors(t, squadra)
     elif t.current_time == t.yellow_completion and squadra.job_color == 'yellow':
-        process_job_completion_at_colors(t, squadra, 'yellow')
+        process_job_completion_at_colors(t, squadra)
     elif t.current_time == t.green_completion_squadra:
-        process_job_completion_at_colors(t, squadra, 'green')
+        process_job_completion_at_colors(t, squadra)
     elif t.current_time == t.green_completion_modulo:
-        process_job_completion_at_colors(t, modulo, 'green')
+        process_job_completion_at_colors(t, modulo)
 
     print_queue_status(queue_manager)
