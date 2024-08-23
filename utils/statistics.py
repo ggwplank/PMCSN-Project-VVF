@@ -18,7 +18,7 @@ class Statistics:
                 'rho_list': [],
 
                 'mean_N_queue': 0,
-                'mean_queue_hub_time': 0.0,
+                'mean_queue_time': 0.0,
                 'mean_service_time': 0.0,
                 'mean_response_time': 0.0,
                 'mean_N_centre': 0.0,
@@ -39,7 +39,7 @@ class Statistics:
                 'rho_list': [],
 
                 'mean_N_queue': 0,
-                'mean_queue_hub_time': 0.0,
+                'mean_queue_time': 0.0,
                 'mean_service_time': 0.0,
                 'mean_response_time': 0.0,
                 'mean_N_centre': 0.0,
@@ -60,7 +60,7 @@ class Statistics:
                 'rho_list': [],
 
                 'mean_N_queue': 0,
-                'mean_queue_hub_time': 0.0,
+                'mean_queue_time': 0.0,
                 'mean_service_time': 0.0,
                 'mean_response_time': 0.0,
                 'mean_N_centre': 0.0,
@@ -81,7 +81,7 @@ class Statistics:
                 'rho_list': [],
 
                 'mean_N_queue': 0,
-                'mean_queue_hub_time': 0.0,
+                'mean_queue_time': 0.0,
                 'mean_service_time': 0.0,
                 'mean_response_time': 0.0,
                 'mean_N_centre': 0.0,

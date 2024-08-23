@@ -4,7 +4,7 @@ from libs import rngs
 
 from simulation.queue_manager import QueueManager
 from simulation.sim_utils import get_next_arrival_time, get_service_time, assign_color, preempt_current_job, \
-    fake_alarm_check
+    fake_alarm_check, check_jobs
 from simulation.event import Event
 from simulation.server import Server, release_server
 
@@ -217,86 +217,70 @@ def update_completion_time(t):
     t.green_completion_modulo = modulo.end_service_time if modulo.occupied else INF
 
 
-def run_simulation(stop_time):
+job_executed = 0    # job eseguiti durante la simulazione infinita
+
+
+def infinite_simulation(batch_size):
+    global job_executed
+
+    t = Event(0, get_next_arrival_time(MEAN_ARRIVAL_TIME), INF, INF, INF, INF, INF)
+
+    job_executed = 0
+
+    while job_executed < batch_size:
+        if check_jobs(t):
+            break
+        execute(t)
+
+    stats.set_stop_time(t.current_time)
+
+
+def finite_simulation(stop_time):
     stats.set_stop_time(stop_time)
 
     t = Event(0, get_next_arrival_time(MEAN_ARRIVAL_TIME), INF, INF, INF, INF, INF)
 
     while t.current_time < stop_time:
-        if all(x == INF for x in
-               [t.next_arrival, t.hub_completion, t.red_completion,
-                t.yellow_completion, t.green_completion_squadra, t.green_completion_modulo]):
-            print("Simulation complete: no more events.")
+        if check_jobs(t):
             break
-
-        events = {
-            'arrival': t.next_arrival,
-            'hub_completion': t.hub_completion,
-            'red_completion': t.red_completion,
-            'yellow_completion': t.yellow_completion,
-            'green_completion_squadra': t.green_completion_squadra,
-            'green_completion_modulo': t.green_completion_modulo,
-            'squad_completion': squad_completion
-        }
-
-        print_simulation_status(t, events)
-
-        next_event_time = min(t.next_arrival, t.hub_completion, t.red_completion, t.yellow_completion,
-                              t.green_completion_squadra, t.green_completion_modulo)
-        t.current_time = next_event_time
-
-        queue_manager.discard_job_from_red_queue()
-        queue_manager.discard_job_from_yellow_queue()
-        queue_manager.discard_job_from_green_queue()
-
-        if t.current_time == t.next_arrival:
-            process_job_arrival_at_hub(t, servers_hub)
-        elif t.current_time == t.hub_completion:
-            process_job_completion_at_hub(t, process_job_arrival_at_colors)
-        elif t.current_time == t.red_completion and squadra.job_color == 'red':
-            process_job_completion_at_colors(t, squadra, 'red')
-        elif t.current_time == t.yellow_completion and squadra.job_color == 'yellow':
-            process_job_completion_at_colors(t, squadra, 'yellow')
-        elif t.current_time == t.green_completion_squadra:
-            process_job_completion_at_colors(t, squadra, 'green')
-        elif t.current_time == t.green_completion_modulo:
-            process_job_completion_at_colors(t, modulo, 'green')
-
-        print_queue_status(queue_manager)
+        execute(t)
 
 
-initialize_temp_file(TEMP_FILENAME)
+def execute(t):
+    events = {
+        'arrival': t.next_arrival,
+        'hub_completion': t.hub_completion,
+        'red_completion': t.red_completion,
+        'yellow_completion': t.yellow_completion,
+        'green_completion_squadra': t.green_completion_squadra,
+        'green_completion_modulo': t.green_completion_modulo,
+        'squad_completion': squad_completion
+    }
 
-for i in range(1024):
-    # Reset dell'ambiente
-    queue_manager.reset_queues()
-    squad_completion = INF
-    jobs_in_hub = 0
-    jobs_in_red = 0
-    jobs_in_yellow = 0
-    jobs_in_green = 0
-    stats.reset_statistics()
-    for server in servers_hub:
-        release_server(server)
-    release_server(squadra)
-    release_server(modulo)
+    print_simulation_status(t, events)
 
-    # Esegui la simulazione
-    run_simulation(1440*7)
+    next_event_time = min(t.next_arrival, t.hub_completion, t.red_completion, t.yellow_completion,
+                          t.green_completion_squadra, t.green_completion_modulo)
+    t.current_time = next_event_time
 
-    # salva le statistiche della simulazione corrente nel file csv
-    write_statistics_to_file(TEMP_FILENAME, stats.calculate_run_statistics(), i)
+    queue_manager.discard_job_from_red_queue()
+    queue_manager.discard_job_from_yellow_queue()
+    queue_manager.discard_job_from_green_queue()
 
-# estrae le statistiche dal file csv e calcola gli intervalli di confidenza
-stats.reset_statistics()
-extract_statistics_from_csv(TEMP_FILENAME, stats)
-stats.calculate_all_confidence_intervals()
+    if t.current_time == t.next_arrival:
+        if TYPE == 0:
+            global job_executed
+            job_executed += 1
+        process_job_arrival_at_hub(t, servers_hub)
+    elif t.current_time == t.hub_completion:
+        process_job_completion_at_hub(t, process_job_arrival_at_colors)
+    elif t.current_time == t.red_completion and squadra.job_color == 'red':
+        process_job_completion_at_colors(t, squadra, 'red')
+    elif t.current_time == t.yellow_completion and squadra.job_color == 'yellow':
+        process_job_completion_at_colors(t, squadra, 'yellow')
+    elif t.current_time == t.green_completion_squadra:
+        process_job_completion_at_colors(t, squadra, 'green')
+    elif t.current_time == t.green_completion_modulo:
+        process_job_completion_at_colors(t, modulo, 'green')
 
-# salva il report finale in un file di testo
-save_statistics_to_file(REPORT_FILENAME, stats)
-
-# rimuove il file temporaneo (se esiste)
-#delete_file(TEMP_FILENAME)
-
-print_separator()
-print("End of Simulation")
+    print_queue_status(queue_manager)

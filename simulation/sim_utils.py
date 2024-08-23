@@ -5,7 +5,7 @@ from libs import rvms, rngs
 from simulation.server import release_server
 
 from utils.constants import MEAN_HUB_SERVICE_TIME, MEAN_YELLOW_SERVICE_TIME, MEAN_RED_SERVICE_TIME, \
-    MEAN_GREEN_SERVICE_TIME, FAKE_ALLARM_RED_PROB, FAKE_ALLARM_YELLOW_PROB, FAKE_ALLARM_GREEN_PROB
+    MEAN_GREEN_SERVICE_TIME, FAKE_ALLARM_RED_PROB, FAKE_ALLARM_YELLOW_PROB, FAKE_ALLARM_GREEN_PROB, INF
 
 streams = {
     'hub': 1,
@@ -67,3 +67,11 @@ def assign_color(probabilities):
 def preempt_current_job(server, t):
     print(f"Preempting current job {server.job_color.upper()} at time {t.current_time}")
     release_server(server)
+
+
+def check_jobs(t):
+    if all(x == INF for x in
+           [t.next_arrival, t.hub_completion, t.red_completion,
+            t.yellow_completion, t.green_completion_squadra, t.green_completion_modulo]):
+        print("Simulation complete: no more events.")
+        return True
