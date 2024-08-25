@@ -78,10 +78,3 @@ FINITE_SIM_REPORT_FILENAME = os.path.join(REPORTS_OUTPUTS_DIR, "finite-sim-repor
 INFINITE_SIM_REPORT_FILENAME = os.path.join(REPORTS_OUTPUTS_DIR, "infinite-sim-report.txt")
 
 GRAPHS_OUTPUTS_DIR = os.path.join("../outputs", "graphs")
-
-"""
- aggiungere la funzione sotto anche nei grafici
-# crea la directory "outputs" se non esiste
-if not os.path.exists(SIMULATION_OUTPUT_DIR):
-    os.makedirs(SIMULATION_OUTPUT_DIR)
-"""
