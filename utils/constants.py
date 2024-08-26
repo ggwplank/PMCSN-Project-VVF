@@ -17,7 +17,7 @@ OPERATIVE_SERVERS = 2  # Numero di serventi nel centro operativo (altro tipo)
 MEAN_ARRIVAL_TIME = 116.23  # Tempo medio di arrivo dei job [min/job]
 MEAN_HUB_SERVICE_TIME = 1.5  # Tempo medio di servizio E[s] in un servente dell'hub [min/job]
 MEAN_RED_SERVICE_TIME = 61.033333  # Tempo medio di servizio E[s] per i job con codice rosso [min/job]
-MEAN_YELLOW_SERVICE_TIME = 90.4777  # Tempo medio di servizio E[s] per i job con codice giallo [min/job]
+MEAN_YELLOW_SERVICE_TIME = 90.47777778  # Tempo medio di servizio E[s] per i job con codice giallo [min/job]
 MEAN_GREEN_SERVICE_TIME = 175  # Tempo medio di servizio per E[s] i job con codice verde [min/job]
 
 # ---------------------------------
@@ -32,13 +32,13 @@ CODE_ASSIGNMENT_PROBS = {
 }
 
 # Probabilità di autorisoluzione dei job in coda
-AUTORESOLUTION_RED_PROB = 4.56  # Codice rosso
-AUTORESOLUTION_YELLOW_PROB = 2.63  # Codice giallo
-AUTORESOLUTION_GREEN_PROB = 1.67  # Codice verde
+AUTORESOLUTION_RED_PROB = 0  # Codice rosso (4.56)
+AUTORESOLUTION_YELLOW_PROB = 0  # Codice giallo (2.63)
+AUTORESOLUTION_GREEN_PROB = 0  # Codice verde (1.67)
 
-FAKE_ALLARM_RED_PROB = 0.27
-FAKE_ALLARM_YELLOW_PROB = 0.15
-FAKE_ALLARM_GREEN_PROB = 0.09
+FAKE_ALLARM_RED_PROB = 0  # 0.27
+FAKE_ALLARM_YELLOW_PROB = 0  # 0.15
+FAKE_ALLARM_GREEN_PROB = 0  # 0.09
 
 # ---------------------------------
 # COSTANTI GENERALI DEL SISTEMA

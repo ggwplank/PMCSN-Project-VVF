@@ -1,32 +1,32 @@
 Simulation Statistics:
 ======================
-JOB COMPLETED: media = 0.8231134227284655, Confidence Interval = ±0.002307638774898642
+JOB COMPLETED: media = 0.8466155851483437, Confidence Interval = ±0.0021498401620987334
 
-mean_queue_hub_time: media = 6.484745263724948e-05, Confidence Interval = ±5.045429074849272e-05
-mean_N_queue_hub: media = 5.762156420609145e-07, Confidence Interval = ±4.4340890901659844e-07
-mean_service_hub_time: media = 1.5015609268994645, Confidence Interval = ±0.009640999097356027
-mean_response_hub_time: media = 1.5016257743521018, Confidence Interval = ±0.009642032579902862
-mean_N_centre_hub: media = 0.01296215064064634, Confidence Interval = ±0.00011595086026608486
-hub_rho: media = 0.006480787212502139, Confidence Interval = ±5.796877067401108e-05
+mean_queue_hub_time: media = 8.107614455505623e-05, Confidence Interval = ±6.404956850157216e-05
+mean_N_queue_hub: media = 7.086462216677363e-07, Confidence Interval = ±5.494920979163279e-07
+mean_service_hub_time: media = 1.5015799345612593, Confidence Interval = ±0.009640865995848649
+mean_response_hub_time: media = 1.5016610107058144, Confidence Interval = ±0.009642726837528409
+mean_N_centre_hub: media = 0.01295000268221841, Confidence Interval = ±0.0001161585617510612
+hub_rho: media = 0.006474647017998372, Confidence Interval = ±5.807133732187578e-05
 
-mean_queue_red_time: media = 16.64648827334669, Confidence Interval = ±0.5884860263809013
-mean_N_queue_red: media = 0.07275024751751771, Confidence Interval = ±0.0028208315154748154
-mean_service_red_time: media = 61.29333520472046, Confidence Interval = ±0.5689247901544048
-mean_response_red_time: media = 77.93982347806715, Confidence Interval = ±0.9929228339750769
-mean_N_centre_red: media = 0.3347858680095126, Confidence Interval = ±0.005532210077419194
-red_rho: media = 0.26203562049199486, Confidence Interval = ±0.003283812027064277
+mean_queue_red_time: media = 20.750428013023694, Confidence Interval = ±0.7969856709513136
+mean_N_queue_red: media = 0.09397730764239132, Confidence Interval = ±0.004099882712152655
+mean_service_red_time: media = 61.26878066542054, Confidence Interval = ±0.5526332347871052
+mean_response_red_time: media = 82.01920867844423, Confidence Interval = ±1.1755392695696125
+mean_N_centre_red: media = 0.36349676132047914, Confidence Interval = ±0.006891169899839898
+red_rho: media = 0.26951945367808783, Confidence Interval = ±0.0034256823941987667
 
-mean_queue_yellow_time: media = 40.69959150613235, Confidence Interval = ±1.5031293685948979
-mean_N_queue_yellow: media = 0.10145614984616086, Confidence Interval = ±0.004037709874384562
-mean_service_yellow_time: media = 92.10612270403698, Confidence Interval = ±1.1779989411660277
-mean_response_yellow_time: media = 132.80571421016933, Confidence Interval = ±2.0877354638612604
-mean_N_centre_yellow: media = 0.3269093301311941, Confidence Interval = ±0.006716914081993818
-yellow_rho: media = 0.22545318028503322, Confidence Interval = ±0.00391358733335012
+mean_queue_yellow_time: media = 55.07634165788665, Confidence Interval = ±2.347902092036491
+mean_N_queue_yellow: media = 0.14295524120249287, Confidence Interval = ±0.006627779842780143
+mean_service_yellow_time: media = 92.01649255025391, Confidence Interval = ±1.1351275309561437
+mean_response_yellow_time: media = 147.09283420814054, Confidence Interval = ±2.8328294739625375
+mean_N_centre_yellow: media = 0.37698335508679715, Confidence Interval = ±0.009184837591201539
+yellow_rho: media = 0.2340281138843043, Confidence Interval = ±0.004058567790996052
 
-mean_queue_green_time: media = 5.718117943639262, Confidence Interval = ±0.6307175298238086
-mean_N_queue_green: media = 0.00979770148071901, Confidence Interval = ±0.0011296731517139629
-mean_service_green_time: media = 177.26448695683203, Confidence Interval = ±2.7747214744179063
-mean_response_green_time: media = 182.98260490047127, Confidence Interval = ±2.9619553898376427
-mean_N_centre_green: media = 0.29257722858894986, Confidence Interval = ±0.006434872886521002
-green_rho: media = 0.28277952710823084, Confidence Interval = ±0.00596073583695158
+mean_queue_green_time: media = 6.650474291441712, Confidence Interval = ±0.7127172970410477
+mean_N_queue_green: media = 0.011832243973084447, Confidence Interval = ±0.0013608677224884844
+mean_service_green_time: media = 176.55916847365302, Confidence Interval = ±2.7249756375661884
+mean_response_green_time: media = 183.2096427650947, Confidence Interval = ±2.9079315079317785
+mean_N_centre_green: media = 0.2956327820277975, Confidence Interval = ±0.006775657816360104
+green_rho: media = 0.28380053805471306, Confidence Interval = ±0.006160274584388967
 
