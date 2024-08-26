@@ -56,13 +56,12 @@ SEED = 324516786  # Seed per la generazione casuale
 LOC = 0.95  # Livello di confidenza (Level of Confidence) per intervalli
 ALPHA = 0.05  # Livello di significatività (1 - LOC)
 
-N_RUN = 1024  # Numero di run da eseguire
 INTERVAL = 1440 * 7  # Intervallo di analisi per ogni run espresso in minuti
 
 B = 512  # Dimensione del batch in termini di job
-K = 96  # Numero di batch utilizzati
+K = 1024  # Numero di batch utilizzati
 
-REPLICATIONS = 96  # Numero di replicazioni (deve essere <= K)
+REPLICATIONS = 1024  # Numero di replicazioni (deve essere <= K)
 
 TYPE = 0  # 1: finita 0: infinita
 

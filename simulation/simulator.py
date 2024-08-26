@@ -36,9 +36,6 @@ squadra.type, modulo.type = SQUADRA, MODULO
 
 # Inizializzazione delle variabili di stato
 squad_completion = INF
-jobs_in_red = 0
-jobs_in_yellow = 0
-jobs_in_green = 0
 
 
 # Processa l'arrivo di un job all'hub
@@ -144,6 +141,13 @@ def assign_server(t, color, added_in_queue_time, current_time):
             # Controlliamo che non sia un fake alarm
             modulo.end_service_time = current_time + fake_alarm_check(color, service_time)
             modulo.job_color = color
+
+            # stats
+            queue_time = current_time - added_in_queue_time
+            stats.append_queue_time_list(color, queue_time)
+            stats.append_service_time_list(color, service_time)
+            stats.append_response_time_list(color, service_time + queue_time)
+
             print(
                 f"Modulo assegnato al job di colore {color} con start {modulo.start_service_time}, con tempo di completamento {modulo.end_service_time}")
         else:
@@ -194,22 +198,20 @@ def update_completion_time(t):
     t.green_completion_modulo = modulo.end_service_time if modulo.occupied else INF
 
 
-def infinite_simulation(batch_size):
-
-    t = Event(0, get_next_arrival_time(MEAN_ARRIVAL_TIME), INF, INF, INF, INF, INF)
+def infinite_simulation(batch_size, t):
+    start_time = t.current_time
 
     while stats.job_arrived < batch_size:
         if check_jobs(t):
             break
         execute(t)
 
-    stats.set_stop_time(t.current_time)
+    stats.set_stop_time(t.current_time - start_time)
+    return t
 
 
-def finite_simulation(stop_time):
+def finite_simulation(stop_time, t):
     stats.set_stop_time(stop_time)
-
-    t = Event(0, get_next_arrival_time(MEAN_ARRIVAL_TIME), INF, INF, INF, INF, INF)
 
     while t.current_time < stop_time:
         if check_jobs(t):
