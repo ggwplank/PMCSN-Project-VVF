@@ -23,10 +23,17 @@ mean_response_yellow_time: media = 149.71363182575715, Confidence Interval = ±1.
 mean_N_centre_yellow: media = 0.384141622037027, Confidence Interval = ±0.004061594474286607
 yellow_rho: media = 0.2323461024782792, Confidence Interval = ±0.0016674945607265323
 
-mean_queue_green_time: media = 8.470402739423532, Confidence Interval = ±0.38089400079487556
-mean_N_queue_green: media = 0.01393244333180359, Confidence Interval = ±0.0006679552942651094
-mean_service_green_time: media = 175.57055383278038, Confidence Interval = ±1.0740692238035163
-mean_response_green_time: media = 184.0409565722039, Confidence Interval = ±1.2117182517262053
-mean_N_centre_green: media = 0.2982008182861176, Confidence Interval = ±0.002897314306875825
-green_rho: media = 0.284268374954314, Confidence Interval = ±0.002579248787001373
+mean_queue_green_squadra_time: media = 7.822870682594951, Confidence Interval = ±0.4242195302340212
+mean_N_queue_green_squadra: media = 0.006910653854021067, Confidence Interval = ±0.00039404120557764874
+mean_service_green_squadra_time: media = 175.55385585393074, Confidence Interval = ±1.5162532321462674
+mean_response_green_squadra_time: media = 183.3767265365257, Confidence Interval = ±1.570490224658475
+mean_N_centre_green_squadra: media = 0.16035947122839816, Confidence Interval = ±0.0019035126783517836
+green_squadra_rho: media = 0.1534488173743771, Confidence Interval = ±0.001806512967497878
+
+mean_queue_green_modulo_time: media = 9.167365660403716, Confidence Interval = ±0.5094714203924322
+mean_N_queue_green_modulo: media = 0.007021789477782524, Confidence Interval = ±0.00041559682689036966
+mean_service_green_modulo_time: media = 176.03140147901973, Confidence Interval = ±1.5934640525570958
+mean_response_green_modulo_time: media = 185.19876713942347, Confidence Interval = ±1.7489841397433932
+mean_N_centre_green_modulo: media = 0.13784134705771947, Confidence Interval = ±0.0018627356854205158
+green_modulo_rho: media = 0.13081955757993693, Confidence Interval = ±0.0016706425673581103
 

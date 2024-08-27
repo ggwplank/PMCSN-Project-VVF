@@ -16,17 +16,24 @@ mean_response_red_time: media = 82.01920867844423, Confidence Interval = ±1.1755
 mean_N_centre_red: media = 0.36349676132047914, Confidence Interval = ±0.006891169899839898
 red_rho: media = 0.26951945367808783, Confidence Interval = ±0.0034256823941987667
 
-mean_queue_yellow_time: media = 55.07634165788665, Confidence Interval = ±2.347902092036491
-mean_N_queue_yellow: media = 0.14295524120249287, Confidence Interval = ±0.006627779842780143
-mean_service_yellow_time: media = 92.01649255025391, Confidence Interval = ±1.1351275309561437
-mean_response_yellow_time: media = 147.09283420814054, Confidence Interval = ±2.8328294739625375
-mean_N_centre_yellow: media = 0.37698335508679715, Confidence Interval = ±0.009184837591201539
-yellow_rho: media = 0.2340281138843043, Confidence Interval = ±0.004058567790996052
+mean_queue_yellow_time: media = 55.076359039106954, Confidence Interval = ±2.347902479438229
+mean_N_queue_yellow: media = 0.14295528710883043, Confidence Interval = ±0.006627781162010768
+mean_service_yellow_time: media = 92.01657165309129, Confidence Interval = ±1.1351285067791297
+mean_response_yellow_time: media = 147.09293069219825, Confidence Interval = ±2.832830470968484
+mean_N_centre_yellow: media = 0.37698360217758903, Confidence Interval = ±0.009184841767692938
+yellow_rho: media = 0.23402831506875857, Confidence Interval = ±0.0040585712799817665
 
-mean_queue_green_time: media = 6.650474291441712, Confidence Interval = ±0.7127172970410477
-mean_N_queue_green: media = 0.011832243973084447, Confidence Interval = ±0.0013608677224884844
-mean_service_green_time: media = 176.55916847365302, Confidence Interval = ±2.7249756375661884
-mean_response_green_time: media = 183.2096427650947, Confidence Interval = ±2.9079315079317785
-mean_N_centre_green: media = 0.2956327820277975, Confidence Interval = ±0.006775657816360104
-green_rho: media = 0.28380053805471306, Confidence Interval = ±0.006160274584388967
+mean_queue_green_squadra_time: media = 6.320968161355482, Confidence Interval = ±0.8899057243523925
+mean_N_queue_green_squadra: media = 0.0058972392752333425, Confidence Interval = ±0.0008657235672665744
+mean_service_green_squadra_time: media = 180.50906103707186, Confidence Interval = ±4.027623511786477
+mean_response_green_squadra_time: media = 186.83002919842735, Confidence Interval = ±4.132783703070042
+mean_N_centre_green_squadra: media = 0.16440293600137038, Confidence Interval = ±0.0047179171375714354
+green_squadra_rho: media = 0.158505696726137, Confidence Interval = ±0.004490866965632382
+
+mean_queue_green_modulo_time: media = 6.870255203330275, Confidence Interval = ±0.8939433529864234
+mean_N_queue_green_modulo: media = 0.005935007230493654, Confidence Interval = ±0.0008028044514818798
+mean_service_green_modulo_time: media = 175.5225569880049, Confidence Interval = ±4.2272843102088515
+mean_response_green_modulo_time: media = 182.39281219133517, Confidence Interval = ±4.422451931721359
+mean_N_centre_green_modulo: media = 0.1312298485590697, Confidence Interval = ±0.004017188212474601
+green_modulo_rho: media = 0.12529484132857605, Confidence Interval = ±0.003656405140546666
 

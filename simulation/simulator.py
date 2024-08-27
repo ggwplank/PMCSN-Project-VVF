@@ -110,12 +110,14 @@ def process_job_arrival_at_colors(t, color):
 def assign_server(t, color, added_in_queue_time, current_time):
     # funzione per assegnare un server a un job, con gestione della prelazione
     if not squadra.occupied:
+        squadra.job_color = color
+        if color == 'green':
+            color = 'green_squadra'
         squadra.occupied = True
         squadra.start_service_time = added_in_queue_time
         service_time = get_service_time(color)
         # Controlliamo che non sia un fake alarm
         squadra.end_service_time = current_time + fake_alarm_check(color, service_time)
-        squadra.job_color = color
 
         # stats
         queue_time = current_time - added_in_queue_time
@@ -135,12 +137,14 @@ def assign_server(t, color, added_in_queue_time, current_time):
             preempt_current_job(squadra, t)
             assign_server(t, color, added_in_queue_time, current_time)
         elif color == 'green' and not modulo.occupied:
+            modulo.job_color = color
+            color = 'green_modulo'
+
             modulo.occupied = True
             modulo.start_service_time = added_in_queue_time
             service_time = get_service_time(color)
             # Controlliamo che non sia un fake alarm
             modulo.end_service_time = current_time + fake_alarm_check(color, service_time)
-            modulo.job_color = color
 
             # stats
             queue_time = current_time - added_in_queue_time

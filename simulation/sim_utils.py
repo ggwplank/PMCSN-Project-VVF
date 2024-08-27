@@ -11,14 +11,16 @@ streams = {
     'hub': 1,
     'red': 2,
     'yellow': 3,
-    'green': 4
+    'green_squadra': 4,
+    'green_modulo': 4
 }
 
 service_rates = {
     'hub': MEAN_HUB_SERVICE_TIME,
     'red': MEAN_RED_SERVICE_TIME,
     'yellow': MEAN_YELLOW_SERVICE_TIME,
-    'green': MEAN_GREEN_SERVICE_TIME
+    'green_squadra': MEAN_GREEN_SERVICE_TIME,
+    'green_modulo': MEAN_GREEN_SERVICE_TIME
 }
 
 
@@ -41,7 +43,7 @@ def fake_alarm_check(queue_color, service_time, probability=None):
         probability = FAKE_ALLARM_RED_PROB
     elif queue_color == 'yellow':
         probability = FAKE_ALLARM_YELLOW_PROB
-    elif queue_color == 'green':
+    elif queue_color == 'green_squadra' or queue_color == 'green_modulo':
         probability = FAKE_ALLARM_GREEN_PROB
 
     rngs.selectStream(7)
