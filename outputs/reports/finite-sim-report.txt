@@ -1,39 +1,56 @@
-Simulation Statistics:
-======================
-JOB COMPLETED: media = 0.8466155851483437, Confidence Interval = ±0.0021498401620987334
+Simulation Statistics
+==================================================
 
-mean_queue_hub_time: media = 8.107614455505623e-05, Confidence Interval = ±6.404956850157216e-05
-mean_N_queue_hub: media = 7.086462216677363e-07, Confidence Interval = ±5.494920979163279e-07
-mean_service_hub_time: media = 1.5015799345612593, Confidence Interval = ±0.009640865995848649
-mean_response_hub_time: media = 1.5016610107058144, Confidence Interval = ±0.009642726837528409
-mean_N_centre_hub: media = 0.01295000268221841, Confidence Interval = ±0.0001161585617510612
-hub_rho: media = 0.006474647017998372, Confidence Interval = ±5.807133732187578e-05
+Mean Completed Jobs  : 0.8466155851483437       +/- 0.0021498401620987334
 
-mean_queue_red_time: media = 20.750428013023694, Confidence Interval = ±0.7969856709513136
-mean_N_queue_red: media = 0.09397730764239132, Confidence Interval = ±0.004099882712152655
-mean_service_red_time: media = 61.26878066542054, Confidence Interval = ±0.5526332347871052
-mean_response_red_time: media = 82.01920867844423, Confidence Interval = ±1.1755392695696125
-mean_N_centre_red: media = 0.36349676132047914, Confidence Interval = ±0.006891169899839898
-red_rho: media = 0.26951945367808783, Confidence Interval = ±0.0034256823941987667
+--------------------------------------------------
+Hub Statistics
+--------------------------------------------------
+Mean Queue Time      : 8.107614455505623e-05    +/- 6.404956850157216e-05
+Mean N Queue         : 7.086462216677363e-07    +/- 5.494920979163279e-07
+Mean Service Time    : 1.5015799345612593       +/- 0.009640865995848649
+Mean Response Time   : 1.5016610107058144       +/- 0.009642726837528409
+Mean N Centre        : 0.01295000268221841      +/- 0.0001161585617510612
+Mean Rho             : 0.006474647017998372     +/- 5.807133732187578e-05
 
-mean_queue_yellow_time: media = 55.076359039106954, Confidence Interval = ±2.347902479438229
-mean_N_queue_yellow: media = 0.14295528710883043, Confidence Interval = ±0.006627781162010768
-mean_service_yellow_time: media = 98.16162194685226, Confidence Interval = ±1.4061179423536456
-mean_response_yellow_time: media = 149.58030923775488, Confidence Interval = ±3.4222345597139574
-mean_N_centre_yellow: media = 0.46668788704791836, Confidence Interval = ±0.012129222066863066
-yellow_rho: media = 0.3237325999390879, Confidence Interval = ±0.0067957788782877495
+--------------------------------------------------
+Red Statistics
+--------------------------------------------------
+Mean Queue Time      : 20.750428013023694       +/- 0.7969856709513136
+Mean N Queue         : 0.09397730764239132      +/- 0.004099882712152655
+Mean Service Time    : 61.26878066542054        +/- 0.5526332347871052
+Mean Response Time   : 82.01920867844423        +/- 1.1755392695696125
+Mean N Centre        : 0.36349676132047914      +/- 0.006891169899839898
+Mean Rho             : 0.26951945367808783      +/- 0.0034256823941987667
 
-mean_queue_green_squadra_time: media = 6.320968161355482, Confidence Interval = ±0.8899057243523925
-mean_N_queue_green_squadra: media = 0.0058972392752333425, Confidence Interval = ±0.0008657235672665744
-mean_service_green_squadra_time: media = 145.41285376031493, Confidence Interval = ±2.8696670847298793
-mean_response_green_squadra_time: media = 178.65174276438924, Confidence Interval = ±6.283452947691203
-mean_N_centre_green_squadra: media = 0.2062160031782117, Confidence Interval = ±0.006002247198571079
-green_squadra_rho: media = 0.20031876390297837, Confidence Interval = ±0.005726946344375256
+--------------------------------------------------
+Yellow Statistics
+--------------------------------------------------
+Mean Queue Time      : 55.076359039106954       +/- 2.347902479438229
+Mean N Queue         : 0.14295528710883043      +/- 0.006627781162010768
+Mean Service Time    : 85.1893413515626         +/- 1.1647816066471766
+Mean Response Time   : 149.58030923775488       +/- 3.4222345597139574
+Mean N Centre        : 0.35954035092430836      +/- 0.009017809066580142
+Mean Rho             : 0.21658506381547793      +/- 0.003960647488109241
 
-mean_queue_green_modulo_time: media = 6.870255203330275, Confidence Interval = ±0.8939433529864234
-mean_N_queue_green_modulo: media = 0.005935007230493654, Confidence Interval = ±0.0008028044514818798
-mean_service_green_modulo_time: media = 175.5225569880049, Confidence Interval = ±4.2272843102088515
-mean_response_green_modulo_time: media = 182.39281219133517, Confidence Interval = ±4.422451931721359
-mean_N_centre_green_modulo: media = 0.1312298485590697, Confidence Interval = ±0.004017188212474601
-green_modulo_rho: media = 0.12529484132857605, Confidence Interval = ±0.003656405140546666
+--------------------------------------------------
+Green_squadra Statistics
+--------------------------------------------------
+Mean Queue Time      : 6.320968161355482        +/- 0.8899057243523925
+Mean N Queue         : 0.0058972392752333425    +/- 0.0008657235672665744
+Mean Service Time    : 138.77191289038905       +/- 3.429319840146095
+Mean Response Time   : 178.65174276438924       +/- 6.283452947691203
+Mean N Centre        : 0.12822498494001766      +/- 0.003961488730883463
+Mean Rho             : 0.12232774566478433      +/- 0.003720122037826009
 
+--------------------------------------------------
+Green_modulo Statistics
+--------------------------------------------------
+Mean Queue Time      : 6.870255203330275        +/- 0.8939433529864234
+Mean N Queue         : 0.005935007230493654     +/- 0.0008028044514818798
+Mean Service Time    : 175.5225569880049        +/- 4.2272843102088515
+Mean Response Time   : 182.39281219133517       +/- 4.422451931721359
+Mean N Centre        : 0.1312298485590697       +/- 0.004017188212474601
+Mean Rho             : 0.12529484132857605      +/- 0.003656405140546666
+
+--------------------------------------------------

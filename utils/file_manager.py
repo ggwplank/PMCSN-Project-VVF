@@ -114,39 +114,44 @@ def extract_statistics_from_csv(filename, stats):
 
 def save_statistics_to_file(filename, stats):
     with open(filename, "w") as file:
-        file.write("Simulation Statistics:\n")
-        file.write("======================\n")
+        file.write("Simulation Statistics\n")
+        file.write("=" * 50 + "\n\n")
 
+        # Sezione JOB COMPLETED
         file.write(
-            f"JOB COMPLETED: media = {stats.data['job_data']['mean_job_completed_percentage']}, "
-            f"Confidence Interval = ±{stats.data['job_data']['job_completed_percentage_confidence_interval']}\n\n"
+            f"{'Mean Completed Jobs':<20} : {stats.data['job_data']['mean_job_completed_percentage']:<25}"
+            f"+/- {stats.data['job_data']['job_completed_percentage_confidence_interval']}\n\n"
         )
 
+        # Sezioni per ogni colore
         for color in ['hub', 'red', 'yellow', 'green_squadra', 'green_modulo']:
-            # Stampa delle statistiche per ogni colore con intervalli di confidenza
+            file.write("-" * 50 + "\n")
+            file.write(f"{color.capitalize()} Statistics\n")
+            file.write("-" * 50 + "\n")
+
             file.write(
-                f"mean_queue_{color}_time: media = {stats.data[color]['mean_queue_time']}, "
-                f"Confidence Interval = ±{stats.data[color]['mean_queue_time_confidence_interval']}\n"
+                f"{'Mean Queue Time':<20} : {stats.data[color]['mean_queue_time']:<25}"
+                f"+/- {stats.data[color]['mean_queue_time_confidence_interval']}\n"
             )
             file.write(
-                f"mean_N_queue_{color}: media = {stats.data[color]['mean_N_queue']}, "
-                f"Confidence Interval = ±{stats.data[color]['mean_N_queue_confidence_interval']}\n"
+                f"{'Mean N Queue':<20} : {stats.data[color]['mean_N_queue']:<25}"
+                f"+/- {stats.data[color]['mean_N_queue_confidence_interval']}\n"
             )
             file.write(
-                f"mean_service_{color}_time: media = {stats.data[color]['mean_service_time']}, "
-                f"Confidence Interval = ±{stats.data[color]['mean_service_time_confidence_interval']}\n"
+                f"{'Mean Service Time':<20} : {stats.data[color]['mean_service_time']:<25}"
+                f"+/- {stats.data[color]['mean_service_time_confidence_interval']}\n"
             )
             file.write(
-                f"mean_response_{color}_time: media = {stats.data[color]['mean_response_time']}, "
-                f"Confidence Interval = ±{stats.data[color]['mean_response_time_confidence_interval']}\n"
+                f"{'Mean Response Time':<20} : {stats.data[color]['mean_response_time']:<25}"
+                f"+/- {stats.data[color]['mean_response_time_confidence_interval']}\n"
             )
             file.write(
-                f"mean_N_centre_{color}: media = {stats.data[color]['mean_N_centre']}, "
-                f"Confidence Interval = ±{stats.data[color]['mean_N_centre_confidence_interval']}\n"
+                f"{'Mean N Centre':<20} : {stats.data[color]['mean_N_centre']:<25}"
+                f"+/- {stats.data[color]['mean_N_centre_confidence_interval']}\n"
             )
             file.write(
-                f"{color}_rho: media = {stats.data[color]['mean_rho']}, "
-                f"Confidence Interval = ±{stats.data[color]['rho_confidence_interval']}\n"
+                f"{'Mean Rho':<20} : {stats.data[color]['mean_rho']:<25}"
+                f"+/- {stats.data[color]['rho_confidence_interval']}\n\n"
             )
 
-            file.write("\n")
+        file.write("-" * 50 + "\n")
