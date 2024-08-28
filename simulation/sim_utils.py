@@ -66,8 +66,14 @@ def assign_color(probabilities):
         return "green"
 
 
-def preempt_current_job(server, t):
+def preempt_current_job(server, t, stats, color, start_service_time, queue_time):
     print(f"Preempting current job {server.job_color.upper()} at time {t.current_time}")
+    if color == 'green':
+        color = 'green_squadra'
+    stats.data[color]['service_time_list'].pop(0)
+    stats.data[color]['service_time_list'].append(t.current_time - start_service_time)
+    stats.data[color]['response_time_list'].pop(0)
+    #stats.data[color]['response_time_list'].append((t.current_time-start_service_time)+ queue_time)
     release_server(server)
 
 

@@ -114,7 +114,7 @@ def assign_server(t, color, added_in_queue_time, current_time):
         if color == 'green':
             color = 'green_squadra'
         squadra.occupied = True
-        squadra.start_service_time = added_in_queue_time
+        squadra.start_service_time = current_time
         service_time = get_service_time(color)
         # Controlliamo che non sia un fake alarm
         squadra.end_service_time = current_time + fake_alarm_check(color, service_time)
@@ -131,10 +131,10 @@ def assign_server(t, color, added_in_queue_time, current_time):
     else:
         # gestione della prelazione
         if color == 'red' and squadra.job_color in ['yellow', 'green']:
-            preempt_current_job(squadra, t)
+            preempt_current_job(squadra, t, stats, squadra.job_color, squadra.start_service_time, current_time - added_in_queue_time)
             assign_server(t, color, added_in_queue_time, current_time)
         elif color == 'yellow' and squadra.job_color == 'green':
-            preempt_current_job(squadra, t)
+            preempt_current_job(squadra, t, stats, squadra.job_color,squadra.start_service_time, current_time - added_in_queue_time)
             assign_server(t, color, added_in_queue_time, current_time)
         elif color == 'green' and not modulo.occupied:
             modulo.job_color = color
