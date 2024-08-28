@@ -3,9 +3,9 @@ from simulation.server import release_server
 from simulation.sim_utils import get_next_arrival_time
 from simulation.simulator import queue_manager, stats, servers_hub, squadra, modulo, finite_simulation, \
     infinite_simulation
-from utils.constants import INF, TYPE, INTERVAL, B, INFINITE_SIM_STATISTICS_FILENAME, \
+from utils.constants import INF, SIMULATION_TYPE, INTERVAL, B, INFINITE_SIM_STATISTICS_FILENAME, \
     INFINITE_SIM_REPORT_FILENAME, FINITE_SIM_REPORT_FILENAME, FINITE_SIM_STATISTICS_FILENAME, REPLICATIONS, K, \
-    MEAN_ARRIVAL_TIME
+    MEAN_ARRIVAL_TIME, INFINITE, FINITE
 from utils.file_manager import initialize_temp_file, write_statistics_to_file, extract_statistics_from_csv, \
     save_statistics_to_file
 from utils.printer import print_separator
@@ -26,10 +26,10 @@ def evaluate_model():
 
 last_event = Event(0, get_next_arrival_time(MEAN_ARRIVAL_TIME), INF, INF, INF, INF, INF)
 
-if TYPE == 0:
+if SIMULATION_TYPE == INFINITE:
     n_run = REPLICATIONS
     stats_filename, report_filename = INFINITE_SIM_STATISTICS_FILENAME, INFINITE_SIM_REPORT_FILENAME
-elif TYPE == 1:
+elif SIMULATION_TYPE == FINITE:
     n_run = K
     stats_filename, report_filename = FINITE_SIM_STATISTICS_FILENAME, FINITE_SIM_REPORT_FILENAME
 else:
@@ -47,12 +47,10 @@ for i in range(n_run):
         release_server(server)
     release_server(squadra)
     release_server(modulo)
-    if TYPE == 1:
+    if SIMULATION_TYPE == FINITE:
         last_event = Event(0, get_next_arrival_time(MEAN_ARRIVAL_TIME), INF, INF, INF, INF, INF)
-        # Esegui la simulazione a orizzonte finito
         finite_simulation(INTERVAL, last_event)
-    elif TYPE == 0:
-        # Esegui la simulazione a orizzonte infinito
+    elif SIMULATION_TYPE == INFINITE:
         last_event = infinite_simulation(B, last_event)
     else:
         print("TYPE not valid!!!")

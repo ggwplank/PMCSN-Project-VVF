@@ -63,12 +63,13 @@ K = 1024  # Numero di batch utilizzati
 
 REPLICATIONS = 1024  # Numero di replicazioni (deve essere <= K)
 
-TYPE = 0  # 1: finita 0: infinita
+INFINITE = 0
+FINITE = 1
+SIMULATION_TYPE = INFINITE
 
 # ---------------------------------
 # FILES E PATHS
 # ---------------------------------
-
 
 REPORTS_OUTPUTS_DIR = os.path.join("outputs", "reports")
 FINITE_SIM_STATISTICS_FILENAME = os.path.join(REPORTS_OUTPUTS_DIR, "finite-statistics.csv")
