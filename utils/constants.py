@@ -47,7 +47,17 @@ FAKE_ALLARM_GREEN_PROB = 0  # 0.09
 SQUADRA = "squadra"  # Nome della squadra (label usata nel sistema)
 MODULO = "modulo"  # Nome del modulo (label usata nel sistema)
 
-SEED = 324516786  # Seed per la generazione casuale
+# Seeds per la generazione casuale
+seeds = {
+    "1": 324516786,
+    "2": 140620017,
+    "3": 170920015,
+    "4": 170520018,
+    "5": 240619974
+}
+SEED = seeds["1"]
+SEED_INDEX = list(seeds.keys())[list(seeds.values()).index(SEED)]
+
 
 # ---------------------------------
 # STATISTICHE E ANALISI
@@ -65,16 +75,19 @@ REPLICATIONS = 1024  # Numero di replicazioni (deve essere <= K)
 
 INFINITE = 0
 FINITE = 1
-SIMULATION_TYPE = INFINITE
+SIMULATION_TYPE = FINITE
 
 # ---------------------------------
 # FILES E PATHS
 # ---------------------------------
 
 REPORTS_OUTPUTS_DIR = os.path.join("outputs", "reports")
-FINITE_SIM_STATISTICS_FILENAME = os.path.join(REPORTS_OUTPUTS_DIR, "finite-statistics.csv")
-INFINITE_SIM_STATISTICS_FILENAME = os.path.join(REPORTS_OUTPUTS_DIR, "infinite-statistics.csv")
-FINITE_SIM_REPORT_FILENAME = os.path.join(REPORTS_OUTPUTS_DIR, "finite-sim-report.txt")
-INFINITE_SIM_REPORT_FILENAME = os.path.join(REPORTS_OUTPUTS_DIR, "infinite-sim-report.txt")
+STATISTICS_OUTPUTS_DIR = os.path.join("outputs", "statistics")
+
+FINITE_SIM_REPORT_FILENAME = os.path.join(REPORTS_OUTPUTS_DIR, "finite-sim-report-" + SEED_INDEX + ".txt")
+INFINITE_SIM_REPORT_FILENAME = os.path.join(REPORTS_OUTPUTS_DIR, "infinite-sim-report-" + SEED_INDEX + ".txt")
+
+FINITE_SIM_STATISTICS_FILENAME = os.path.join(STATISTICS_OUTPUTS_DIR, "finite-statistics-" + SEED_INDEX + ".csv")
+INFINITE_SIM_STATISTICS_FILENAME = os.path.join(STATISTICS_OUTPUTS_DIR, "infinite-statistics-" + SEED_INDEX + ".csv")
 
 GRAPHS_OUTPUTS_DIR = os.path.join("../outputs", "graphs")

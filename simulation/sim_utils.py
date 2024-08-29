@@ -33,7 +33,49 @@ def get_next_arrival_time(mean_arrival_time):
 # Simulazione del tempo di servizio
 def get_service_time(stream):
     rngs.selectStream(streams[stream])
-    return rvms.idfExponential(service_rates[stream], rngs.random())
+    service_time = rvms.idfExponential(service_rates[stream], rngs.random())
+
+    """
+    if service_time < 25.0 and stream == "red":
+        print("#######################################")
+        print("#######################################")
+        print("##############   R E D   ##############")
+        print("#######################################")
+        print("#######################################")
+    elif service_time < 25.0 and stream == "yellow":
+        print("#######################################")
+        print("#######################################")
+        print("##############   Y E L   ##############")
+        print("#######################################")
+        print("#######################################")
+    elif service_time < 25.0 and stream == "green_squadra":
+        print("#######################################")
+        print("#######################################")
+        print("##############   G R S   ##############")
+        print("#######################################")
+        print("#######################################")
+    elif service_time < 25.0 and stream == "green_modulo":
+        print("#######################################")
+        print("#######################################")
+        print("##############   G R M   ##############")
+        print("#######################################")
+        print("#######################################")
+    """
+
+
+    # esponenziale troncata, che tiene sempre conto del tempo necessario all'arrivo sul luogo
+    if stream != "hub":
+        if service_time < 25.0:
+            service_time = service_time
+
+    """
+    while True:
+        service_time = rvms.idfExponential(service_rates[stream], rngs.random())
+        if service_time >= 25.0:
+            return service_time
+    """
+
+    return service_time
 
 
 # Simulazione del fake alarm, tempo di servizio = 0, se è fake imposta a 0 il tempo di servizio, altrimenti non viene
