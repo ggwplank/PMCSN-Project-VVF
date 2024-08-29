@@ -31,11 +31,6 @@ CODE_ASSIGNMENT_PROBS = {
     "green": 100
 }
 
-# Probabilità di autorisoluzione dei job in coda
-AUTORESOLUTION_RED_PROB = 0  # Codice rosso (4.56)
-AUTORESOLUTION_YELLOW_PROB = 0  # Codice giallo (2.63)
-AUTORESOLUTION_GREEN_PROB = 0  # Codice verde (1.67)
-
 FAKE_ALLARM_RED_PROB = 0  # 0.27
 FAKE_ALLARM_YELLOW_PROB = 0  # 0.15
 FAKE_ALLARM_GREEN_PROB = 0  # 0.09

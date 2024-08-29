@@ -36,33 +36,6 @@ class QueueManager:
         if self.validate_color(color):
             return len(self.queues[color])
 
-    def discard_job_from_queue(self, queue_color, probability):
-        deque = self.queues[queue_color]
-        jobs_to_remove = []  # lista temporanea per i job da rimuovere
-
-        rngs.selectStream(6)
-        for job in deque:
-            p = rvms.idfUniform(0, 100, rngs.random())
-            if p < probability:
-                print(f"{job} from {queue_color} queue AUTORESOLVED!")
-                jobs_to_remove.append(job)
-
-        # rimozione dei job dalla coda specificata
-        for job in jobs_to_remove:
-            deque.remove(job)
-
-        # aggiornamento della coda specificata
-        self.queues[queue_color] = deque
-
-    def discard_job_from_red_queue(self):
-        self.discard_job_from_queue("red", AUTORESOLUTION_RED_PROB)
-
-    def discard_job_from_yellow_queue(self):
-        self.discard_job_from_queue("yellow", AUTORESOLUTION_YELLOW_PROB)
-
-    def discard_job_from_green_queue(self):
-        self.discard_job_from_queue("green", AUTORESOLUTION_GREEN_PROB)
-
     def reset_queues(self):
         for key, queue in self.queues.items():
             queue.clear()

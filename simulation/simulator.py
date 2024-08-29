@@ -240,10 +240,6 @@ def execute(t):
                           t.green_completion_squadra, t.green_completion_modulo)
     t.current_time = next_event_time
 
-    queue_manager.discard_job_from_red_queue()
-    queue_manager.discard_job_from_yellow_queue()
-    queue_manager.discard_job_from_green_queue()
-
     if t.current_time == t.next_arrival:
         stats.job_arrived += 1
         process_job_arrival_at_hub(t, servers_hub)
