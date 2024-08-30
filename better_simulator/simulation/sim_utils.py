@@ -85,9 +85,9 @@ def fake_alarm_check(queue_color, service_time, probability=None):
         probability = FAKE_ALLARM_RED_PROB
     elif queue_color == 'orange':
         probability = FAKE_ALLARM_ORANGE_PROB
-    elif queue_color == 'yellow':
+    elif queue_color == 'yellow_squadra' or queue_color == 'yellow_modulo':
         probability = FAKE_ALLARM_YELLOW_PROB
-    elif queue_color == 'green_squadra' or queue_color == 'green_modulo':
+    elif queue_color == 'green_modulo':
         probability = FAKE_ALLARM_GREEN_PROB
 
     rngs.selectStream(7)
@@ -114,7 +114,7 @@ def assign_color(probabilities):
 
 def preempt_current_job(server, t, stats, color, start_service_time):
     print(f"Preempting current job {server.job_color.upper()} at time {t.current_time}")
-    if server.type == "squadra" and color in ['yellow', 'green']:
+    if server.type == "squadra" and color == 'yellow':
         color += "_squadra"
     elif server.type == "modulo" and color in ['yellow', 'green']:
         color += "_modulo"
@@ -128,7 +128,7 @@ def preempt_current_job(server, t, stats, color, start_service_time):
 def check_jobs(t):
     if all(x == INF for x in
            [t.next_arrival, t.hub_completion, t.red_completion, t.orange_completion,
-            t.yellow_completion_squadra, t.yellow_completion_modulo, t.green_completion_squadra,
+            t.yellow_completion_squadra, t.yellow_completion_modulo,
             t.green_completion_modulo]):
         print("Simulation complete: no more events.")
         return True

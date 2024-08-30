@@ -134,7 +134,7 @@ def assign_server(t, color, added_in_queue_time, current_time):
         elif color == 'orange' and squadra.job_color == 'yellow':
             preempt_current_job(squadra, t, stats, squadra.job_color, squadra.start_service_time)
             assign_server(t, color, added_in_queue_time, current_time)
-        elif color == 'yellow' and modulo.job_color == 'green':
+        elif color == 'yellow' and modulo.job_color == 'green' and modulo.occupied:
             preempt_current_job(modulo, t, stats, modulo.job_color, modulo.start_service_time)
             assign_server(t, color, added_in_queue_time, current_time)
         elif color in ['yellow', 'green'] and not modulo.occupied:
@@ -186,7 +186,6 @@ def process_job_completion_at_colors(t, server):
         t.red_completion = squadra.end_service_time if squadra.job_color == 'red' else INF
         t.orange_completion = squadra.end_service_time if squadra.job_color == 'orange' else INF
         t.yellow_completion_squadra = squadra.end_service_time if squadra.job_color == 'yellow' else INF
-        t.green_completion_squadra = squadra.end_service_time if squadra.job_color == 'green' else INF
     elif server == modulo:
         t.green_completion_modulo = modulo.end_service_time if modulo.job_color == 'green' else INF
         t.yellow_completion_modulo = modulo.end_service_time if modulo.job_color == 'yellow' else INF
@@ -201,7 +200,6 @@ def update_completion_time(t):
         t.red_completion = squadra.end_service_time if squadra.job_color == 'red' else INF
         t.orange_completion = squadra.end_service_time if squadra.job_color == 'orange' else INF
         t.yellow_completion_squadra = squadra.end_service_time if squadra.job_color == 'yellow' else INF
-        t.green_completion_squadra = squadra.end_service_time if squadra.job_color == 'green' else INF
     else:
         t.red_completion = t.orange_completion = t.yellow_completion_squadra = t.green_completion_squadra = INF
 
@@ -243,15 +241,15 @@ def execute(t):
         'orange_completion': t.orange_completion,
         'yellow_completion_squadra': t.yellow_completion_squadra,
         'yellow_completion_modulo': t.yellow_completion_modulo,
-        'green_completion_squadra': t.green_completion_squadra,
         'green_completion_modulo': t.green_completion_modulo,
         'squad_completion': squad_completion
     }
 
     print_simulation_status(t, events)
 
-    next_event_time = min(t.next_arrival, t.hub_completion, t.red_completion, t.orange_completion, t.yellow_completion_squadra, t.yellow_completion_modulo,
-                          t.green_completion_squadra, t.green_completion_modulo)
+    next_event_time = min(t.next_arrival, t.hub_completion, t.red_completion, t.orange_completion,
+                          t.yellow_completion_squadra, t.yellow_completion_modulo,
+                          t.green_completion_modulo)
     t.current_time = next_event_time
 
     if t.current_time == t.next_arrival:
@@ -271,9 +269,6 @@ def execute(t):
     elif t.current_time == t.yellow_completion_modulo and modulo.job_color == 'yellow':
         stats.job_completed += 1
         process_job_completion_at_colors(t, modulo)
-    elif t.current_time == t.green_completion_squadra and squadra.job_color == 'green':
-        stats.job_completed += 1
-        process_job_completion_at_colors(t, squadra)
     elif t.current_time == t.green_completion_modulo and modulo.job_color == 'green':
         stats.job_completed += 1
         process_job_completion_at_colors(t, modulo)

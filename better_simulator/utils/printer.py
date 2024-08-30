@@ -26,12 +26,12 @@ def print_simulation_status(t, events):
     print_separator()
     print(f"Current Time: {t.current_time:.6f}")
     print("Next Events:")
-    print(f"  Arrival:         {events['arrival'] if events['arrival'] != INF else 'inf'}")
-    print(f"  Hub Completion:  {events['hub_completion'] if events['hub_completion'] != INF else 'inf'}")
-    print(f"  Red Completion:  {events['red_completion'] if events['red_completion'] != INF else 'inf'}")
-    print(f"  Yellow Completion: {events['yellow_completion'] if events['yellow_completion'] != INF else 'inf'}")
-    print(
-        f"  Green Squad Completion:  {events['green_completion_squadra'] if events['green_completion_squadra'] != INF else 'inf'}")
+    print(f"  Arrival:            {events['arrival'] if events['arrival'] != INF else 'inf'}")
+    print(f"  Hub Completion:     {events['hub_completion'] if events['hub_completion'] != INF else 'inf'}")
+    print(f"  Red Completion:     {events['red_completion'] if events['red_completion'] != INF else 'inf'}")
+    print(f"  Orange Completion:  {events['orange_completion'] if events['orange_completion'] != INF else 'inf'}")
+    print(f"  Yellow Squad Completion: {events['yellow_completion_squadra'] if events['yellow_completion_squadra'] != INF else 'inf'}")
+    print(f"  Yellow Modulo Completion: {events['yellow_completion_modulo'] if events['yellow_completion_modulo'] != INF else 'inf'}")
     print(
         f"  Green Modulo Completion:  {events['green_completion_modulo'] if events['green_completion_modulo'] != INF else 'inf'}")
     print(f"  Squad Completion:   {events['squad_completion'] if events['squad_completion'] != INF else 'inf'}")

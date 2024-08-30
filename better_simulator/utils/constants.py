@@ -17,7 +17,7 @@ OPERATIVE_SERVERS = 2  # Numero di serventi nel centro operativo (altro tipo)
 MEAN_ARRIVAL_TIME = 116.23  # Tempo medio di arrivo dei job [min/job]
 MEAN_HUB_SERVICE_TIME = 1.5  # Tempo medio di servizio E[s] in un servente dell'hub [min/job]
 MEAN_RED_SERVICE_TIME = 61.033333 - 25  # Tempo medio di servizio E[s] per i job con codice rosso [min/job]
-MEAN_ORANGE_SERVICE_TIME = 45  # Tempo medio di servizio E[s] per i job con codice arancione [min/job]
+MEAN_ORANGE_SERVICE_TIME = 45 - 25 # Tempo medio di servizio E[s] per i job con codice arancione [min/job]
 MEAN_YELLOW_SERVICE_TIME = 90.47777778 - 25  # Tempo medio di servizio E[s] per i job con codice giallo [min/job]
 MEAN_GREEN_SERVICE_TIME = 175 - 25  # Tempo medio di servizio per E[s] i job con codice verde [min/job]
 
@@ -72,7 +72,7 @@ REPLICATIONS = 1024  # Numero di replicazioni (deve essere <= K)
 
 INFINITE = 0
 FINITE = 1
-SIMULATION_TYPE = INFINITE
+SIMULATION_TYPE = FINITE
 
 # ---------------------------------
 # FILES E PATHS
