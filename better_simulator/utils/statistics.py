@@ -1,8 +1,7 @@
 import math
-import scipy.stats as stats
 
-from libs import rvms
-from utils.constants import HUB_SERVERS, ALPHA
+from simulator.libs import rvms
+from simulator.utils.constants import HUB_SERVERS, ALPHA
 
 
 class Statistics:

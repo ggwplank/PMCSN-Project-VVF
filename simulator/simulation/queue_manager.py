@@ -1,8 +1,6 @@
 import random
 from collections import deque
 
-from libs import rvms, rngs
-from utils.constants import AUTORESOLUTION_GREEN_PROB, AUTORESOLUTION_YELLOW_PROB, AUTORESOLUTION_RED_PROB
 
 
 class QueueManager:

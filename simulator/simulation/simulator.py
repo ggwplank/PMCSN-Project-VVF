@@ -1,17 +1,13 @@
-import os
+from simulator.libs import rngs
 
-from libs import rngs
-
-from simulation.queue_manager import QueueManager
-from simulation.sim_utils import get_next_arrival_time, get_service_time, assign_color, preempt_current_job, \
+from simulator.simulation.queue_manager import QueueManager
+from simulator.simulation.sim_utils import get_next_arrival_time, get_service_time, assign_color, preempt_current_job, \
     fake_alarm_check, check_jobs
-from simulation.event import Event
-from simulation.server import Server, release_server
+from simulator.simulation.server import Server, release_server
 
-from utils.constants import *
-from utils.file_manager import *
-from utils.printer import *
-from utils.statistics import Statistics
+from simulator.utils.constants import *
+from simulator.utils.printer import *
+from simulator.utils.statistics import Statistics
 
 rngs.plantSeeds(SEED)
 

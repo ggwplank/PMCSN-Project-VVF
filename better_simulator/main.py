@@ -1,14 +1,14 @@
-from simulation.event import Event
-from simulation.server import release_server
-from simulation.sim_utils import get_next_arrival_time
-from simulation.simulator import queue_manager, stats, servers_hub, squadra, modulo, finite_simulation, \
+from simulator.simulation.event import Event
+from simulator.simulation.server import release_server
+from simulator.simulation.sim_utils import get_next_arrival_time
+from simulator.simulation.simulator import queue_manager, stats, servers_hub, squadra, modulo, finite_simulation, \
     infinite_simulation
-from utils.constants import INF, SIMULATION_TYPE, INTERVAL, B, INFINITE_SIM_STATISTICS_FILENAME, \
+from simulator.utils.constants import INF, SIMULATION_TYPE, INTERVAL, B, INFINITE_SIM_STATISTICS_FILENAME, \
     INFINITE_SIM_REPORT_FILENAME, FINITE_SIM_REPORT_FILENAME, FINITE_SIM_STATISTICS_FILENAME, REPLICATIONS, K, \
     MEAN_ARRIVAL_TIME, INFINITE, FINITE
-from utils.file_manager import initialize_temp_file, write_statistics_to_file, extract_statistics_from_csv, \
+from simulator.utils.file_manager import initialize_temp_file, write_statistics_to_file, extract_statistics_from_csv, \
     save_statistics_to_file
-from utils.printer import print_separator
+from simulator.utils.printer import print_separator
 
 
 def evaluate_model():

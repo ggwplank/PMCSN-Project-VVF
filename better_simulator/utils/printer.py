@@ -1,4 +1,4 @@
-from utils.constants import INF
+from simulator.utils.constants import INF
 
 
 def print_separator():

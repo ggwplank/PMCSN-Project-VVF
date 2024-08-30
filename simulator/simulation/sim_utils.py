@@ -1,10 +1,8 @@
-import random
+from simulator.libs import rngs, rvms
 
-from libs import rvms, rngs
+from simulator.simulation.server import release_server
 
-from simulation.server import release_server
-
-from utils.constants import MEAN_HUB_SERVICE_TIME, MEAN_YELLOW_SERVICE_TIME, MEAN_RED_SERVICE_TIME, \
+from simulator.utils.constants import MEAN_HUB_SERVICE_TIME, MEAN_YELLOW_SERVICE_TIME, MEAN_RED_SERVICE_TIME, \
     MEAN_GREEN_SERVICE_TIME, FAKE_ALLARM_RED_PROB, FAKE_ALLARM_YELLOW_PROB, FAKE_ALLARM_GREEN_PROB, INF
 
 streams = {
@@ -65,8 +63,7 @@ def get_service_time(stream):
 
     # esponenziale troncata, che tiene sempre conto del tempo necessario all'arrivo sul luogo
     if stream != "hub":
-        if service_time < 25.0:
-            service_time = service_time
+        return service_time + 25
 
     """
     while True:

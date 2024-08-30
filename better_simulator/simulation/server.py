@@ -1,4 +1,4 @@
-from utils.constants import INF
+from better_simulator.utils.constants import INF
 
 
 class Server:
