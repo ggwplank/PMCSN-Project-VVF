@@ -33,44 +33,9 @@ def get_service_time(stream):
     rngs.selectStream(streams[stream])
     service_time = rvms.idfExponential(service_rates[stream], rngs.random())
 
-    """
-    if service_time < 25.0 and stream == "red":
-        print("#######################################")
-        print("#######################################")
-        print("##############   R E D   ##############")
-        print("#######################################")
-        print("#######################################")
-    elif service_time < 25.0 and stream == "yellow":
-        print("#######################################")
-        print("#######################################")
-        print("##############   Y E L   ##############")
-        print("#######################################")
-        print("#######################################")
-    elif service_time < 25.0 and stream == "green_squadra":
-        print("#######################################")
-        print("#######################################")
-        print("##############   G R S   ##############")
-        print("#######################################")
-        print("#######################################")
-    elif service_time < 25.0 and stream == "green_modulo":
-        print("#######################################")
-        print("#######################################")
-        print("##############   G R M   ##############")
-        print("#######################################")
-        print("#######################################")
-    """
-
-
     # esponenziale troncata, che tiene sempre conto del tempo necessario all'arrivo sul luogo
     if stream != "hub":
         return service_time + 25
-
-    """
-    while True:
-        service_time = rvms.idfExponential(service_rates[stream], rngs.random())
-        if service_time >= 25.0:
-            return service_time
-    """
 
     return service_time
 
@@ -85,7 +50,7 @@ def fake_alarm_check(queue_color, service_time, probability=None):
     elif queue_color == 'green_squadra' or queue_color == 'green_modulo':
         probability = FAKE_ALLARM_GREEN_PROB
 
-    rngs.selectStream(7)
+    rngs.selectStream(6)
     p = rvms.idfUniform(0, 100, rngs.random())
     if p < probability:
         service_time = 0

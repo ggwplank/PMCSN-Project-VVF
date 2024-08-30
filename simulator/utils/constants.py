@@ -50,9 +50,8 @@ seeds = {
     "4": 170520018,
     "5": 240619974
 }
-SEED = seeds["5"]
+SEED = seeds["1"]
 SEED_INDEX = list(seeds.keys())[list(seeds.values()).index(SEED)]
-
 
 # ---------------------------------
 # STATISTICHE E ANALISI
@@ -76,8 +75,8 @@ SIMULATION_TYPE = INFINITE
 # FILES E PATHS
 # ---------------------------------
 
-REPORTS_OUTPUTS_DIR = os.path.join("simulator","outputs", "reports")
-STATISTICS_OUTPUTS_DIR = os.path.join("simulator","outputs", "statistics")
+REPORTS_OUTPUTS_DIR = os.path.join("outputs", "reports")
+STATISTICS_OUTPUTS_DIR = os.path.join("outputs", "statistics")
 
 FINITE_SIM_REPORT_FILENAME = os.path.join(REPORTS_OUTPUTS_DIR, "finite-sim-report-" + SEED_INDEX + ".txt")
 INFINITE_SIM_REPORT_FILENAME = os.path.join(REPORTS_OUTPUTS_DIR, "infinite-sim-report-" + SEED_INDEX + ".txt")

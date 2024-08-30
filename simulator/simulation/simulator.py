@@ -17,8 +17,7 @@ rngs.plantSeeds(SEED)
 # stream 3 -> tempi di servizio yellow
 # stream 4 -> tempi di servizio green
 # stream 5 -> assegnazione colore
-# stream 6 -> probabilità di autorisoluzione
-# stream 7 -> probabilità di fake alarm
+# stream 6 -> probabilità di fake alarm
 
 # Inizializzazione degli Oggetti di Simulazione
 queue_manager = QueueManager()  # Gestione delle code
