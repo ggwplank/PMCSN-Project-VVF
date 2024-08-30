@@ -1,7 +1,6 @@
 from collections import deque
 
 
-
 class QueueManager:
     def __init__(self):
         self.queues = {

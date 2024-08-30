@@ -10,7 +10,8 @@ streams = {
     'hub': 1,
     'red': 2,
     'orange': 3,
-    'yellow': 4,
+    'yellow_squadra': 4,
+    'yellow_modulo': 4,
     'green_squadra': 5,
     'green_modulo': 5
 }
@@ -19,7 +20,8 @@ service_rates = {
     'hub': MEAN_HUB_SERVICE_TIME,
     'red': MEAN_RED_SERVICE_TIME,
     'orange': MEAN_ORANGE_SERVICE_TIME,
-    'yellow': MEAN_YELLOW_SERVICE_TIME,
+    'yellow_squadra': MEAN_YELLOW_SERVICE_TIME,
+    'yellow_modulo': MEAN_YELLOW_SERVICE_TIME,
     'green_squadra': MEAN_GREEN_SERVICE_TIME,
     'green_modulo': MEAN_GREEN_SERVICE_TIME
 }
@@ -98,7 +100,7 @@ def fake_alarm_check(queue_color, service_time, probability=None):
 
 # Assegnazione del colore
 def assign_color(probabilities):
-    rngs.selectStream(5)
+    rngs.selectStream(6)
     p = rvms.idfUniform(0, 100, rngs.random())
     if p < probabilities['red']:
         return "red"
@@ -112,8 +114,11 @@ def assign_color(probabilities):
 
 def preempt_current_job(server, t, stats, color, start_service_time):
     print(f"Preempting current job {server.job_color.upper()} at time {t.current_time}")
-    if color == 'green':
-        color = 'green_squadra'
+    if server.type == "squadra" and color in ['yellow', 'green']:
+        color += "_squadra"
+    elif server.type == "modulo" and color in ['yellow', 'green']:
+        color += "_modulo"
+
     stats.data[color]['service_time_list'].pop(0)
     stats.data[color]['service_time_list'].append(t.current_time - start_service_time)
     stats.data[color]['response_time_list'].pop(0)
@@ -122,7 +127,8 @@ def preempt_current_job(server, t, stats, color, start_service_time):
 
 def check_jobs(t):
     if all(x == INF for x in
-           [t.next_arrival, t.hub_completion, t.red_completion,
-            t.yellow_completion, t.green_completion_squadra, t.green_completion_modulo]):
+           [t.next_arrival, t.hub_completion, t.red_completion, t.orange_completion,
+            t.yellow_completion_squadra, t.yellow_completion_modulo, t.green_completion_squadra,
+            t.green_completion_modulo]):
         print("Simulation complete: no more events.")
         return True
