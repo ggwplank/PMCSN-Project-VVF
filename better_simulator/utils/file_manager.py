@@ -1,5 +1,4 @@
 import csv
-import os
 
 HEADER = [
     "Simulation",
@@ -17,13 +16,27 @@ HEADER = [
     "mean_response_red_time",
     "mean_N_centre_red",
     "red_rho",
-    # Yellow queue statistics
-    "mean_queue_yellow_time",
-    "mean_N_queue_yellow",
-    "mean_service_yellow_time",
-    "mean_response_yellow_time",
-    "mean_N_centre_yellow",
-    "yellow_rho",
+    # Orange queue statistics
+    "mean_queue_orange_time",
+    "mean_N_queue_orange",
+    "mean_service_orange_time",
+    "mean_response_orange_time",
+    "mean_N_centre_orange",
+    "orange_rho",
+    # Yellow_squadra queue statistics
+    "mean_queue_yellow_squadra_time",
+    "mean_N_queue_yellow_squadra",
+    "mean_service_yellow_squadra_time",
+    "mean_response_yellow_squadra_time",
+    "mean_N_centre_yellow_squadra",
+    "yellow_squadra_rho",
+    # Yellow_modulo queue statistics
+    "mean_queue_yellow_modulo_time",
+    "mean_N_queue_yellow_modulo",
+    "mean_service_yellow_modulo_time",
+    "mean_response_yellow_modulo_time",
+    "mean_N_centre_yellow_modulo",
+    "yellow_modulo_rho",
     # Green squadra queue statistics
     "mean_queue_green_squadra_time",
     "mean_N_queue_green_squadra",
@@ -67,13 +80,27 @@ def write_statistics_to_file(filename, job_completed_percentage_stats, centre_st
         "mean_response_red_time": centre_stats['red']['mean_response_time'],
         'mean_N_centre_red': centre_stats['red']['mean_N_centre'],
         "red_rho": centre_stats['red']['mean_rho'],
-        # Yellow queue statistics
-        "mean_queue_yellow_time": centre_stats['yellow']['mean_queue_time'],
-        "mean_N_queue_yellow": centre_stats['yellow']['mean_N_queue'],
-        "mean_service_yellow_time": centre_stats['yellow']['mean_service_time'],
-        "mean_response_yellow_time": centre_stats['yellow']['mean_response_time'],
-        'mean_N_centre_yellow': centre_stats['yellow']['mean_N_centre'],
-        "yellow_rho": centre_stats['yellow']['mean_rho'],
+        # Orange queue statistics
+        "mean_queue_orange_time": centre_stats['orange']['mean_queue_time'],
+        "mean_N_queue_orange": centre_stats['orange']['mean_N_queue'],
+        "mean_service_orange_time": centre_stats['orange']['mean_service_time'],
+        "mean_response_orange_time": centre_stats['orange']['mean_response_time'],
+        'mean_N_centre_orange': centre_stats['orange']['mean_N_centre'],
+        "orange_rho": centre_stats['orange']['mean_rho'],
+        # Yellow_squadra queue statistics
+        "mean_queue_yellow_squadra_time": centre_stats['yellow_squadra']['mean_queue_time'],
+        "mean_N_queue_yellow_squadra": centre_stats['yellow_squadra']['mean_N_queue'],
+        "mean_service_yellow_squadra_time": centre_stats['yellow_squadra']['mean_service_time'],
+        "mean_response_yellow_squadra_time": centre_stats['yellow_squadra']['mean_response_time'],
+        'mean_N_centre_yellow_squadra': centre_stats['yellow_squadra']['mean_N_centre'],
+        "yellow_squadra_rho": centre_stats['yellow_squadra']['mean_rho'],
+        # Yellow_modulo queue statistics
+        "mean_queue_yellow_modulo_time": centre_stats['yellow_modulo']['mean_queue_time'],
+        "mean_N_queue_yellow_modulo": centre_stats['yellow_modulo']['mean_N_queue'],
+        "mean_service_yellow_modulo_time": centre_stats['yellow_modulo']['mean_service_time'],
+        "mean_response_yellow_modulo_time": centre_stats['yellow_modulo']['mean_response_time'],
+        'mean_N_centre_yellow_modulo': centre_stats['yellow_modulo']['mean_N_centre'],
+        "yellow_modulo_rho": centre_stats['yellow_modulo']['mean_rho'],
         # Green squadra queue statistics
         "mean_queue_green_squadra_time": centre_stats['green_squadra']['mean_queue_time'],
         "mean_N_queue_green_squadra": centre_stats['green_squadra']['mean_N_queue'],
@@ -102,7 +129,7 @@ def extract_statistics_from_csv(filename, stats):
         reader = csv.DictReader(csvfile)
 
         for row in reader:
-            for color in ['hub', 'red', 'yellow', 'green_squadra', 'green_modulo']:
+            for color in ['hub', 'red', 'orange', 'yellow_squadra', 'yellow_modulo', 'green_squadra', 'green_modulo']:
                 stats.data[color]['queue_time_list'].append(float(row[f'mean_queue_{color}_time']))
                 stats.data[color]['N_queue_list'].append(float(row[f'mean_N_queue_{color}']))
                 stats.data[color]['service_time_list'].append(float(row[f'mean_service_{color}_time']))
@@ -124,7 +151,7 @@ def save_statistics_to_file(filename, stats):
         )
 
         # Sezioni per ogni colore
-        for color in ['hub', 'red', 'yellow', 'green_squadra', 'green_modulo']:
+        for color in ['hub', 'red', 'orange', 'yellow_squadra', 'yellow_modulo', 'green_squadra', 'green_modulo']:
             file.write("-" * 50 + "\n")
             file.write(f"{color.capitalize()} Statistics\n")
             file.write("-" * 50 + "\n")

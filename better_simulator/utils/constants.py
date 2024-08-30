@@ -78,8 +78,8 @@ SIMULATION_TYPE = INFINITE
 # FILES E PATHS
 # ---------------------------------
 
-REPORTS_OUTPUTS_DIR = os.path.join("simulator", "outputs", "reports")
-STATISTICS_OUTPUTS_DIR = os.path.join("simulator", "outputs", "statistics")
+REPORTS_OUTPUTS_DIR = os.path.join("better_simulator", "outputs", "reports")
+STATISTICS_OUTPUTS_DIR = os.path.join("better_simulator", "outputs", "statistics")
 
 FINITE_SIM_REPORT_FILENAME = os.path.join(REPORTS_OUTPUTS_DIR, "finite-sim-report-" + SEED_INDEX + ".txt")
 INFINITE_SIM_REPORT_FILENAME = os.path.join(REPORTS_OUTPUTS_DIR, "infinite-sim-report-" + SEED_INDEX + ".txt")
@@ -87,4 +87,4 @@ INFINITE_SIM_REPORT_FILENAME = os.path.join(REPORTS_OUTPUTS_DIR, "infinite-sim-r
 FINITE_SIM_STATISTICS_FILENAME = os.path.join(STATISTICS_OUTPUTS_DIR, "finite-statistics-" + SEED_INDEX + ".csv")
 INFINITE_SIM_STATISTICS_FILENAME = os.path.join(STATISTICS_OUTPUTS_DIR, "infinite-statistics-" + SEED_INDEX + ".csv")
 
-GRAPHS_OUTPUTS_DIR = os.path.join("../outputs", "graphs")
+GRAPHS_OUTPUTS_DIR = os.path.join("../better_simulator/outputs", "graphs")

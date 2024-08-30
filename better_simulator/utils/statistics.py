@@ -61,7 +61,49 @@ class Statistics:
                 'mean_N_centre_confidence_interval': 0.0,
                 'rho_confidence_interval': 0.0
             },
-            'yellow': {
+            'orange': {
+                'queue_time_list': [],
+                'service_time_list': [],
+                'response_time_list': [],
+                'N_centre_list': [],
+                'rho_list': [],
+
+                'mean_N_queue': 0,
+                'mean_queue_time': 0.0,
+                'mean_service_time': 0.0,
+                'mean_response_time': 0.0,
+                'mean_N_centre': 0.0,
+                'mean_rho': 0.0,
+
+                'mean_queue_time_confidence_interval': 0.0,
+                'mean_N_queue_confidence_interval': 0.0,
+                'mean_service_time_confidence_interval': 0.0,
+                'mean_response_time_confidence_interval': 0.0,
+                'mean_N_centre_confidence_interval': 0.0,
+                'rho_confidence_interval': 0.0
+            },
+            'yellow_squadra': {
+                'queue_time_list': [],
+                'service_time_list': [],
+                'response_time_list': [],
+                'N_centre_list': [],
+                'rho_list': [],
+
+                'mean_N_queue': 0,
+                'mean_queue_time': 0.0,
+                'mean_service_time': 0.0,
+                'mean_response_time': 0.0,
+                'mean_N_centre': 0.0,
+                'mean_rho': 0.0,
+
+                'mean_queue_time_confidence_interval': 0.0,
+                'mean_N_queue_confidence_interval': 0.0,
+                'mean_service_time_confidence_interval': 0.0,
+                'mean_response_time_confidence_interval': 0.0,
+                'mean_N_centre_confidence_interval': 0.0,
+                'rho_confidence_interval': 0.0
+            },
+            'yellow_modulo': {
                 'queue_time_list': [],
                 'service_time_list': [],
                 'response_time_list': [],
@@ -208,7 +250,7 @@ class Statistics:
     # Calcolo delle statistiche di una singola run
     # ======
     def calculate_run_statistics(self):
-        for color in ['hub', 'red', 'yellow', 'green_squadra', 'green_modulo']:
+        for color in ['hub', 'red', 'orange', 'yellow_squadra', 'yellow_modulo', 'green_squadra', 'green_modulo']:
             self.calculate_mean_queue_time(color)
             self.calculate_mean_N_queue(color)
             self.calculate_mean_service_time(color)
@@ -224,13 +266,13 @@ class Statistics:
             'mean_response_time': self.data[color]['mean_response_time'],
             'mean_N_centre': self.data[color]['mean_N_centre'],
             'mean_rho': self.data[color]['mean_rho']
-        } for color in ['hub', 'red', 'yellow', 'green_squadra', 'green_modulo']}
+        } for color in ['hub', 'red', 'orange', 'yellow_squadra', 'yellow_modulo', 'green_squadra', 'green_modulo']}
 
     # ======
     # Calcolo degli intervalli di confidenza per ogni colore
     # ======
     def calculate_all_confidence_intervals(self):
-        for color in ['hub', 'red', 'yellow', 'green_squadra', 'green_modulo']:
+        for color in ['hub', 'red', 'orange', 'yellow_squadra', 'yellow_modulo', 'green_squadra', 'green_modulo']:
             self.data[color]['mean_queue_time'], self.data[color][
                 'mean_queue_time_confidence_interval'] = calculate_confidence_interval(
                 self.data[color]['queue_time_list'])
@@ -256,7 +298,7 @@ class Statistics:
     # Reset delle statistiche per una nuova run
     # ======
     def reset_statistics(self):
-        for color in ['hub', 'red', 'yellow', 'green_squadra', 'green_modulo']:
+        for color in ['hub', 'red', 'orange', 'yellow_squadra', 'yellow_modulo', 'green_squadra', 'green_modulo']:
             self.data[color]['N_queue_list'] = []
             self.data[color]['queue_time_list'] = []
             self.data[color]['service_time_list'] = []

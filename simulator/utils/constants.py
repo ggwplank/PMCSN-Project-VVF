@@ -85,4 +85,4 @@ INFINITE_SIM_REPORT_FILENAME = os.path.join(REPORTS_OUTPUTS_DIR, "infinite-sim-r
 FINITE_SIM_STATISTICS_FILENAME = os.path.join(STATISTICS_OUTPUTS_DIR, "finite-statistics-" + SEED_INDEX + ".csv")
 INFINITE_SIM_STATISTICS_FILENAME = os.path.join(STATISTICS_OUTPUTS_DIR, "infinite-statistics-" + SEED_INDEX + ".csv")
 
-GRAPHS_OUTPUTS_DIR = os.path.join("../outputs", "graphs")
+GRAPHS_OUTPUTS_DIR = os.path.join("../simulator/outputs", "graphs")
