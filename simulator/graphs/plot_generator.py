@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import os
-from simulator.utils.constants import FINITE_SIM_STATISTICS_FILENAME, INFINITE_SIM_STATISTICS_FILENAME, GRAPHS_OUTPUTS_DIR, SEED
+from simulator.utils.constants import  seeds
 
 FIGSIZE = (18, 9)
 DPI = 300
@@ -12,57 +12,63 @@ FONTSIZE_LABELS = 16
 FONTSIZE_LEGEND = 14
 FONTSIZE_TICKS = 12
 
+STATISTICS_OUTPUTS_DIR = os.path.join("..","outputs", "statistics")
+GRAPHS_OUTPUTS_DIR = os.path.join("../outputs", "graphs")
+
+COLUMNS_TO_PLOT = [
+    "mean_queue_hub_time", "mean_queue_red_time", "mean_queue_yellow_time", "mean_queue_green_squadra_time","mean_queue_green_modulo_time",
+    "mean_N_queue_hub", "mean_N_queue_red", "mean_N_queue_yellow", "mean_N_queue_green_squadra", "mean_N_queue_green_modulo",
+]
+
+COLORS = ['b', 'g', 'r', 'c', 'm']  # Blu, Verde, Rosso, Ciano, Magenta
+
 
 def choose_horizon():
     choice = input("Vuoi generare grafici per orizzonte finito (1) o infinito (2)? ").strip().lower()
     print("\n")
     if choice == "1":
-        return FINITE_SIM_STATISTICS_FILENAME, "finite_horizon"
+        return "finite_horizon", "finite-statistics"
     elif choice == "2":
-        return INFINITE_SIM_STATISTICS_FILENAME, "infinite_horizon"
+        return "infinite_horizon", "infinite-statistics"
     else:
         print("Scelta non valida. Riprova.")
         return choose_horizon()
 
-
-def plot_custom_graph(csv_file_path, y_column, x_column='Simulation', x_label='Simulation Run', y_label=None,
-                      sample_rate=16, save_dir='general'):
-    if not os.path.exists(csv_file_path):
-        raise FileNotFoundError(f"File CSV non trovato: {csv_file_path}")
-
-    data = pd.read_csv(csv_file_path)
-
-    # Verifica se le colonne esistono nel CSV
-    if x_column not in data.columns or y_column not in data.columns:
-        raise ValueError(f"Colonne '{x_column}' o '{y_column}' non trovate nel CSV.")
-
-    # Estrae le colonne necessarie per il grafico
-    x_values = data[x_column]
-    y_values = data[y_column]
-
-    # Se y_label non è specificato, usa il nome della colonna y_column
-    if y_label is None:
-        y_label = y_column
-
-    # Campionamento dei dati per migliorare la leggibilità del grafico
-    sampled_x_values = x_values[::sample_rate]
-    sampled_y_values = y_values[::sample_rate]
-
-    # Creazione del grafico
+def plot_custom_graphs_across_seeds(csv_paths, y_column, save_dir, sample_rate=16):
     plt.figure(figsize=FIGSIZE)
-    plt.plot(sampled_x_values, sampled_y_values, linestyle='-', color='#1f77b4', linewidth=2, markersize=MARKERSIZE,
-             label=y_label)
 
-    # Etichette degli assi
-    plt.xlabel(x_label, fontsize=FONTSIZE_LABELS)
-    plt.ylabel(y_label, fontsize=FONTSIZE_LABELS)
-    plt.title(f'{y_column} per {x_label} \n Seed: {SEED}', fontsize=FONTSIZE_TITLE, fontweight='bold', pad=20)
+    for i, (seed_key, csv_path) in enumerate(csv_paths.items()):
+        if not os.path.exists(csv_path):
+            raise FileNotFoundError(f"File CSV non trovato: {csv_path}")
+
+        data = pd.read_csv(csv_path)
+
+        # Verifica se la colonna esiste nel CSV
+        if y_column not in data.columns:
+            raise ValueError(f"Colonna '{y_column}' non trovata nel CSV per il seed {seed_key}.")
+
+        x_values = data['Simulation'][::sample_rate]
+        y_values = data[y_column][::sample_rate]
+
+        '''  
+             # Solo i marker, senza linee
+             plt.plot(x_values, y_values, linestyle='', markersize=MARKERSIZE,
+                      color=COLORS[i], marker='o', label=f'Seed: {seeds[seed_key]}')
+             '''
+        plt.plot(x_values, y_values, linestyle='-', linewidth='2', markersize=MARKERSIZE,
+                 color=COLORS[i], marker='o', label=f'Seed: {seeds[seed_key]}')
+
+    plt.xlabel('Simulation Run', fontsize=FONTSIZE_LABELS)
+    plt.ylabel(y_column, fontsize=FONTSIZE_LABELS)
+    plt.title(f'{y_column} per Simulation Run', fontsize=FONTSIZE_TITLE, fontweight='bold', pad=20)
     plt.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
     plt.xticks(rotation=XTICK_ROTATION, fontsize=FONTSIZE_TICKS)
     plt.yticks(fontsize=FONTSIZE_TICKS)
-    plt.legend(fontsize=FONTSIZE_LEGEND, loc='best')
 
-    # aggiunta bordo attorno al grafico
+    # Posizionamento della legenda fuori dal grafico
+    plt.legend(fontsize=FONTSIZE_LEGEND, loc='upper left', bbox_to_anchor=(1, 1))
+
+    # aggiugiamo il bordo attorno al grafico
     plt.gca().spines['top'].set_visible(True)
     plt.gca().spines['right'].set_visible(True)
     plt.gca().spines['left'].set_linewidth(1.5)
@@ -73,7 +79,7 @@ def plot_custom_graph(csv_file_path, y_column, x_column='Simulation', x_label='S
         os.makedirs(save_dir, exist_ok=True)
         print(f"Creata la cartella: {save_dir}\n")
 
-    output_filename = f'{y_column}.png'
+    output_filename = f'{y_column}_comparison.png'
     output_file_path = os.path.join(save_dir, output_filename)
 
     try:
@@ -83,40 +89,24 @@ def plot_custom_graph(csv_file_path, y_column, x_column='Simulation', x_label='S
         print(f"Errore durante il salvataggio del grafico: {e}")
     plt.close()
 
+def generate_comparison_graphs(sample_rate=16):
+    horizon_choice, file_prefix = choose_horizon()
 
-def generate_all_graphs_by_category():
-    csv_filename, horizon_folder = choose_horizon()
-    csv_file_path = "../" + csv_filename
+    csv_paths = {seed_key: os.path.join(STATISTICS_OUTPUTS_DIR, f"{file_prefix}-{seed_key}.csv") for seed_key in seeds.keys()}
+    sample_csv_path = next(iter(csv_paths.values()))  # Prende il percorso del primo CSV per ottenere le colonne
 
-    # carica i dati dal file CSV
-    data = pd.read_csv(csv_file_path)
-    horizon_output_dir = os.path.join(GRAPHS_OUTPUTS_DIR, horizon_folder)
-    categories = {
-        "general": [],
-        "hub": [],
-        "red_queue": [],
-        "yellow_queue": [],
-        "green_queue": []
-    }
+    if not os.path.exists(sample_csv_path):
+        raise FileNotFoundError(f"File CSV non trovato: {sample_csv_path}")
 
-    for column in data.columns:
-        if 'hub' in column.lower():
-            categories["hub"].append(column)
-        elif 'red' in column.lower():
-            categories["red_queue"].append(column)
-        elif 'yellow' in column.lower():
-            categories["yellow_queue"].append(column)
-        elif 'green' in column.lower():
-            categories["green_queue"].append(column)
+    data = pd.read_csv(sample_csv_path)
+    horizon_output_dir = os.path.join(GRAPHS_OUTPUTS_DIR, horizon_choice)
+
+    for column in COLUMNS_TO_PLOT:
+        if column in data.columns:
+            print(f"Generazione del grafico comparativo per la colonna: {column}")
+            plot_custom_graphs_across_seeds(csv_paths, y_column=column, save_dir=horizon_output_dir,
+                                            sample_rate=sample_rate)
         else:
-            categories["general"].append(column)
+            print(f"Colonna {column} non trovata nei file CSV.")
 
-    for category, columns in categories.items():
-        for column in columns:
-            if column != 'Simulation':
-                print(f"Generazione del grafico per {column} in {category}")
-                plot_custom_graph(csv_file_path=csv_file_path, y_column=column,
-                                  save_dir=os.path.join(horizon_output_dir, category))
-
-
-generate_all_graphs_by_category()
+generate_comparison_graphs(sample_rate=75)
