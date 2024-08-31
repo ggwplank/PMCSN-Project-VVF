@@ -48,7 +48,7 @@ seeds = {
     "2": 140620017,
     "3": 170920015,
     "4": 170520018,
-    "5": 240619974
+    "5": 123456789
 }
 SEED = seeds["1"]
 SEED_INDEX = list(seeds.keys())[list(seeds.values()).index(SEED)]
@@ -69,7 +69,7 @@ REPLICATIONS = 1024  # Numero di replicazioni (deve essere <= K)
 
 INFINITE = 0
 FINITE = 1
-SIMULATION_TYPE = FINITE
+SIMULATION_TYPE = INFINITE
 
 # ---------------------------------
 # FILES E PATHS
