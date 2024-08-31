@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import os
-from simulator.utils.constants import FINITE_SIM_STATISTICS_FILENAME, INFINITE_SIM_STATISTICS_FILENAME, GRAPHS_OUTPUTS_DIR, SEED
+from standard_simulator.utils.constants import FINITE_SIM_STATISTICS_FILENAME, INFINITE_SIM_STATISTICS_FILENAME, GRAPHS_OUTPUTS_DIR, SEED
 
 FIGSIZE = (18, 9)
 DPI = 300

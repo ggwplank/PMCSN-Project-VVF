@@ -1,8 +1,8 @@
-from simulator.libs import rngs, rvms
+from standard_simulator.libs import rngs, rvms
 
-from simulator.simulation.server import release_server
+from standard_simulator.simulation.server import release_server
 
-from simulator.utils.constants import MEAN_HUB_SERVICE_TIME, MEAN_YELLOW_SERVICE_TIME, MEAN_RED_SERVICE_TIME, \
+from standard_simulator.utils.constants import MEAN_HUB_SERVICE_TIME, MEAN_YELLOW_SERVICE_TIME, MEAN_RED_SERVICE_TIME, \
     MEAN_GREEN_SERVICE_TIME, FAKE_ALLARM_RED_PROB, FAKE_ALLARM_YELLOW_PROB, FAKE_ALLARM_GREEN_PROB, INF
 
 streams = {

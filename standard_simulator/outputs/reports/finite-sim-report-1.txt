@@ -1,7 +1,19 @@
 Simulation Statistics
 ==================================================
 
-Mean Completed Jobs  : 0.8398760500663084       +/- 0.0020383765404341178
+Mean Jobs Arrived    : 86.9638671875            +/- 0.5680948479897925
+Mean Completed Jobs Percentage : 0.8398760500663084       +/- 0.0020383765404341178
+
+Red Mean Jobs Arrived : 44.400390625             +/- 0.4037027345303817
+Red Mean Completed Jobs Percentage : 0.9969302476807519       +/- 0.000564273644189434
+
+Yellow Mean Jobs Arrived : 25.716796875             +/- 0.30921476448785856
+Yellow Mean Completed Jobs Percentage : 0.6922023742666084       +/- 0.005682308940239978
+
+Green Mean Jobs Arrived : 16.208984375             +/- 0.25167099279208055
+Green Mean Completed Jobs Percentage : 0.6742836491533387       +/- 0.00668572820696941
+
+
 
 --------------------------------------------------
 Hub Statistics

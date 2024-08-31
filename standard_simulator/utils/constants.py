@@ -69,14 +69,14 @@ REPLICATIONS = 1024  # Numero di replicazioni (deve essere <= K)
 
 INFINITE = 0
 FINITE = 1
-SIMULATION_TYPE = INFINITE
+SIMULATION_TYPE = FINITE
 
 # ---------------------------------
 # FILES E PATHS
 # ---------------------------------
 
-REPORTS_OUTPUTS_DIR = os.path.join("outputs", "reports")
-STATISTICS_OUTPUTS_DIR = os.path.join("outputs", "statistics")
+REPORTS_OUTPUTS_DIR = os.path.join("standard_simulator", "outputs", "reports")
+STATISTICS_OUTPUTS_DIR = os.path.join("standard_simulator", "outputs", "statistics")
 
 FINITE_SIM_REPORT_FILENAME = os.path.join(REPORTS_OUTPUTS_DIR, "finite-sim-report-" + SEED_INDEX + ".txt")
 INFINITE_SIM_REPORT_FILENAME = os.path.join(REPORTS_OUTPUTS_DIR, "infinite-sim-report-" + SEED_INDEX + ".txt")
@@ -84,4 +84,4 @@ INFINITE_SIM_REPORT_FILENAME = os.path.join(REPORTS_OUTPUTS_DIR, "infinite-sim-r
 FINITE_SIM_STATISTICS_FILENAME = os.path.join(STATISTICS_OUTPUTS_DIR, "finite-statistics-" + SEED_INDEX + ".csv")
 INFINITE_SIM_STATISTICS_FILENAME = os.path.join(STATISTICS_OUTPUTS_DIR, "infinite-statistics-" + SEED_INDEX + ".csv")
 
-GRAPHS_OUTPUTS_DIR = os.path.join("../simulator/outputs", "graphs")
+GRAPHS_OUTPUTS_DIR = os.path.join("../standard_simulator/outputs", "graphs")

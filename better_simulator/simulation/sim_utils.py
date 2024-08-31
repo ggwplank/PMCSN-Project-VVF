@@ -12,7 +12,6 @@ streams = {
     'orange': 3,
     'yellow_squadra': 4,
     'yellow_modulo': 4,
-    'green_squadra': 5,
     'green_modulo': 5
 }
 
@@ -22,7 +21,6 @@ service_rates = {
     'orange': MEAN_ORANGE_SERVICE_TIME,
     'yellow_squadra': MEAN_YELLOW_SERVICE_TIME,
     'yellow_modulo': MEAN_YELLOW_SERVICE_TIME,
-    'green_squadra': MEAN_GREEN_SERVICE_TIME,
     'green_modulo': MEAN_GREEN_SERVICE_TIME
 }
 

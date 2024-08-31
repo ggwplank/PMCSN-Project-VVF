@@ -1,4 +1,4 @@
-from simulator.utils.constants import INF
+from standard_simulator.utils.constants import INF
 
 
 class Server:

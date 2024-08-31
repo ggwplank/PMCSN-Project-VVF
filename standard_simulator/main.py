@@ -1,14 +1,14 @@
-from simulator.simulation.event import Event
-from simulator.simulation.server import release_server
-from simulator.simulation.sim_utils import get_next_arrival_time
-from simulator.simulation.simulator import queue_manager, stats, servers_hub, squadra, modulo, finite_simulation, \
+from standard_simulator.simulation.event import Event
+from standard_simulator.simulation.server import release_server
+from standard_simulator.simulation.sim_utils import get_next_arrival_time
+from standard_simulator.simulation.simulator import queue_manager, stats, servers_hub, squadra, modulo, finite_simulation, \
     infinite_simulation
-from simulator.utils.constants import INF, SIMULATION_TYPE, INTERVAL, B, INFINITE_SIM_STATISTICS_FILENAME, \
+from standard_simulator.utils.constants import INF, SIMULATION_TYPE, INTERVAL, B, INFINITE_SIM_STATISTICS_FILENAME, \
     INFINITE_SIM_REPORT_FILENAME, FINITE_SIM_REPORT_FILENAME, FINITE_SIM_STATISTICS_FILENAME, REPLICATIONS, K, \
     MEAN_ARRIVAL_TIME, INFINITE, FINITE
-from simulator.utils.file_manager import initialize_temp_file, write_statistics_to_file, extract_statistics_from_csv, \
+from standard_simulator.utils.file_manager import initialize_temp_file, write_statistics_to_file, extract_statistics_from_csv, \
     save_statistics_to_file
-from simulator.utils.printer import print_separator
+from standard_simulator.utils.printer import print_separator
 
 
 def evaluate_model():
@@ -56,7 +56,7 @@ for i in range(n_run):
         print("TYPE not valid!!!")
         break
 
-    job_completed_percentage_stats, centre_stats = stats.calculate_run_statistics()
-    write_statistics_to_file(stats_filename, job_completed_percentage_stats, centre_stats, i)
+    global_job_stats, queue_job_stats, queue_stats = stats.calculate_run_statistics()
+    write_statistics_to_file(stats_filename, global_job_stats,  queue_job_stats, queue_stats, i)
 
 evaluate_model()

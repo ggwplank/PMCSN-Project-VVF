@@ -1,7 +1,7 @@
 import math
 
-from simulator.libs import rvms
-from simulator.utils.constants import HUB_SERVERS, ALPHA
+from standard_simulator.libs import rvms
+from standard_simulator.utils.constants import HUB_SERVERS, ALPHA
 
 
 class Statistics:
