@@ -1,7 +1,9 @@
+import os
+
 import matplotlib.pyplot as plt
 import pandas as pd
-import os
-from simulator.utils.constants import seeds, SEED
+
+from standard_simulator.utils.constants import seeds
 
 FIGSIZE = (18, 9)
 DPI = 300

@@ -137,26 +137,30 @@ def save_statistics_to_file(filename, stats):
 
         # Sezione JOB STATISTICS
 
+        file.write("-" * 50 + "\n")
+        file.write("Jobs Statistics\n")
+        file.write("-" * 50 + "\n")
+
         file.write(
-            f"{'Mean Jobs Arrived':<20} : {stats.data['job_data']['mean_job_arrived']:<25}"
-            f"+/- {stats.data['job_data']['job_arrived_confidence_interval']}\n"
+            f"{'Mean Arrived':<33} : {stats.data['job_data']['mean_job_arrived']:<20}"
+            f"+/- {stats.data['job_data']['job_arrived_confidence_interval']:<10}\n"
         )
 
         file.write(
-            f"{'Mean Completed Jobs Percentage':<20} : {stats.data['job_data']['mean_job_completed_percentage']:<25}"
-            f"+/- {stats.data['job_data']['job_completed_percentage_confidence_interval']}\n\n"
+            f"{'Mean Completed Percentage':<33} : {stats.data['job_data']['mean_job_completed_percentage']:<20}"
+            f"+/- {stats.data['job_data']['job_completed_percentage_confidence_interval']:<10}\n\n"
         )
 
         for color in ['red', 'yellow', 'green']:
             file.write(
-                f"{color.capitalize()+' Mean Jobs Arrived':<20} : {stats.data['job_data'][color+'_mean_job_arrived']:<25}"
-                f"+/- {stats.data['job_data'][color+'_job_arrived_confidence_interval']}\n"
+                f"{color.capitalize() + ' Mean Arrived':<33} : {stats.data['job_data'][color + '_mean_job_arrived']:<20}"
+                f"+/- {stats.data['job_data'][color + '_job_arrived_confidence_interval']:<10}\n"
             )
             file.write(
-                f"{color.capitalize()+' Mean Completed Jobs Percentage':<20} : {stats.data['job_data']['mean_'+color+'_job_completed_percentage']:<25}"
-                f"+/- {stats.data['job_data'][color+'_job_completed_percentage_confidence_interval']}\n\n"
+                f"{color.capitalize() + ' Mean Completed Percentage':<33} : {stats.data['job_data']['mean_' + color + '_job_completed_percentage']:<20}"
+                f"+/- {stats.data['job_data'][color + '_job_completed_percentage_confidence_interval']:<10}\n\n"
             )
-        file.write("\n\n")
+
         # Sezioni per ogni colore
         for color in ['hub', 'red', 'yellow', 'green_squadra', 'green_modulo']:
             file.write("-" * 50 + "\n")
