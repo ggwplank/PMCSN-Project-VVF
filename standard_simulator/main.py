@@ -1,12 +1,14 @@
 from standard_simulator.simulation.event import Event
 from standard_simulator.simulation.server import release_server
 from standard_simulator.simulation.sim_utils import get_next_arrival_time
-from standard_simulator.simulation.simulator import queue_manager, stats, servers_hub, squadra, modulo, finite_simulation, \
+from standard_simulator.simulation.simulator import queue_manager, stats, servers_hub, squadra, modulo, \
+    finite_simulation, \
     infinite_simulation
 from standard_simulator.utils.constants import INF, SIMULATION_TYPE, INTERVAL, B, INFINITE_SIM_STATISTICS_FILENAME, \
     INFINITE_SIM_REPORT_FILENAME, FINITE_SIM_REPORT_FILENAME, FINITE_SIM_STATISTICS_FILENAME, REPLICATIONS, K, \
     MEAN_ARRIVAL_TIME, INFINITE, FINITE
-from standard_simulator.utils.file_manager import initialize_temp_file, write_statistics_to_file, extract_statistics_from_csv, \
+from standard_simulator.utils.file_manager import initialize_temp_file, write_statistics_to_file, \
+    extract_statistics_from_csv, \
     save_statistics_to_file
 from standard_simulator.utils.printer import print_separator
 
@@ -27,13 +29,13 @@ def evaluate_model():
 last_event = Event(0, get_next_arrival_time(MEAN_ARRIVAL_TIME), INF, INF, INF, INF, INF)
 
 if SIMULATION_TYPE == INFINITE:
-    n_run = REPLICATIONS
+    n_run = K
     stats_filename, report_filename = INFINITE_SIM_STATISTICS_FILENAME, INFINITE_SIM_REPORT_FILENAME
 elif SIMULATION_TYPE == FINITE:
-    n_run = K
+    n_run = REPLICATIONS
     stats_filename, report_filename = FINITE_SIM_STATISTICS_FILENAME, FINITE_SIM_REPORT_FILENAME
 else:
-    print("TYPE not valid!!!")
+    print("Invalid simulation type!")
     exit(1)
 
 initialize_temp_file(stats_filename)
@@ -53,10 +55,10 @@ for i in range(n_run):
     elif SIMULATION_TYPE == INFINITE:
         last_event = infinite_simulation(B, last_event)
     else:
-        print("TYPE not valid!!!")
+        print("Invalid simulation type!")
         break
 
     global_job_stats, queue_job_stats, queue_stats = stats.calculate_run_statistics()
-    write_statistics_to_file(stats_filename, global_job_stats,  queue_job_stats, queue_stats, i)
+    write_statistics_to_file(stats_filename, global_job_stats, queue_job_stats, queue_stats, i)
 
 evaluate_model()
