@@ -44,8 +44,17 @@ HEADER = [
     "mean_response_green_modulo_time",
     "mean_N_centre_green_modulo",
     "green_modulo_rho",
-
-    "job_completed_percentage"
+    # System statistics
+    "job_arrived",
+    "red_job_arrived",
+    "orange_job_arrived",
+    "yellow_job_arrived",
+    "green_job_arrived",
+    "job_completed_percentage",
+    "red_job_completed_percentage",
+    "orange_job_completed_percentage",
+    "yellow_job_completed_percentage",
+    "green_job_completed_percentage"
 ]
 
 
@@ -55,54 +64,63 @@ def initialize_temp_file(filename):
         writer.writeheader()
 
 
-def write_statistics_to_file(filename, job_completed_percentage_stats, centre_stats, simulation_index):
+def write_statistics_to_file(filename, global_job_stats, queue_job_stats, queue_stats, simulation_index):
     # Prepara il dizionario per il file CSV
     row = {
         "Simulation": simulation_index + 1,
         # Hub statistics
-        "mean_queue_hub_time": centre_stats['hub']['mean_queue_time'],
-        "mean_N_queue_hub": centre_stats['hub']['mean_N_queue'],
-        "mean_service_hub_time": centre_stats['hub']['mean_service_time'],
-        "mean_response_hub_time": centre_stats['hub']['mean_response_time'],
-        'mean_N_centre_hub': centre_stats['hub']['mean_N_centre'],
-        "hub_rho": centre_stats['hub']['mean_rho'],
+        "mean_queue_hub_time": queue_stats['hub']['mean_queue_time'],
+        "mean_N_queue_hub": queue_stats['hub']['mean_N_queue'],
+        "mean_service_hub_time": queue_stats['hub']['mean_service_time'],
+        "mean_response_hub_time": queue_stats['hub']['mean_response_time'],
+        'mean_N_centre_hub': queue_stats['hub']['mean_N_centre'],
+        "hub_rho": queue_stats['hub']['mean_rho'],
         # Red queue statistics
-        "mean_queue_red_time": centre_stats['red']['mean_queue_time'],
-        "mean_N_queue_red": centre_stats['red']['mean_N_queue'],
-        "mean_service_red_time": centre_stats['red']['mean_service_time'],
-        "mean_response_red_time": centre_stats['red']['mean_response_time'],
-        'mean_N_centre_red': centre_stats['red']['mean_N_centre'],
-        "red_rho": centre_stats['red']['mean_rho'],
+        "mean_queue_red_time": queue_stats['red']['mean_queue_time'],
+        "mean_N_queue_red": queue_stats['red']['mean_N_queue'],
+        "mean_service_red_time": queue_stats['red']['mean_service_time'],
+        "mean_response_red_time": queue_stats['red']['mean_response_time'],
+        'mean_N_centre_red': queue_stats['red']['mean_N_centre'],
+        "red_rho": queue_stats['red']['mean_rho'],
         # Orange queue statistics
-        "mean_queue_orange_time": centre_stats['orange']['mean_queue_time'],
-        "mean_N_queue_orange": centre_stats['orange']['mean_N_queue'],
-        "mean_service_orange_time": centre_stats['orange']['mean_service_time'],
-        "mean_response_orange_time": centre_stats['orange']['mean_response_time'],
-        'mean_N_centre_orange': centre_stats['orange']['mean_N_centre'],
-        "orange_rho": centre_stats['orange']['mean_rho'],
+        "mean_queue_orange_time": queue_stats['orange']['mean_queue_time'],
+        "mean_N_queue_orange": queue_stats['orange']['mean_N_queue'],
+        "mean_service_orange_time": queue_stats['orange']['mean_service_time'],
+        "mean_response_orange_time": queue_stats['orange']['mean_response_time'],
+        'mean_N_centre_orange': queue_stats['orange']['mean_N_centre'],
+        "orange_rho": queue_stats['orange']['mean_rho'],
         # Yellow_squadra queue statistics
-        "mean_queue_yellow_squadra_time": centre_stats['yellow_squadra']['mean_queue_time'],
-        "mean_N_queue_yellow_squadra": centre_stats['yellow_squadra']['mean_N_queue'],
-        "mean_service_yellow_squadra_time": centre_stats['yellow_squadra']['mean_service_time'],
-        "mean_response_yellow_squadra_time": centre_stats['yellow_squadra']['mean_response_time'],
-        'mean_N_centre_yellow_squadra': centre_stats['yellow_squadra']['mean_N_centre'],
-        "yellow_squadra_rho": centre_stats['yellow_squadra']['mean_rho'],
+        "mean_queue_yellow_squadra_time": queue_stats['yellow_squadra']['mean_queue_time'],
+        "mean_N_queue_yellow_squadra": queue_stats['yellow_squadra']['mean_N_queue'],
+        "mean_service_yellow_squadra_time": queue_stats['yellow_squadra']['mean_service_time'],
+        "mean_response_yellow_squadra_time": queue_stats['yellow_squadra']['mean_response_time'],
+        'mean_N_centre_yellow_squadra': queue_stats['yellow_squadra']['mean_N_centre'],
+        "yellow_squadra_rho": queue_stats['yellow_squadra']['mean_rho'],
         # Yellow_modulo queue statistics
-        "mean_queue_yellow_modulo_time": centre_stats['yellow_modulo']['mean_queue_time'],
-        "mean_N_queue_yellow_modulo": centre_stats['yellow_modulo']['mean_N_queue'],
-        "mean_service_yellow_modulo_time": centre_stats['yellow_modulo']['mean_service_time'],
-        "mean_response_yellow_modulo_time": centre_stats['yellow_modulo']['mean_response_time'],
-        'mean_N_centre_yellow_modulo': centre_stats['yellow_modulo']['mean_N_centre'],
-        "yellow_modulo_rho": centre_stats['yellow_modulo']['mean_rho'],
+        "mean_queue_yellow_modulo_time": queue_stats['yellow_modulo']['mean_queue_time'],
+        "mean_N_queue_yellow_modulo": queue_stats['yellow_modulo']['mean_N_queue'],
+        "mean_service_yellow_modulo_time": queue_stats['yellow_modulo']['mean_service_time'],
+        "mean_response_yellow_modulo_time": queue_stats['yellow_modulo']['mean_response_time'],
+        'mean_N_centre_yellow_modulo': queue_stats['yellow_modulo']['mean_N_centre'],
+        "yellow_modulo_rho": queue_stats['yellow_modulo']['mean_rho'],
         # Green modulo queue statistics
-        "mean_queue_green_modulo_time": centre_stats['green_modulo']['mean_queue_time'],
-        "mean_N_queue_green_modulo": centre_stats['green_modulo']['mean_N_queue'],
-        "mean_service_green_modulo_time": centre_stats['green_modulo']['mean_service_time'],
-        "mean_response_green_modulo_time": centre_stats['green_modulo']['mean_response_time'],
-        'mean_N_centre_green_modulo': centre_stats['green_modulo']['mean_N_centre'],
-        "green_modulo_rho": centre_stats['green_modulo']['mean_rho'],
-        # Job completed percentage
-        "job_completed_percentage": job_completed_percentage_stats['job_completed_percentage']
+        "mean_queue_green_modulo_time": queue_stats['green_modulo']['mean_queue_time'],
+        "mean_N_queue_green_modulo": queue_stats['green_modulo']['mean_N_queue'],
+        "mean_service_green_modulo_time": queue_stats['green_modulo']['mean_service_time'],
+        "mean_response_green_modulo_time": queue_stats['green_modulo']['mean_response_time'],
+        'mean_N_centre_green_modulo': queue_stats['green_modulo']['mean_N_centre'],
+        "green_modulo_rho": queue_stats['green_modulo']['mean_rho'],
+        # Job statistics
+        "job_arrived": global_job_stats['job_arrived'],
+        "red_job_arrived": queue_job_stats['red']['job_arrived'],
+        "orange_job_arrived": queue_job_stats['orange']['job_arrived'],
+        "yellow_job_arrived": queue_job_stats['yellow']['job_arrived'],
+        "green_job_arrived": queue_job_stats['green']['job_arrived'],
+        "job_completed_percentage": global_job_stats['job_completed_percentage'],
+        "red_job_completed_percentage": queue_job_stats['red']['job_completed_percentage'],
+        "orange_job_completed_percentage": queue_job_stats['orange']['job_completed_percentage'],
+        "yellow_job_completed_percentage": queue_job_stats['yellow']['job_completed_percentage'],
+        "green_job_completed_percentage": queue_job_stats['green']['job_completed_percentage']
     }
 
     with open(filename, "a", newline='') as file:
@@ -122,7 +140,11 @@ def extract_statistics_from_csv(filename, stats):
                 stats.data[color]['response_time_list'].append(float(row[f'mean_response_{color}_time']))
                 stats.data[color]['N_centre_list'].append(float(row[f'mean_N_centre_{color}']))
                 stats.data[color]['rho_list'].append(float(row[f'{color}_rho']))
+            stats.data['job_data']['job_arrived_list'].append(float(row[f'job_arrived']))
             stats.data['job_data']['job_completed_percentage_list'].append(float(row[f'job_completed_percentage']))
+            for color in ['red', 'orange', 'yellow', 'green']:
+                stats.data['job_data'][color + '_job_arrived_list'].append(float(row[f'{color}_job_arrived']))
+                stats.data['job_data'][color + '_job_completed_percentage_list'].append(float(row[f'{color}_job_completed_percentage']))
 
 
 def save_statistics_to_file(filename, stats):
@@ -130,11 +152,30 @@ def save_statistics_to_file(filename, stats):
         file.write("Simulation Statistics\n")
         file.write("=" * 50 + "\n\n")
 
-        # Sezione JOB COMPLETED
+        # Sezione JOB STATISTICS
+        file.write("-" * 50 + "\n")
+        file.write("Jobs Statistics\n")
+        file.write("-" * 50 + "\n")
+
         file.write(
-            f"{'Mean Completed Jobs':<20} : {stats.data['job_data']['mean_job_completed_percentage']:<25}"
-            f"+/- {stats.data['job_data']['job_completed_percentage_confidence_interval']}\n\n"
+            f"{'Mean Arrived':<33} : {stats.data['job_data']['mean_job_arrived']:<20}"
+            f"+/- {stats.data['job_data']['job_arrived_confidence_interval']:<10}\n"
         )
+
+        file.write(
+            f"{'Mean Completed Percentage':<33} : {stats.data['job_data']['mean_job_completed_percentage']:<20}"
+            f"+/- {stats.data['job_data']['job_completed_percentage_confidence_interval']:<10}\n\n"
+        )
+
+        for color in ['red', 'orange', 'yellow', 'green']:
+            file.write(
+                f"{color.capitalize() + ' Mean Arrived':<33} : {stats.data['job_data'][color + '_mean_job_arrived']:<20}"
+                f"+/- {stats.data['job_data'][color + '_job_arrived_confidence_interval']:<10}\n"
+            )
+            file.write(
+                f"{color.capitalize() + ' Mean Completed Percentage':<33} : {stats.data['job_data']['mean_' + color + '_job_completed_percentage']:<20}"
+                f"+/- {stats.data['job_data'][color + '_job_completed_percentage_confidence_interval']:<10}\n\n"
+            )
 
         # Sezioni per ogni colore
         for color in ['hub', 'red', 'orange', 'yellow_squadra', 'yellow_modulo', 'green_modulo']:

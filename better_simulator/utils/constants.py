@@ -78,8 +78,8 @@ SIMULATION_TYPE = FINITE
 # FILES E PATHS
 # ---------------------------------
 
-REPORTS_OUTPUTS_DIR = os.path.join("better_simulator", "outputs", "reports")
-STATISTICS_OUTPUTS_DIR = os.path.join("better_simulator", "outputs", "statistics")
+REPORTS_OUTPUTS_DIR = os.path.join("outputs", "reports")
+STATISTICS_OUTPUTS_DIR = os.path.join("outputs", "statistics")
 
 FINITE_SIM_REPORT_FILENAME = os.path.join(REPORTS_OUTPUTS_DIR, "finite-sim-report-" + SEED_INDEX + ".txt")
 INFINITE_SIM_REPORT_FILENAME = os.path.join(REPORTS_OUTPUTS_DIR, "infinite-sim-report-" + SEED_INDEX + ".txt")

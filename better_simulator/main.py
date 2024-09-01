@@ -6,7 +6,8 @@ from better_simulator.simulation.simulator import queue_manager, stats, servers_
 from better_simulator.utils.constants import INF, SIMULATION_TYPE, INTERVAL, B, INFINITE_SIM_STATISTICS_FILENAME, \
     INFINITE_SIM_REPORT_FILENAME, FINITE_SIM_REPORT_FILENAME, FINITE_SIM_STATISTICS_FILENAME, REPLICATIONS, K, \
     MEAN_ARRIVAL_TIME, INFINITE, FINITE
-from better_simulator.utils.file_manager import initialize_temp_file, write_statistics_to_file, extract_statistics_from_csv, \
+from better_simulator.utils.file_manager import initialize_temp_file, write_statistics_to_file, \
+    extract_statistics_from_csv, \
     save_statistics_to_file
 from better_simulator.utils.printer import print_separator
 
@@ -24,13 +25,13 @@ def evaluate_model():
     print("End of Simulation")
 
 
-last_event = Event(0, get_next_arrival_time(MEAN_ARRIVAL_TIME), INF, INF, INF, INF, INF,INF)
+last_event = Event(0, get_next_arrival_time(MEAN_ARRIVAL_TIME), INF, INF, INF, INF, INF, INF)
 
 if SIMULATION_TYPE == INFINITE:
-    n_run = REPLICATIONS
+    n_run = K
     stats_filename, report_filename = INFINITE_SIM_STATISTICS_FILENAME, INFINITE_SIM_REPORT_FILENAME
 elif SIMULATION_TYPE == FINITE:
-    n_run = K
+    n_run = REPLICATIONS
     stats_filename, report_filename = FINITE_SIM_STATISTICS_FILENAME, FINITE_SIM_REPORT_FILENAME
 else:
     print("TYPE not valid!!!")
@@ -53,10 +54,10 @@ for i in range(n_run):
     elif SIMULATION_TYPE == INFINITE:
         last_event = infinite_simulation(B, last_event)
     else:
-        print("TYPE not valid!!!")
+        print("Invalid simulation type!")
         break
 
-    job_completed_percentage_stats, centre_stats = stats.calculate_run_statistics()
-    write_statistics_to_file(stats_filename, job_completed_percentage_stats, centre_stats, i)
+    global_job_stats, queue_job_stats, queue_stats = stats.calculate_run_statistics()
+    write_statistics_to_file(stats_filename, global_job_stats, queue_job_stats, queue_stats, i)
 
 evaluate_model()

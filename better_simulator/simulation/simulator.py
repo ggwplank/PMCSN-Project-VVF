@@ -73,6 +73,9 @@ def process_job_completion_at_hub(t, next_event_function):
         t.type = color
         print(f"Job in hub completed at time {t.current_time} and sent to sent to {color.upper()} queue")
 
+        # stats
+        stats.increment_job_arrived_in_color(color)
+
         # ci sono job in coda
         if not queue_manager.is_queue_empty("hub"):
             next_job_time = queue_manager.get_from_queue('hub')
@@ -201,7 +204,7 @@ def update_completion_time(t):
         t.orange_completion = squadra.end_service_time if squadra.job_color == 'orange' else INF
         t.yellow_completion_squadra = squadra.end_service_time if squadra.job_color == 'yellow' else INF
     else:
-        t.red_completion = t.orange_completion = t.yellow_completion_squadra = t.green_completion_squadra = INF
+        t.red_completion = t.orange_completion = t.yellow_completion_squadra = INF
 
     if modulo.occupied:
         global modulo_completion
@@ -253,24 +256,47 @@ def execute(t):
     t.current_time = next_event_time
 
     if t.current_time == t.next_arrival:
-        stats.job_arrived += 1
+        # stats
+        stats.increment_arrived_job()
+
         process_job_arrival_at_hub(t, servers_hub)
+
     elif t.current_time == t.hub_completion:
         process_job_completion_at_hub(t, process_job_arrival_at_colors)
+
     elif t.current_time == t.red_completion and squadra.job_color == 'red':
-        stats.job_completed += 1
+        # stats
+        stats.increment_job_completed()
+        stats.increment_job_completed_in_color('red')
+
         process_job_completion_at_colors(t, squadra)
+
     elif t.current_time == t.orange_completion and squadra.job_color == 'orange':
-        stats.job_completed += 1
+        # stats
+        stats.increment_job_completed()
+        stats.increment_job_completed_in_color('orange')
+
         process_job_completion_at_colors(t, squadra)
+
     elif t.current_time == t.yellow_completion_squadra and squadra.job_color == 'yellow':
-        stats.job_completed += 1
+        # stats
+        stats.increment_job_completed()
+        stats.increment_job_completed_in_color('yellow')
+
         process_job_completion_at_colors(t, squadra)
+
     elif t.current_time == t.yellow_completion_modulo and modulo.job_color == 'yellow':
-        stats.job_completed += 1
+        # stats
+        stats.increment_job_completed()
+        stats.increment_job_completed_in_color('yellow')
+
         process_job_completion_at_colors(t, modulo)
+
     elif t.current_time == t.green_completion_modulo and modulo.job_color == 'green':
-        stats.job_completed += 1
+        # stats
+        stats.increment_job_completed()
+        stats.increment_job_completed_in_color('green')
+
         process_job_completion_at_colors(t, modulo)
 
     print_queue_status(queue_manager)

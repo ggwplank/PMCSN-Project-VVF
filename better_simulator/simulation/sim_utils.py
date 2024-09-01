@@ -36,42 +36,9 @@ def get_service_time(stream):
     rngs.selectStream(streams[stream])
     service_time = rvms.idfExponential(service_rates[stream], rngs.random())
 
-    """
-    if service_time < 25.0 and stream == "red":
-        print("#######################################")
-        print("#######################################")
-        print("##############   R E D   ##############")
-        print("#######################################")
-        print("#######################################")
-    elif service_time < 25.0 and stream == "yellow":
-        print("#######################################")
-        print("#######################################")
-        print("##############   Y E L   ##############")
-        print("#######################################")
-        print("#######################################")
-    elif service_time < 25.0 and stream == "green_squadra":
-        print("#######################################")
-        print("#######################################")
-        print("##############   G R S   ##############")
-        print("#######################################")
-        print("#######################################")
-    elif service_time < 25.0 and stream == "green_modulo":
-        print("#######################################")
-        print("#######################################")
-        print("##############   G R M   ##############")
-        print("#######################################")
-        print("#######################################")
-    """
     # esponenziale troncata, che tiene sempre conto del tempo necessario all'arrivo sul luogo
     if stream != "hub":
         return service_time + 25
-
-    """
-    while True:
-        service_time = rvms.idfExponential(service_rates[stream], rngs.random())
-        if service_time >= 25.0:
-            return service_time
-    """
 
     return service_time
 
