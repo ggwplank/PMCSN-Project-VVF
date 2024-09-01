@@ -1,8 +1,6 @@
-import os
-
 import matplotlib.pyplot as plt
 import pandas as pd
-
+import os
 from standard_simulator.utils.constants import seeds
 
 FIGSIZE = (18, 9)
@@ -34,11 +32,13 @@ color_translation = {
 }
 
 def choose_graph_type():
-    choice = input("Vuoi generare grafici a linea (1) o a colonna (2)? ").strip().lower()
+    choice = input("Vuoi generare grafici a linea (1) o a colonna (2) o comparare i seed (3)? ").strip().lower()
     if choice == "1":
         return "line"
     elif choice == "2":
         return "bar"
+    elif choice == "3":
+        return "multiple"
     else:
         print("Scelta non valida. Riprova.")
         return choose_graph_type()
@@ -187,7 +187,69 @@ def plot_bar_graph(csv_paths, y_column, save_dir, selected_seed, sample_rate, x_
 
     plt.close()
 
+def plot_custom_graphs_across_seeds(csv_paths, y_column, save_dir, sample_rate,x_label):
+    plt.figure(figsize=FIGSIZE)
+    if "mean_N_queue" in y_column:
+        color_key = y_column.split('_')[3]  # estraggo il colore dalla colonna
+        color = color_translation.get(color_key, color_key)
+        title = f'Popolazione Media in coda per {color}'
+        y_label = 'E[NQ]'
+    elif "mean_queue" in y_column:
+        parts = y_column.split('_')
+        if len(parts) > 3:
+            color_key = '_'.join(parts[2:-1])
+        else:
+            color_key = parts[2]
+        color = color_translation.get(color_key, color_key)
+        title = f'Tempo Medio di Attesa in Coda {color}'
+        y_label = 'E[TQ]'
+    else:
+        title = y_column
+        y_label = y_column
+    for i, (seed_key, csv_path) in enumerate(csv_paths.items()):
+        if not os.path.exists(csv_path):
+            raise FileNotFoundError(f"File CSV non trovato: {csv_path}")
 
+        data = pd.read_csv(csv_path)
+
+        # Verifica se la colonna esiste nel CSV
+        if y_column not in data.columns:
+            raise ValueError(f"Colonna '{y_column}' non trovata nel CSV per il seed {seed_key}.")
+
+        x_values = data['Simulation'][::sample_rate]
+        y_values = data[y_column][::sample_rate]
+
+        # Plot solo con marker
+        plt.plot(x_values, y_values, linestyle='-', markersize=MARKERSIZE,
+                 color=COLORS[i], marker='o', label=f'Seed: {seeds[seed_key]}')
+
+    plt.xlabel(x_label, fontsize=FONTSIZE_LABELS)
+    plt.ylabel(y_label, fontsize=FONTSIZE_LABELS)
+    plt.title(title, fontsize=FONTSIZE_TITLE, fontweight='bold', pad=20)
+    plt.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
+    plt.xticks(rotation=XTICK_ROTATION, fontsize=FONTSIZE_TICKS)
+    plt.yticks(fontsize=FONTSIZE_TICKS)
+
+    # Posizionamento della legenda fuori dal grafico
+    plt.legend(fontsize=FONTSIZE_LEGEND, loc='upper left', bbox_to_anchor=(1,1))
+
+    # Aggiunta di un bordo attorno al grafico
+    plt.gca().spines['top'].set_visible(True)
+    plt.gca().spines['right'].set_visible(True)
+    plt.gca().spines['left'].set_linewidth(1.5)
+    plt.gca().spines['bottom'].set_linewidth(1.5)
+    plt.tight_layout(pad=2)
+
+    # Salva i grafici nella cartella specificata
+    output_filename = f'{y_column}_comparison.png'
+    output_file_path = os.path.join(save_dir, output_filename)
+
+    try:
+        plt.savefig(output_file_path, dpi=DPI, bbox_inches='tight')
+        print(f"Grafico salvato in: {output_file_path}\n")
+    except Exception as e:
+        print(f"Errore durante il salvataggio del grafico: {e}")
+    plt.close()
 
 def generate_comparison_graphs(sample_rate):
     graph_type = choose_graph_type()
@@ -209,6 +271,8 @@ def generate_comparison_graphs(sample_rate):
                 plot_custom_graph_for_selected_seed(csv_paths, y_column=column, save_dir=horizon_output_dir, sample_rate=sample_rate, selected_seed='1', x_label=x_label)
             elif graph_type == "bar":
                 plot_bar_graph(csv_paths, y_column=column, save_dir=horizon_output_dir, selected_seed='1', sample_rate=sample_rate, x_label=x_label)
+            elif graph_type== "multiple":
+                plot_custom_graphs_across_seeds(csv_paths,y_column=column,save_dir=horizon_output_dir,sample_rate=sample_rate, x_label=x_label)
         else:
             print(f"Colonna {column} non trovata nei file CSV.")
 
