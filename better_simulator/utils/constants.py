@@ -16,9 +16,9 @@ OPERATIVE_SERVERS = 2  # Numero di serventi nel centro operativo (altro tipo)
 
 MEAN_ARRIVAL_TIME = 116.23  # Tempo medio di arrivo dei job [min/job]
 MEAN_HUB_SERVICE_TIME = 1.5  # Tempo medio di servizio E[s] in un servente dell'hub [min/job]
-MEAN_RED_SERVICE_TIME = 61.033333 - 25  # Tempo medio di servizio E[s] per i job con codice rosso [min/job]
-MEAN_ORANGE_SERVICE_TIME = 45 - 25 # Tempo medio di servizio E[s] per i job con codice arancione [min/job]
-MEAN_YELLOW_SERVICE_TIME = 90.47777778 - 25  # Tempo medio di servizio E[s] per i job con codice giallo [min/job]
+MEAN_RED_SERVICE_TIME = 71.033333 - 25  # Tempo medio di servizio E[s] per i job con codice rosso [min/job]
+MEAN_ORANGE_SERVICE_TIME = 56.925 - 25  # Tempo medio di servizio E[s] per i job con codice arancione [min/job]
+MEAN_YELLOW_SERVICE_TIME = 117.32 - 25  # Tempo medio di servizio E[s] per i job con codice giallo [min/job]
 MEAN_GREEN_SERVICE_TIME = 175 - 25  # Tempo medio di servizio per E[s] i job con codice verde [min/job]
 
 # ---------------------------------
@@ -27,16 +27,16 @@ MEAN_GREEN_SERVICE_TIME = 175 - 25  # Tempo medio di servizio per E[s] i job con
 
 # Probabilità di assegnazione dei codici colore
 CODE_ASSIGNMENT_PROBS = {
-    "red": 30,
-    "orange": 60,
-    "yellow": 75,  # 51.48 + 29.71
+    "red": 51.48,
+    "orange": 69.53,  # 51.48 + 18.05
+    "yellow": 81.19,  # 69.53 + 11.66
     "green": 100
 }
 
 FAKE_ALLARM_RED_PROB = 0  # 0.27
-FAKE_ALLARM_ORANGE_PROB = 0
-FAKE_ALLARM_YELLOW_PROB = 0  # 0.15
-FAKE_ALLARM_GREEN_PROB = 0  # 0.09
+FAKE_ALLARM_ORANGE_PROB = 0 # 0.09
+FAKE_ALLARM_YELLOW_PROB = 0  # 0.06
+FAKE_ALLARM_GREEN_PROB = 0  # 0.1
 
 # ---------------------------------
 # COSTANTI GENERALI DEL SISTEMA
@@ -65,10 +65,10 @@ ALPHA = 0.05  # Livello di significatività (1 - LOC)
 
 INTERVAL = 1440 * 7  # Intervallo di analisi per ogni run espresso in minuti
 
-B = 512  # Dimensione del batch in termini di job
-K = 1024  # Numero di batch utilizzati
+B = 1096  # Dimensione del batch in termini di job
+K = 260  # Numero di batch utilizzati
 
-REPLICATIONS = 1024  # Numero di replicazioni (deve essere <= K)
+REPLICATIONS = 260  # Numero di replicazioni (deve essere <= K)
 
 INFINITE = 0
 FINITE = 1
