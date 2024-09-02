@@ -169,7 +169,7 @@ def process_job_completion_at_colors(t, server):
     release_server(server)
 
     if server == squadra:
-        for color in ['red', 'orange', 'yellow', 'green']:
+        for color in ['red', 'orange', 'yellow']:
             # "squadra" gestisce i job in quest'ordine di priorità: red, orange, yellow, green
             if not queue_manager.is_queue_empty(color):
                 next_job_time = queue_manager.get_from_queue(color)
