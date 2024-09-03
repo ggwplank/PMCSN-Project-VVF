@@ -218,7 +218,7 @@ def update_completion_time(t):
 def infinite_simulation(batch_size, t):
     start_time = t.current_time
 
-    while stats.job_arrived < batch_size:
+    while stats.return_job_arrived() < batch_size:
         if check_jobs(t):
             break
         execute(t)

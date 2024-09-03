@@ -33,10 +33,10 @@ CODE_ASSIGNMENT_PROBS = {
     "green": 100
 }
 
-FAKE_ALLARM_RED_PROB = 0  # 0.27
-FAKE_ALLARM_ORANGE_PROB = 0 # 0.09
-FAKE_ALLARM_YELLOW_PROB = 0  # 0.06
-FAKE_ALLARM_GREEN_PROB = 0  # 0.1
+FAKE_ALLARM_RED_PROB = 0.27  # 0.27
+FAKE_ALLARM_ORANGE_PROB = 0.09 # 0.09
+FAKE_ALLARM_YELLOW_PROB = 0.06  # 0.06
+FAKE_ALLARM_GREEN_PROB = 0.1  # 0.1
 
 # ---------------------------------
 # COSTANTI GENERALI DEL SISTEMA
@@ -72,7 +72,7 @@ REPLICATIONS = 260  # Numero di replicazioni (deve essere <= K)
 
 INFINITE = 0
 FINITE = 1
-SIMULATION_TYPE = FINITE
+SIMULATION_TYPE = INFINITE
 
 # ---------------------------------
 # FILES E PATHS
@@ -81,10 +81,10 @@ SIMULATION_TYPE = FINITE
 REPORTS_OUTPUTS_DIR = os.path.join("outputs", "reports")
 STATISTICS_OUTPUTS_DIR = os.path.join("outputs", "statistics")
 
-FINITE_SIM_REPORT_FILENAME = os.path.join(REPORTS_OUTPUTS_DIR, "finite-sim-report-" + SEED_INDEX + ".txt")
-INFINITE_SIM_REPORT_FILENAME = os.path.join(REPORTS_OUTPUTS_DIR, "infinite-sim-report-" + SEED_INDEX + ".txt")
+FINITE_SIM_REPORT_FILENAME = os.path.join(REPORTS_OUTPUTS_DIR, "FA-finite-sim-report-" + SEED_INDEX + ".txt")
+INFINITE_SIM_REPORT_FILENAME = os.path.join(REPORTS_OUTPUTS_DIR, "FA-infinite-sim-report-" + SEED_INDEX + ".txt")
 
-FINITE_SIM_STATISTICS_FILENAME = os.path.join(STATISTICS_OUTPUTS_DIR, "finite-statistics-" + SEED_INDEX + ".csv")
-INFINITE_SIM_STATISTICS_FILENAME = os.path.join(STATISTICS_OUTPUTS_DIR, "infinite-statistics-" + SEED_INDEX + ".csv")
+FINITE_SIM_STATISTICS_FILENAME = os.path.join(STATISTICS_OUTPUTS_DIR, "FA-finite-statistics-" + SEED_INDEX + ".csv")
+INFINITE_SIM_STATISTICS_FILENAME = os.path.join(STATISTICS_OUTPUTS_DIR, "FA-infinite-statistics-" + SEED_INDEX + ".csv")
 
 GRAPHS_OUTPUTS_DIR = os.path.join("../better_simulator/outputs", "graphs")
