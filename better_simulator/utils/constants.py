@@ -28,13 +28,13 @@ MEAN_GREEN_SERVICE_TIME = 175 - 25  # Tempo medio di servizio per E[s] i job con
 # Probabilità di assegnazione dei codici colore
 CODE_ASSIGNMENT_PROBS = {
     "red": 51.48,
-    "orange": 69.53,  # 51.48 + 18.05
-    "yellow": 81.19,  # 69.53 + 11.66
+    "orange": 51.48 + 18.05,  # 51.48 + 18.05
+    "yellow": 69.53 + 11.66,  # 69.53 + 11.66
     "green": 100
 }
 
 FAKE_ALLARM_RED_PROB = 0.27  # 0.27
-FAKE_ALLARM_ORANGE_PROB = 0.09 # 0.09
+FAKE_ALLARM_ORANGE_PROB = 0.09  # 0.09
 FAKE_ALLARM_YELLOW_PROB = 0.06  # 0.06
 FAKE_ALLARM_GREEN_PROB = 0.1  # 0.1
 
@@ -81,10 +81,12 @@ SIMULATION_TYPE = INFINITE
 REPORTS_OUTPUTS_DIR = os.path.join("outputs", "reports")
 STATISTICS_OUTPUTS_DIR = os.path.join("outputs", "statistics")
 
-FINITE_SIM_REPORT_FILENAME = os.path.join(REPORTS_OUTPUTS_DIR, "FA-finite-sim-report-" + SEED_INDEX + ".txt")
-INFINITE_SIM_REPORT_FILENAME = os.path.join(REPORTS_OUTPUTS_DIR, "FA-infinite-sim-report-" + SEED_INDEX + ".txt")
+FINITE_SIM_REPORT_FILENAME = os.path.join(REPORTS_OUTPUTS_DIR, "finite-sim-report-" + SEED_INDEX + ".txt")
+INFINITE_SIM_REPORT_FILENAME = os.path.join(REPORTS_OUTPUTS_DIR,
+                                            "infinite-sim-report-" + SEED_INDEX + ".txt")
 
-FINITE_SIM_STATISTICS_FILENAME = os.path.join(STATISTICS_OUTPUTS_DIR, "FA-finite-statistics-" + SEED_INDEX + ".csv")
-INFINITE_SIM_STATISTICS_FILENAME = os.path.join(STATISTICS_OUTPUTS_DIR, "FA-infinite-statistics-" + SEED_INDEX + ".csv")
+FINITE_SIM_STATISTICS_FILENAME = os.path.join(STATISTICS_OUTPUTS_DIR, "finite-statistics-" + SEED_INDEX + ".csv")
+INFINITE_SIM_STATISTICS_FILENAME = os.path.join(STATISTICS_OUTPUTS_DIR,
+                                                "infinite-statistics-" + SEED_INDEX + ".csv")
 
 GRAPHS_OUTPUTS_DIR = os.path.join("../better_simulator/outputs", "graphs")

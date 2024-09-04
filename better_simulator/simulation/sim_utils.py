@@ -58,7 +58,7 @@ def fake_alarm_check(queue_color, service_time, probability=None):
     rngs.selectStream(7)
     p = rvms.idfUniform(0, 100, rngs.random())
     if p < probability:
-        service_time = 0
+        service_time = 25
         print(f"{queue_color} job is a FAKE ALARM!")
     return service_time
 

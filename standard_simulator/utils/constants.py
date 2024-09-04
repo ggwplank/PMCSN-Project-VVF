@@ -26,8 +26,8 @@ MEAN_GREEN_SERVICE_TIME = 175 - 25  # Tempo medio di servizio per E[s] i job con
 
 # Probabilità di assegnazione dei codici colore
 CODE_ASSIGNMENT_PROBS = {
-    "red": 51.48,
-    "yellow": 81.19,  # 51.48 + 29.71
+    "red":  51.48,
+    "yellow": 51.48 + 29.71,  # 51.48 + 29.71
     "green": 100
 }
 
@@ -78,7 +78,7 @@ SIMULATION_TYPE = INFINITE
 REPORTS_OUTPUTS_DIR = os.path.join("outputs", "reports")
 STATISTICS_OUTPUTS_DIR = os.path.join("outputs", "statistics")
 
-FINITE_SIM_REPORT_FILENAME = os.path.join(REPORTS_OUTPUTS_DIR, "FA-finite-sim-report-" + SEED_INDEX + ".txt")
+FINITE_SIM_REPORT_FILENAME = os.path.join(REPORTS_OUTPUTS_DIR, "finite-sim-report-" + SEED_INDEX + ".txt")
 INFINITE_SIM_REPORT_FILENAME = os.path.join(REPORTS_OUTPUTS_DIR, "infinite-sim-report-" + SEED_INDEX + ".txt")
 
 FINITE_SIM_STATISTICS_FILENAME = os.path.join(STATISTICS_OUTPUTS_DIR, "finite-statistics-" + SEED_INDEX + ".csv")

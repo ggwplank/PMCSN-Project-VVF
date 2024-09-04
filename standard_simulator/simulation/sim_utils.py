@@ -35,7 +35,10 @@ def get_service_time(stream):
 
     # esponenziale troncata, che tiene sempre conto del tempo necessario all'arrivo sul luogo
     if stream != "hub":
-        return service_time + 25
+        if stream == "red":
+            return service_time + 25
+        else:
+            return service_time + 25
 
     return service_time
 
@@ -53,7 +56,7 @@ def fake_alarm_check(queue_color, service_time, probability=None):
     rngs.selectStream(6)
     p = rvms.idfUniform(0, 100, rngs.random())
     if p < probability:
-        service_time = 0
+        service_time = 25
         print(f"{queue_color} job is a FAKE ALARM!")
     return service_time
 

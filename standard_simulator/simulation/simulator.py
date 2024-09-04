@@ -139,7 +139,7 @@ def assign_server(t, color, added_in_queue_time, current_time):
             color = 'green_modulo'
 
             modulo.occupied = True
-            modulo.start_service_time = added_in_queue_time
+            modulo.start_service_time = current_time
             service_time = get_service_time(color)
             # Controlliamo che non sia un fake alarm
             modulo.end_service_time = current_time + fake_alarm_check(color, service_time)
