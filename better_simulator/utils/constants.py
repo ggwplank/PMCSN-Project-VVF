@@ -53,7 +53,7 @@ seeds = {
     "4": 170520018,
     "5": 240619974
 }
-SEED = seeds["1"]
+SEED = seeds[("5")]
 SEED_INDEX = list(seeds.keys())[list(seeds.values()).index(SEED)]
 
 # ---------------------------------
@@ -83,10 +83,10 @@ STATISTICS_OUTPUTS_DIR = os.path.join("outputs", "statistics")
 
 FINITE_SIM_REPORT_FILENAME = os.path.join(REPORTS_OUTPUTS_DIR, "finite-sim-report-" + SEED_INDEX + ".txt")
 INFINITE_SIM_REPORT_FILENAME = os.path.join(REPORTS_OUTPUTS_DIR,
-                                            "infinite-sim-report-" + SEED_INDEX + ".txt")
+                                            "FA-infinite-sim-report-" + SEED_INDEX + ".txt")
 
 FINITE_SIM_STATISTICS_FILENAME = os.path.join(STATISTICS_OUTPUTS_DIR, "finite-statistics-" + SEED_INDEX + ".csv")
 INFINITE_SIM_STATISTICS_FILENAME = os.path.join(STATISTICS_OUTPUTS_DIR,
-                                                "infinite-statistics-" + SEED_INDEX + ".csv")
+                                                "FA-infinite-statistics-" + SEED_INDEX + ".csv")
 
 GRAPHS_OUTPUTS_DIR = os.path.join("../better_simulator/outputs", "graphs")
