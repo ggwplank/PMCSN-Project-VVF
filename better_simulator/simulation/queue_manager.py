@@ -36,3 +36,9 @@ class QueueManager:
     def reset_queues(self):
         for key, queue in self.queues.items():
             queue.clear()
+
+    def check_queues(self):
+        for key, queue in self.queues.items():
+            if len(queue) != 0:
+                return False
+        return True

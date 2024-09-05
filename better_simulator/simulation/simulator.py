@@ -234,6 +234,26 @@ def finite_simulation(stop_time, t):
         if check_jobs(t):
             break
         execute(t)
+    t.next_arrival = INF
+    while queue_manager.check_queues():
+        execute(t)
+        if check_jobs(t):
+            break
+
+    if t.current_time != INF:
+        events = {
+            'arrival': t.next_arrival,
+            'hub_completion': t.hub_completion,
+            'red_completion': t.red_completion,
+            'orange_completion': t.orange_completion,
+            'yellow_completion_squadra': t.yellow_completion_squadra,
+            'yellow_completion_modulo': t.yellow_completion_modulo,
+            'green_completion_modulo': t.green_completion_modulo,
+            'squad_completion': squad_completion
+        }
+
+        print_simulation_status(t, events)
+        print_queue_status(queue_manager)
 
 
 def execute(t):
