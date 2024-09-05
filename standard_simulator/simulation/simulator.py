@@ -1,7 +1,8 @@
 from standard_simulator.libs import rngs
 
 from standard_simulator.simulation.queue_manager import QueueManager
-from standard_simulator.simulation.sim_utils import get_next_arrival_time, get_service_time, assign_color, preempt_current_job, \
+from standard_simulator.simulation.sim_utils import get_next_arrival_time, get_service_time, assign_color, \
+    preempt_current_job, \
     fake_alarm_check, check_jobs
 from standard_simulator.simulation.server import Server, release_server
 
@@ -129,10 +130,12 @@ def assign_server(t, color, added_in_queue_time, current_time):
     else:
         # gestione della prelazione
         if color == 'red' and squadra.job_color in ['yellow', 'green']:
-            preempt_current_job(squadra, t, stats, squadra.job_color, squadra.start_service_time, current_time - added_in_queue_time)
+            preempt_current_job(squadra, t, stats, squadra.job_color, squadra.start_service_time,
+                                current_time - added_in_queue_time)
             assign_server(t, color, added_in_queue_time, current_time)
         elif color == 'yellow' and squadra.job_color == 'green':
-            preempt_current_job(squadra, t, stats, squadra.job_color,squadra.start_service_time, current_time - added_in_queue_time)
+            preempt_current_job(squadra, t, stats, squadra.job_color, squadra.start_service_time,
+                                current_time - added_in_queue_time)
             assign_server(t, color, added_in_queue_time, current_time)
         elif color == 'green' and not modulo.occupied:
             modulo.job_color = color
@@ -215,6 +218,10 @@ def infinite_simulation(batch_size, t):
 def finite_simulation(stop_time, t):
     stats.set_stop_time(stop_time)
 
+    # stats
+    stats.calculate_system_status(queue_manager, t.current_time, operative_servers, servers_hub)
+    stats.calculate_queues_status(queue_manager, t.current_time)
+
     while t.current_time < stop_time:
         if check_jobs(t):
             break
@@ -258,7 +265,6 @@ def execute(t):
     t.current_time = next_event_time if next_event_time != INF else INF
 
     if t.current_time == t.next_arrival:
-        # stats
         stats.increment_arrived_job()
 
         process_job_arrival_at_hub(t, servers_hub)
@@ -293,5 +299,9 @@ def execute(t):
         stats.increment_job_completed_in_color('green')
 
         process_job_completion_at_colors(t, modulo)
+
+    # stats
+    stats.calculate_system_status(queue_manager, t.current_time, operative_servers, servers_hub)
+    stats.calculate_queues_status(queue_manager, t.current_time)
 
     print_queue_status(queue_manager)

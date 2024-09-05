@@ -84,3 +84,6 @@ FINITE_SIM_STATISTICS_FILENAME = os.path.join(STATISTICS_OUTPUTS_DIR, "PROVA-fin
 INFINITE_SIM_STATISTICS_FILENAME = os.path.join(STATISTICS_OUTPUTS_DIR, "FA-infinite-statistics-" + SEED_INDEX + ".csv")
 
 GRAPHS_OUTPUTS_DIR = os.path.join("../standard_simulator/outputs", "graphs")
+
+QUEUES_STATUS_FILENAME = os.path.join(REPORTS_OUTPUTS_DIR, "queue-status-" + SEED_INDEX + ".csv")
+SYSTEM_STATUS_FILENAME = os.path.join(REPORTS_OUTPUTS_DIR, "system-status-" + SEED_INDEX + ".csv")
