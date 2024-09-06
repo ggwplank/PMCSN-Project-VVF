@@ -1,0 +1,82 @@
+Simulation Statistics
+==================================================
+
+--------------------------------------------------
+Jobs Statistics
+--------------------------------------------------
+Mean Arrived                      : 0.0                 +/- 0.0       
+Mean Completed Percentage         : 0.0                 +/- 0.0       
+
+Red Mean Arrived                  : 0.0                 +/- 0.0       
+Red Mean Completed Percentage     : 0.0                 +/- 0.0       
+
+Orange Mean Arrived               : 0.0                 +/- 0.0       
+Orange Mean Completed Percentage  : 0.0                 +/- 0.0       
+
+Yellow Mean Arrived               : 0.0                 +/- 0.0       
+Yellow Mean Completed Percentage  : 0.0                 +/- 0.0       
+
+Green Mean Arrived                : 0.0                 +/- 0.0       
+Green Mean Completed Percentage   : 0.0                 +/- 0.0       
+
+--------------------------------------------------
+Hub Statistics
+--------------------------------------------------
+Mean Queue Time      : 0.0                      +/- 0.0
+Mean N Queue         : 0.0                      +/- 0.0
+Mean Service Time    : 0.0                      +/- 0.0
+Mean Response Time   : 0.0                      +/- 0.0
+Mean N Centre        : 0.0                      +/- 0.0
+Mean Rho             : 0.0                      +/- 0.0
+
+--------------------------------------------------
+Red Statistics
+--------------------------------------------------
+Mean Queue Time      : 0.0                      +/- 0.0
+Mean N Queue         : 0.0                      +/- 0.0
+Mean Service Time    : 0.0                      +/- 0.0
+Mean Response Time   : 0.0                      +/- 0.0
+Mean N Centre        : 0.0                      +/- 0.0
+Mean Rho             : 0.0                      +/- 0.0
+
+--------------------------------------------------
+Orange Statistics
+--------------------------------------------------
+Mean Queue Time      : 0.0                      +/- 0.0
+Mean N Queue         : 0.0                      +/- 0.0
+Mean Service Time    : 0.0                      +/- 0.0
+Mean Response Time   : 0.0                      +/- 0.0
+Mean N Centre        : 0.0                      +/- 0.0
+Mean Rho             : 0.0                      +/- 0.0
+
+--------------------------------------------------
+Yellow_squadra Statistics
+--------------------------------------------------
+Mean Queue Time      : 0.0                      +/- 0.0
+Mean N Queue         : 0.0                      +/- 0.0
+Mean Service Time    : 0.0                      +/- 0.0
+Mean Response Time   : 0.0                      +/- 0.0
+Mean N Centre        : 0.0                      +/- 0.0
+Mean Rho             : 0.0                      +/- 0.0
+
+--------------------------------------------------
+Yellow_modulo Statistics
+--------------------------------------------------
+Mean Queue Time      : 0.0                      +/- 0.0
+Mean N Queue         : 0.0                      +/- 0.0
+Mean Service Time    : 0.0                      +/- 0.0
+Mean Response Time   : 0.0                      +/- 0.0
+Mean N Centre        : 0.0                      +/- 0.0
+Mean Rho             : 0.0                      +/- 0.0
+
+--------------------------------------------------
+Green_modulo Statistics
+--------------------------------------------------
+Mean Queue Time      : 0.0                      +/- 0.0
+Mean N Queue         : 0.0                      +/- 0.0
+Mean Service Time    : 0.0                      +/- 0.0
+Mean Response Time   : 0.0                      +/- 0.0
+Mean N Centre        : 0.0                      +/- 0.0
+Mean Rho             : 0.0                      +/- 0.0
+
+--------------------------------------------------
