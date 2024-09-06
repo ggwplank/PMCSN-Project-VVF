@@ -39,7 +39,7 @@ else:
 
 initialize_files(stats_filename, QUEUES_STATUS_FILENAME, SYSTEM_STATUS_FILENAME)
 
-for i in range(1):
+for i in range(n_run):
     # Reset dell'ambiente
     queue_manager.reset_queues()
     squad_completion = INF
