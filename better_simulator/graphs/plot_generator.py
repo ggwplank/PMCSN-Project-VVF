@@ -1,8 +1,14 @@
-import matplotlib.pyplot as plt
-import pandas as pd
 import os
-from standard_simulator.utils.constants import FINITE_SIM_STATISTICS_FILENAME, INFINITE_SIM_STATISTICS_FILENAME, GRAPHS_OUTPUTS_DIR, SEED
+import pandas as pd
+import matplotlib.pyplot as plt
 
+from standard_simulator.utils.constants import seeds
+
+# Definizioni Directory
+ANALISI_STAZIONARIETA_DIR = os.path.join("../outputs", "statistics/analisi_della_stazionarietà")
+ANALISI_TRANSITORIO_DIR = os.path.join("../outputs", "reports")
+
+# Impostazioni grafiche
 FIGSIZE = (18, 9)
 DPI = 300
 MARKERSIZE = 6
@@ -13,110 +19,151 @@ FONTSIZE_LEGEND = 14
 FONTSIZE_TICKS = 12
 
 
-def choose_horizon():
-    choice = input("Vuoi generare grafici per orizzonte finito (1) o infinito (2)? ").strip().lower()
-    print("\n")
-    if choice == "1":
-        return FINITE_SIM_STATISTICS_FILENAME, "finite_horizon"
-    elif choice == "2":
-        return INFINITE_SIM_STATISTICS_FILENAME, "infinite_horizon"
-    else:
-        print("Scelta non valida. Riprova.")
-        return choose_horizon()
+## le colonne per il better simulator
+COLUMNS_TO_SUM = [
+    "mean_N_centre_hub", "mean_N_centre_red", "mean_N_centre_yellow_squadra","mean_N_centre_yellow_modulo",
+     "mean_N_centre_green_modulo"
+]
+
+COLORS = ['b', 'g', 'r', 'c', 'm']  # Blu, Verde, Rosso, Ciano, Magenta
 
 
-def plot_custom_graph(csv_file_path, y_column, x_column='Simulation', x_label='Simulation Run', y_label=None,
-                      sample_rate=16, save_dir='general'):
-    if not os.path.exists(csv_file_path):
-        raise FileNotFoundError(f"File CSV non trovato: {csv_file_path}")
-
-    data = pd.read_csv(csv_file_path)
-
-    # Verifica se le colonne esistono nel CSV
-    if x_column not in data.columns or y_column not in data.columns:
-        raise ValueError(f"Colonne '{x_column}' o '{y_column}' non trovate nel CSV.")
-
-    # Estrae le colonne necessarie per il grafico
-    x_values = data[x_column]
-    y_values = data[y_column]
-
-    # Se y_label non è specificato, usa il nome della colonna y_column
-    if y_label is None:
-        y_label = y_column
-
-    # Campionamento dei dati per migliorare la leggibilità del grafico
-    sampled_x_values = x_values[::sample_rate]
-    sampled_y_values = y_values[::sample_rate]
-
-    # Creazione del grafico
+def plot_sum_of_columns_from_multiple_csvs(csv_folder, output_folder, sample_rate=15, final_sample_rate=1,
+                                           switch_batch=0,
+                                           y_min=None, y_max=None):
+    if not os.path.exists(output_folder):
+        os.makedirs(output_folder, exist_ok=True)
+    csv_files = [f for f in os.listdir(csv_folder) if f.startswith('FA-infinite-statistics-') and f.endswith('.csv')]
+    if not csv_files:
+        raise FileNotFoundError(f"Nessun file CSV trovato nella cartella: {csv_folder}")
     plt.figure(figsize=FIGSIZE)
-    plt.plot(sampled_x_values, sampled_y_values, linestyle='-', color='#1f77b4', linewidth=2, markersize=MARKERSIZE,
-             label=y_label)
+    plt.title('Evoluzione della Popolazione di Sistema', fontsize=FONTSIZE_TITLE, fontweight='bold', pad=20)
+    for i, csv_file in enumerate(csv_files):
+        seed = csv_file.split('-')[-1].replace('.csv', '')  # Estrai il numero di seed dal nome del file
+        csv_path = os.path.join(csv_folder, csv_file)
+        df = pd.read_csv(csv_path)
+        missing_columns = [col for col in COLUMNS_TO_SUM if col not in df.columns]
+        if missing_columns:
+            print(f"Mancano le colonne {missing_columns} nel CSV per il seed {seed}.")
+            continue
+        # Somma delle colonne specifiche per ogni seed
+        y_values = df[COLUMNS_TO_SUM].sum(axis=1)
+        x_values = df['Simulation']
 
-    # Etichette degli assi
-    plt.xlabel(x_label, fontsize=FONTSIZE_LABELS)
-    plt.ylabel(y_label, fontsize=FONTSIZE_LABELS)
-    plt.title(f'{y_column} per {x_label} \n Seed: {SEED}', fontsize=FONTSIZE_TITLE, fontweight='bold', pad=20)
-    plt.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
+        # Campionamento iniziale (fino a switch_batch)
+        x_values_initial = x_values[x_values < switch_batch][::sample_rate]  # Campionamento normale
+        y_values_initial = y_values[x_values < switch_batch][::sample_rate]
+
+        # Campionamento finale (dopo switch_batch)
+        x_values_final = x_values[x_values >= switch_batch][::final_sample_rate]
+        y_values_final = y_values[x_values >= switch_batch][::final_sample_rate]
+
+        # Genera il grafico a linea per la parte iniziale
+        plt.plot(x_values_initial, y_values_initial, linestyle='-', linewidth=2, markersize=MARKERSIZE,
+                 color=COLORS[i % len(COLORS)], marker='o', label=f'Seed: {seeds[seed]}')
+
+        # Genera il grafico a linea per la parte finale con maggiore dettaglio
+        plt.plot(x_values_final, y_values_final, linestyle='-', linewidth=2, markersize=MARKERSIZE,
+                 color=COLORS[i % len(COLORS)], marker='o')
+
+    # Impostazioni Grafiche
+    plt.xlabel('Batch', fontsize=FONTSIZE_LABELS)
+    plt.ylabel('Popolazione di Sistema', fontsize=FONTSIZE_LABELS)
     plt.xticks(rotation=XTICK_ROTATION, fontsize=FONTSIZE_TICKS)
     plt.yticks(fontsize=FONTSIZE_TICKS)
-    plt.legend(fontsize=FONTSIZE_LEGEND, loc='best')
+    plt.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
 
-    # aggiunta bordo attorno al grafico
+    # Imposta il limite dell'asse Y
+    if y_min is not None or y_max is not None:
+        plt.ylim(y_min, y_max)
+    plt.legend(fontsize=FONTSIZE_LEGEND, loc='upper left', bbox_to_anchor=(0, 1))
+
+    # Aggiungi bordo attorno al grafico
     plt.gca().spines['top'].set_visible(True)
     plt.gca().spines['right'].set_visible(True)
     plt.gca().spines['left'].set_linewidth(1.5)
     plt.gca().spines['bottom'].set_linewidth(1.5)
     plt.tight_layout(pad=2)
 
-    if not os.path.exists(save_dir):
-        os.makedirs(save_dir, exist_ok=True)
-        print(f"Creata la cartella: {save_dir}\n")
-
-    output_filename = f'{y_column}.png'
-    output_file_path = os.path.join(save_dir, output_filename)
-
+    output_file_path = os.path.join(output_folder, 'Mean_N_centre_comparison.png')
     try:
         plt.savefig(output_file_path, dpi=DPI, bbox_inches='tight')
-        print(f"Grafico salvato in: {output_file_path}\n")
+        print(f"Grafico salvato in: {output_file_path}")
     except Exception as e:
         print(f"Errore durante il salvataggio del grafico: {e}")
+
     plt.close()
 
 
-def generate_all_graphs_by_category():
-    csv_filename, horizon_folder = choose_horizon()
-    csv_file_path = "../" + csv_filename
+def plot_columns_from_multiple_csvs(csv_folder, output_folder, sample_rate=10, final_sample_rate=1):
+    if not os.path.exists(output_folder):
+        os.makedirs(output_folder, exist_ok=True)
+    csv_files = [f for f in os.listdir(csv_folder) if f.startswith('system-status-') if f.endswith('.csv')]
+    if not csv_files:
+        raise FileNotFoundError(f"Nessun file CSV trovato nella cartella: {csv_folder}")
+    dataframes = {}
+    for csv_file in csv_files:
+        seed = csv_file.split('-')[-1].replace('.csv', '')  # Estrai il numero di seed dal nome del file
+        csv_path = os.path.join(csv_folder, csv_file)
+        dataframes[seed] = pd.read_csv(csv_path)
+    plt.figure(figsize=FIGSIZE)
+    plt.title('Evoluzione della Popolazione di Sistema', fontsize=FONTSIZE_TITLE, fontweight='bold', pad=20)
 
-    # carica i dati dal file CSV
-    data = pd.read_csv(csv_file_path)
-    horizon_output_dir = os.path.join(GRAPHS_OUTPUTS_DIR, horizon_folder)
-    categories = {
-        "general": [],
-        "hub": [],
-        "red_queue": [],
-        "yellow_queue": [],
-        "green_queue": []
-    }
+    for i, (seed, df) in enumerate(dataframes.items()):
+        if 'time' not in df.columns or 'system' not in df.columns:
+            print(f"Colonne 'time' o 'system' non trovate nel CSV per il seed {seed}.")
+            continue
 
-    for column in data.columns:
-        if 'hub' in column.lower():
-            categories["hub"].append(column)
-        elif 'red' in column.lower():
-            categories["red_queue"].append(column)
-        elif 'yellow' in column.lower():
-            categories["yellow_queue"].append(column)
-        elif 'green' in column.lower():
-            categories["green_queue"].append(column)
-        else:
-            categories["general"].append(column)
+        x_values_initial = df['time'][df['time'] < 9500][::sample_rate]
+        y_values_initial = df['system'][df['time'] < 9500][::sample_rate]
 
-    for category, columns in categories.items():
-        for column in columns:
-            if column != 'Simulation':
-                print(f"Generazione del grafico per {column} in {category}")
-                plot_custom_graph(csv_file_path=csv_file_path, y_column=column,
-                                  save_dir=os.path.join(horizon_output_dir, category))
+        # Campionamento finale con un rate più piccolo
+        x_values_final = df['time'][df['time'] >= 9500][::final_sample_rate]
+        y_values_final = df['system'][df['time'] >= 9500][::final_sample_rate]
+
+        plt.plot(x_values_initial, y_values_initial, linestyle='-', linewidth=2, markersize=MARKERSIZE,
+                 color=COLORS[i % len(COLORS)], marker='o', label=f'Seed: {seeds[seed]}')
+
+        plt.plot(x_values_final, y_values_final, linestyle='-', linewidth=2, markersize=MARKERSIZE,
+                 color=COLORS[i % len(COLORS)], marker='o')
+
+    # Impostazioni dell'asse e legenda
+    plt.xlabel('Tempo', fontsize=FONTSIZE_LABELS)
+    plt.ylabel('Popolazione di Sistema', fontsize=FONTSIZE_LABELS)
+    plt.xticks(rotation=XTICK_ROTATION, fontsize=FONTSIZE_TICKS)
+    plt.yticks(fontsize=FONTSIZE_TICKS)
+    plt.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
+    plt.legend(fontsize=FONTSIZE_LEGEND, loc='upper right', bbox_to_anchor=(1, 1))
+
+    # Aggiungi bordo attorno al grafico
+    plt.gca().spines['top'].set_visible(True)
+    plt.gca().spines['right'].set_visible(True)
+    plt.gca().spines['left'].set_linewidth(1.5)
+    plt.gca().spines['bottom'].set_linewidth(1.5)
+    plt.tight_layout(pad=2)
+
+    # Salva il grafico in output
+    output_file_path = os.path.join(output_folder, 'system_comparison.png')
+    try:
+        plt.savefig(output_file_path, dpi=DPI, bbox_inches='tight')
+        print(f"Grafico salvato in: {output_file_path}")
+    except Exception as e:
+        print(f"Errore durante il salvataggio del grafico: {e}")
+
+    plt.close()
 
 
-generate_all_graphs_by_category()
+def run_analysis():
+    choice = input("Vuoi fare i grafici per l'analisi del transitorio o della stazionarietà? (1/2): ").strip().lower()
+    if choice == "1":
+        plot_columns_from_multiple_csvs(ANALISI_TRANSITORIO_DIR, ANALISI_TRANSITORIO_DIR, sample_rate=8,
+                                        final_sample_rate=1)
+    elif choice == "2":
+        plot_sum_of_columns_from_multiple_csvs(ANALISI_STAZIONARIETA_DIR, ANALISI_STAZIONARIETA_DIR, sample_rate=10,
+                                               final_sample_rate=10, y_min=0, y_max=2)
+    else:
+        print("Scelta non valida. Inserisci 'transitorio' o 'stazionarietà'.")
+
+
+run_analysis()
+
