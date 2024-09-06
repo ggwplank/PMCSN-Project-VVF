@@ -1,5 +1,7 @@
 import math
 
+from better_simulator.utils import file_manager
+from better_simulator.utils.constants import SYSTEM_STATUS_FILENAME, QUEUES_STATUS_FILENAME
 from standard_simulator.libs import rvms
 from standard_simulator.utils.constants import HUB_SERVERS, ALPHA
 
@@ -7,6 +9,9 @@ from standard_simulator.utils.constants import HUB_SERVERS, ALPHA
 class Statistics:
     def __init__(self):
         self.stop_time = 0
+
+        self.queues_status = []
+        self.system_status = []
 
         # Inizializzazione delle liste per ogni colore
         self.data = {
@@ -233,6 +238,25 @@ class Statistics:
     # ======
     # Metodi per calcolare le metriche medie
     # ======
+    def calculate_queues_status(self, queue_manager, current_time):
+        for color, queue in queue_manager.queues.items():
+            self.queues_status.append(len(queue))
+        file_manager.write_queues_status(current_time, self.queues_status, QUEUES_STATUS_FILENAME)
+        self.queues_status = []
+
+    def calculate_system_status(self, queue_manager, current_time, operative_servers,servers_hub):
+        sum_centre = 0
+        for color, queue in queue_manager.queues.items():
+            sum_centre += len(queue)
+        for server in operative_servers:
+            if server.occupied:
+                sum_centre += 1
+        for server in servers_hub:
+            if server.occupied:
+                sum_centre += 1
+        self.system_status.append(sum_centre)
+        file_manager.write_queues_status(current_time, self.system_status, SYSTEM_STATUS_FILENAME)
+        self.system_status = []
 
     def calculate_mean_queue_time(self, color):
         queue_times = self.data[color]['queue_time_list']

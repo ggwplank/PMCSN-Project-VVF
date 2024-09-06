@@ -58,9 +58,19 @@ HEADER = [
 ]
 
 
-def initialize_temp_file(filename):
-    with open(filename, "w", newline='') as file:
+def initialize_files(temp_file_name, queues_file_name, system_status_file_name):
+    with open(temp_file_name, "w", newline='') as file:
         writer = csv.DictWriter(file, fieldnames=HEADER)
+        writer.writeheader()
+
+    with open(queues_file_name, "w", newline='') as file:
+        fields = ['time', 'hub', 'red', 'yellow', 'green']
+        writer = csv.DictWriter(file, fieldnames=fields)
+        writer.writeheader()
+
+    with open(system_status_file_name, "w", newline='') as file:
+        fields = ['time', 'system']
+        writer = csv.DictWriter(file, fieldnames=fields)
         writer.writeheader()
 
 
@@ -209,3 +219,29 @@ def save_statistics_to_file(filename, stats):
             )
 
         file.write("-" * 50 + "\n")
+
+
+def write_queues_status(time, queues_status, nome_file):
+    # Prepara i dati da scrivere (inserisci 'time' all'inizio della lista)
+    to_print = queues_status.copy()  # Copia la lista per evitare di modificarla direttamente
+    to_print.insert(0, time)
+
+    # Apre il file in modalità append
+    with open(nome_file, mode='a', newline='') as file_csv:
+        writer = csv.writer(file_csv)
+
+        # Scrive i dati riga per riga
+        writer.writerow(to_print)
+
+
+def write_system_status(time, system_status, nome_file):
+    # Prepara i dati da scrivere (inserisci 'time' all'inizio della lista)
+    to_print = system_status.copy()  # Copia la lista per evitare di modificarla direttamente
+    to_print.insert(0, time)
+
+    # Apre il file in modalità append
+    with open(nome_file, mode='a', newline='') as file_csv:
+        writer = csv.writer(file_csv)
+
+        # Scrive i dati riga per riga
+        writer.writerow(to_print)

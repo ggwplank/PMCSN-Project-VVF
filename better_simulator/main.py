@@ -5,10 +5,10 @@ from better_simulator.simulation.simulator import queue_manager, stats, servers_
     infinite_simulation
 from better_simulator.utils.constants import INF, SIMULATION_TYPE, INTERVAL, B, INFINITE_SIM_STATISTICS_FILENAME, \
     INFINITE_SIM_REPORT_FILENAME, FINITE_SIM_REPORT_FILENAME, FINITE_SIM_STATISTICS_FILENAME, REPLICATIONS, K, \
-    MEAN_ARRIVAL_TIME, INFINITE, FINITE
-from better_simulator.utils.file_manager import initialize_temp_file, write_statistics_to_file, \
+    MEAN_ARRIVAL_TIME, INFINITE, FINITE, QUEUES_STATUS_FILENAME, SYSTEM_STATUS_FILENAME
+from better_simulator.utils.file_manager import initialize_files, write_statistics_to_file, \
     extract_statistics_from_csv, \
-    save_statistics_to_file
+    save_statistics_to_file, initialize_files
 from better_simulator.utils.printer import print_separator
 
 
@@ -37,7 +37,7 @@ else:
     print("TYPE not valid!!!")
     exit(1)
 
-initialize_temp_file(stats_filename)
+initialize_files(stats_filename, QUEUES_STATUS_FILENAME, SYSTEM_STATUS_FILENAME)
 
 for i in range(1):
     # Reset dell'ambiente

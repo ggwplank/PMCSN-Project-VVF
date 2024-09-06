@@ -319,4 +319,8 @@ def execute(t):
 
         process_job_completion_at_colors(t, modulo)
 
+    # stats
+    stats.calculate_system_status(queue_manager, t.current_time, operative_servers, servers_hub)
+    stats.calculate_queues_status(queue_manager, t.current_time)
+
     print_queue_status(queue_manager)
