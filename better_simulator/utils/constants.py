@@ -52,7 +52,7 @@ seeds = {
     "3": 170920015,
     "4": 170520018
 }
-SEED = seeds[("1")]
+SEED = seeds[("3")]
 SEED_INDEX = list(seeds.keys())[list(seeds.values()).index(SEED)]
 
 # ---------------------------------

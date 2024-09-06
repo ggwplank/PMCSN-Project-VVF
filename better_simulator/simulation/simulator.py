@@ -230,6 +230,10 @@ def infinite_simulation(batch_size, t):
 def finite_simulation(stop_time, t):
     stats.set_stop_time(stop_time)
 
+    # stats
+    stats.calculate_system_status(queue_manager, t.current_time, operative_servers, servers_hub)
+    stats.calculate_queues_status(queue_manager, t.current_time)
+
     while t.current_time < stop_time:
         if check_jobs(t):
             break
