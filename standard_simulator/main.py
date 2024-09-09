@@ -58,7 +58,7 @@ for i in range(n_run):
         print("Invalid simulation type!")
         break
 
-    #global_job_stats, queue_job_stats, queue_stats = stats.calculate_run_statistics()
-    #write_statistics_to_file(stats_filename, global_job_stats, queue_job_stats, queue_stats, i)
+    global_job_stats, queue_job_stats, queue_stats = stats.calculate_run_statistics()
+    write_statistics_to_file(stats_filename, global_job_stats, queue_job_stats, queue_stats, i)
 
-#evaluate_model()
+evaluate_model()
